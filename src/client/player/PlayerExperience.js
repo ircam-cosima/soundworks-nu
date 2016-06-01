@@ -17,7 +17,7 @@ const viewTemplate = `
 // this experience plays a sound when it starts, and plays another sound when
 // other clients join the experience
 export default class PlayerExperience extends soundworks.Experience {
-  constructor(audioFiles, standalone) {
+  constructor(standalone, audioFiles) {
     // disable socket connection - use for standalone application
     super(!standalone);
 

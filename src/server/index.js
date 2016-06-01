@@ -5,7 +5,7 @@ import PlayerExperience from './PlayerExperience';
 // initialize application with configuration options
 soundworks.server.init({ appName: 'Template' });
 
-const standalone = true;
+const standalone = false;
 
 // define the configuration object to be passed to the `.ejs` template
 soundworks.server.setClientConfigDefinition((clientType, config, httpRequest) => {
@@ -22,7 +22,8 @@ soundworks.server.setClientConfigDefinition((clientType, config, httpRequest) =>
     config.assetsDomain = '';
   }
 
-  const config = {
+  const data = {
+    standalone: standalone,
     clientType: clientType,
     appName: config.appName,
     version: config.version,
@@ -32,9 +33,9 @@ soundworks.server.setClientConfigDefinition((clientType, config, httpRequest) =>
   };
 
   if (!standalone)
-    config.socketIO = socketIOConfig;
+    data.socketIO = socketIOConfig;
 
-  return config;
+  return data;
 });
 
 // create the experience
