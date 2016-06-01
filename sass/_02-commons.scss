@@ -1,0 +1,179 @@
+// -----------------------------------------------------------------
+// RESET - GENERAL LAYOUT
+// -----------------------------------------------------------------
+
+/**
+ * The following code is inspired by:
+ *   http://meyerweb.com/eric/tools/css/reset/
+ *   v2.0 | 20110126
+ *   License: none (public domain)
+ */
+html, body, div, span, h1, h2, h3, h4, h5, h6, p, a, button, input, option, select {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+
+body {
+  line-height: 1;
+}
+
+ol, ul {
+  list-style: none;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  background-color: $backgroundColor;
+}
+
+body {
+  font-family: $mainFont;
+  font-size: 62.5%;
+  line-height: normal;
+  color: $textColor;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: bold;
+}
+
+p {
+  margin: 0;
+  padding: 0;
+}
+
+// -----------------------------------------------------------------
+// LAYOUT HELPERS
+// -----------------------------------------------------------------
+
+// default container of the application
+#container {
+  position: relative;
+}
+
+.foreground {
+  position: relative;
+  z-index: 1;
+}
+
+.background {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.fit-container {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+// center horizontally
+.flex-center {
+  box-sizing: border-box;
+  padding: 10px;
+  display: flex;
+  display: -webkit-flex; /* Safari */
+
+  & > * {
+    text-align: center;
+    flex-basis: 100%;
+    -webkit-flex-basis: 100%;
+    width: 100%;
+  }
+}
+
+// center horizontally and vertically
+.flex-middle {
+  @extend .flex-center;
+  align-items: center;
+  -webkit-align-items: center;
+}
+
+// create the soft blink animation from keyframe mixin
+@include keyframes(soft-blink) {
+  0% { opacity: 1.0; }
+  50% { opacity: 0.3; }
+  100% { opacity: 1.0; }
+}
+
+// -----------------------------------------------------------------
+// TAG HELPERS
+// -----------------------------------------------------------------
+
+.huge {
+  font-size: 3rem;
+}
+
+.big {
+  font-size: 2rem;
+}
+
+p, .normal {
+  font-size: 1.5rem;
+}
+
+.small {
+  font-size: 1rem;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.italic {
+  font-style: italic;
+}
+
+.btn {
+  background-color: $backgroundColor;
+  border: 1px solid $textColor;
+  border-radius: $borderRadius;
+  color: $textColor;
+  padding: 6px 0;
+  font-size: 1rem;
+  display: block;
+  @include transition(background-color 50ms);
+  letter-spacing: 0.05em;
+
+  &:active {
+    background-color: $textColor;
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  &.unselected, &.disabled, &[disabled] {
+    opacity: 0.5;
+  }
+
+  &.selected {
+    opacity: 1;
+  }
+}
+
+.landscape .portrait-only {
+  display: none;
+}
+
+// transform a <br> in ' ' in landscape mode
+.landscape br.portrait-only {
+  content: ' ';
+  display: inline;
+
+  &:after {
+    content: ' ';
+  }
+}
+
+.soft-blink {
+  @include animation('soft-blink 3.6s ease-in-out infinite');
+}
+
+

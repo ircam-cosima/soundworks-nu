@@ -1,0 +1,47 @@
+#!/usr/bin/env node
+var fse = require('fs-extra');
+var log = require('./log');
+var path = require('path');
+var sass = require('node-sass');
+
+'use strict';
+
+/**
+ * Find all files recursively in `srcDirectory` that pass the allowed function
+ * and are not prefixed by `_`. Transpile them to the `distDirectory`
+ */
+function processSass(srcDirectory, distDirectory, isAllowed, sassOptions) {
+  fse
+    .walk(srcDirectory)
+    .on('data', function(item) {
+      var filename = item.path;
+      var basename = path.basename(filename);
+
+      if (isAllowed(filename) && !/^_/.test(basename)) {
+        var relFilename = path.relative(srcDirectory, filename);
+        var outFilename = path.join(distDirectory, relFilename);
+        outFilename = outFilename.replace(/\.scss$/, '.css');
+
+        Object.assign(sassOptions, {
+          file: filename,
+          outFilename: outFilename
+        });
+
+        sass.render(sassOptions, function(err, result) {
+          if (err)
+            return log.sassError(err);
+
+          fse.outputFile(outFilename, result.css, function(err) {
+            if (err)
+              return console.error(err.message);
+
+            log.sassSuccess(outFilename);
+          });
+        });
+      }
+    });
+}
+
+module.exports = {
+  process: processSass,
+};

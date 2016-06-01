@@ -1,0 +1,36 @@
+/**
+ * Mixins
+ */
+@import '01-mixins';
+
+/**
+ * Defines some global layout variables (background-color, text-color, etc...)
+ * Change values to change the general look of the application
+ */
+@import 'configuration';
+
+/**
+ * Class helpers (.small, .big for font sizes, .btn, etc..)
+ */
+@import '02-commons';
+
+/**
+ * Services styles.
+ */
+@import '03-services';
+
+/**
+ * Import and overrides `wavesjs/basic-controllers` sass files,
+ * rendering of the controllers can be configured though variables here.
+ */
+@import '04-conductor';
+
+/**
+ * Default styles for the `survey` scene.
+ */
+@import '05-survey';
+
+/**
+ * Entry point for application specific styling and overriding.
+ */
+@import 'overrides';

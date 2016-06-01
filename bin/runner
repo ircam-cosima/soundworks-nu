@@ -1,0 +1,451 @@
+#!/usr/bin/env node
+var fse = require('fs-extra');
+var watch = require('watch');
+var path = require('path');
+var uglifyJS = require('uglifyjs');
+var util = require('util');
+
+var javascripts = require('./javascripts');
+var log = require('./log');
+var server = require('./server');
+var styles = require('./styles');
+var cwd = process.cwd();
+
+// polyfill Object.assign for old nodes
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign
+if (typeof Object.assign != 'function') {
+  (function () {
+    Object.assign = function (target) {
+      'use strict';
+      if (target === undefined || target === null) {
+        throw new TypeError('Cannot convert undefined or null to object');
+      }
+
+      var output = Object(target);
+      for (var index = 1; index < arguments.length; index++) {
+        var source = arguments[index];
+        if (source !== undefined && source !== null) {
+          for (var nextKey in source) {
+            if (source.hasOwnProperty(nextKey)) {
+              output[nextKey] = source[nextKey];
+            }
+          }
+        }
+      }
+      return output;
+    };
+  })();
+}
+
+'use strict';
+
+/**
+ * Options for babel transpiling.
+ */
+var babelOptions = {
+  sourceMap: 'inline',
+  presets: ['es2015'],
+  plugins: ['transform-runtime', 'transform-es2015-modules-commonjs'],
+};
+
+/**
+ * Options for browserify.
+ */
+var browserifyOptions = {
+  debug: true,
+  fullPaths: false,
+};
+
+/**
+ * Options for sass.
+ */
+var sassOptions = {
+  outputStyle: 'compressed',
+  sourceMap: true,
+  sourceMapEmbed: true,
+};
+
+/**
+ * Options for watch.
+ */
+var watchOptions = {
+  ignoreDotFiles: true,
+  ignoreUnreadableDir: true,
+  ignoreNotPermitted: true,
+  interval: 2000,
+};
+
+/**
+ * Watched directories
+ */
+var ejsTemplatesDirectory = path.join(cwd, 'html');
+// style directories
+var cssSrcDirectory = path.join(cwd, 'sass');
+var cssPublicDirectory = path.join(cwd, 'public', 'css');
+// server side javascript directories
+var serverSrcDirectory = path.join(cwd, 'src', 'server');
+var serverDistDirectory = path.join(cwd, 'server');
+// client side javascript directories
+var clientSrcDirectory = path.join(cwd, 'src', 'client');
+var clientDistDirectory = path.join(cwd, 'client');
+var clientPublicDirectory = path.join(cwd, 'public', 'js');
+// common javascript directories (indexes must match)
+// directories must exists when the script is launched
+var commonSrcDirectories = [path.join(cwd, 'src', 'common')];
+var commonDistDirectories = [path.join(cwd, 'common')];
+
+/**
+ * Define which file should be ignored by every command.
+ */
+var allowedExtentions = /\.ejs$|\.scss$|\.js$/;
+var excludeFiles = /^\./; // exclude hidden files
+
+/**
+ * Test the given filename, to ensure it can be processed by any command / tranpsiler
+ * @param {String} filename - The filename to be checked.
+ * @param {Boolean} [ensureFile=true] - If set to false, don't test if the file exists.
+ */
+function isAllowed(filename, ensureFile) {
+  ensureFile = ensureFile === undefined ? true : ensureFile;
+
+  var basename = path.basename(filename);
+  var isFile = true;
+
+  if (ensureFile) {
+    try {
+      isFile = fse.lstatSync(filename).isFile() && !fse.lstatSync(filename).isSymbolicLink();
+    } catch(e) {
+      console.log(e.message);
+      isFile = false;
+    }
+  }
+
+  var hasAllowedExt = allowedExtentions.test(basename);
+  var notExcludeFile = !excludeFiles.test(basename);
+
+  return isFile && hasAllowedExt && notExcludeFile;
+}
+
+/**
+ * Returns a list of the file in a given folder recursively.
+ */
+function _getFileList(folder, callback) {
+  var files = [];
+
+  fse.walk(folder)
+    .on('data', function(item) {
+      if (item.stats.isFile() && isAllowed(item.path))
+        files.push(item.path);
+    })
+    .on('end', function() {
+      callback(files);
+    });
+}
+
+var commands = {
+  /**
+   * Watch the file system and reinit the application accordingly
+   */
+  watch: function () {
+    // watch ejs templates
+    watchServerTemplates(ejsTemplatesDirectory);
+    // watch sass files
+    watchSassFiles(cssSrcDirectory, cssPublicDirectory);
+    // watch javascript server files
+    watchServerJavascriptFiles(serverSrcDirectory, serverDistDirectory);
+    // watch javascript client files
+    watchClientJavascriptFiles(clientSrcDirectory, clientDistDirectory, clientPublicDirectory);
+    // watch common javascript files
+    watchCommonJavascriptFiles(commonSrcDirectories, commonDistDirectories);
+
+    server.start();
+  },
+
+  /**
+   * Update all the files (css and js)
+   */
+  transpile: function() {
+    transpile();
+  },
+
+  /**
+   * Start the application
+   */
+  start: function() {
+    server.start();
+  },
+
+  /**
+   * Minify all files in `clientPublicDirectory`
+   */
+  minify: function() {
+    minify();
+  },
+};
+
+
+/**
+ * Watch the server templates.
+ * Restart the server when a template file (aka. `ejs` file) is modified.
+ */
+function watchServerTemplates(srcDirectory) {
+  watch.createMonitor(srcDirectory, watchOptions, function(monitor) {
+    monitor.on('created', function(filename) {
+      if (isAllowed(filename))
+        server.restart();
+    });
+
+    monitor.on('changed', function(filename) {
+      if (isAllowed(filename))
+        server.restart();
+    });
+  });
+}
+
+/**
+ * Watch the sass files.
+ */
+function watchSassFiles(srcDirectory, distDirectory) {
+  watch.createMonitor(srcDirectory, watchOptions, function(monitor) {
+    monitor.on('created', function(filename) {
+      if (isAllowed(filename))
+        styles.process(srcDirectory, distDirectory, isAllowed, sassOptions);
+    });
+
+    monitor.on('changed', function(filename) {
+      if (isAllowed(filename))
+        styles.process(srcDirectory, distDirectory, isAllowed, sassOptions);
+    });
+
+    monitor.on('removed', function(filename) {
+      styles.process(srcDirectory, distDirectory, isAllowed, sassOptions);
+    });
+  });
+}
+
+/**
+ * Watch server js files.
+ */
+function watchServerJavascriptFiles(srcDirectory, distDirectory) {
+  watch.createMonitor(srcDirectory, watchOptions, function(monitor) {
+    var transpiler = javascripts.getTranspiler(srcDirectory, distDirectory, isAllowed, babelOptions);
+
+    monitor.on('created', function(filename) {
+      if (isAllowed(filename)) {
+        server.stop();
+        transpiler.transpile(filename, [], server.start);
+      }
+    });
+
+    monitor.on('changed', function(filename) {
+      if (isAllowed(filename)) {
+        server.stop();
+        transpiler.transpile(filename, [], server.start);
+      }
+    });
+
+    monitor.on('removed', function(filename) {
+      if (isAllowed(filename, false)) {
+        server.stop();
+        transpiler.delete(filename, server.start);
+      }
+    });
+  });
+}
+
+/**
+ * Watch client js files.
+ */
+function watchClientJavascriptFiles(srcDirectory, distDirectory, publicDirectory) {
+  watch.createMonitor(srcDirectory, watchOptions, function(monitor) {
+    var transpiler = javascripts.getTranspiler(srcDirectory, distDirectory, isAllowed, babelOptions, browserifyOptions);
+
+    monitor.on('created', function(filename) {
+      if (isAllowed(filename))
+        transpiler.transpile(filename, [], function() { transpiler.bundle(filename, publicDirectory, true); });
+    });
+
+    monitor.on('changed', function(filename) {
+      if (isAllowed(filename))
+        transpiler.transpile(filename, [], function() { transpiler.bundle(filename, publicDirectory, true); });
+    });
+
+    monitor.on('removed', function(filename) {
+      if (isAllowed(filename, false))
+        transpiler.delete(filename, function() { transpiler.bundle(filename, publicDirectory, false); });
+    });
+  });
+}
+
+/**
+ * Watch common javascript files. Restarts the server as these files can beused server side.
+ * For client side, watchify should do the job.
+ */
+function watchCommonJavascriptFiles(srcDirectories, distDirectories) {
+  srcDirectories.forEach(function(srcDirectory, index) {
+    fse.stat(srcDirectory, function(err, stats) {
+      if (err || !stats.isDirectory)
+        return log.watchWarning(srcDirectory);
+
+      var distDirectory = distDirectories[index];
+
+      watch.createMonitor(srcDirectory, watchOptions, function(monitor) {
+        var transpiler = javascripts.getTranspiler(srcDirectory, distDirectory, isAllowed, babelOptions);
+
+        monitor.on('created', function(filename) {
+          if (isAllowed(filename)) {
+            server.stop();
+            transpiler.transpile(filename, [], server.start);
+          }
+        });
+
+        monitor.on('changed', function(filename) {
+          if (isAllowed(filename)) {
+            server.stop();
+            transpiler.transpile(filename, [], server.start);
+          }
+        });
+
+        monitor.on('removed', function(filename) {
+          if (isAllowed(filename, false)) {
+            server.stop();
+            transpiler.delete(filename, server.start);
+          }
+        });
+      });
+    });
+  });
+}
+
+
+function transpile() {
+  // 1. transpile common files
+  var length = commonSrcDirectories.length;
+  var commonJsIndex = 0;
+
+  function transpileCommonFiles() {
+    var srcDirectory = commonSrcDirectories[commonJsIndex];
+    var distDirectory = commonDistDirectories[commonJsIndex];
+
+    // define what to do next (transpile next common folder or server folder)
+    function next() {
+      commonJsIndex += 1;
+
+      if (commonJsIndex === length)
+        transpileServerFiles();
+      else
+        transpileCommonFiles();
+    }
+
+    fse.stat(srcDirectory, function(err, stat) {
+      if (err || !stat.isDirectory())
+        return next();
+
+      _getFileList(srcDirectory, function(files) {
+        var transpiler = javascripts.getTranspiler(srcDirectory, distDirectory, isAllowed, babelOptions);
+        transpiler.transpile(undefined, files, next);
+      });
+    });
+  }
+
+  // 2. transpile server files
+  function transpileServerFiles() {
+    var next = transpileClientFiles;
+
+    _getFileList(serverSrcDirectory, function(files) {
+      var transpiler = javascripts.getTranspiler(serverSrcDirectory, serverDistDirectory, isAllowed, babelOptions);
+      transpiler.transpile(undefined, files, next);
+    });
+  }
+
+  // 3. transpile client files
+  function transpileClientFiles() {
+    var next = rebundleClientFiles;
+
+    _getFileList(clientSrcDirectory, function(files) {
+      var transpiler = javascripts.getTranspiler(clientSrcDirectory, clientDistDirectory, isAllowed, babelOptions);
+      transpiler.transpile(undefined, files, next);
+    });
+  }
+
+  // 4. rebundle client files
+  function rebundleClientFiles() {
+    // find all first level directories in clientDistDirectory
+    var clientIndexes = fse.readdirSync(clientSrcDirectory).filter(function(filename) {
+      return fse.statSync(path.join(clientSrcDirectory, filename)).isDirectory();
+    }).map(function(dirname) {
+      return path.join(clientSrcDirectory, dirname, 'index.js');
+    });
+
+    var transpiler = javascripts.getTranspiler(clientSrcDirectory, clientDistDirectory, isAllowed, babelOptions, browserifyOptions);
+
+    clientIndexes.forEach(function(filename, index) {
+      transpiler.bundle(filename, clientPublicDirectory, true, true);
+    });
+  }
+
+  // start the chain
+  transpileCommonFiles();
+
+  // 5. rebundle css files
+  styles.process(cssSrcDirectory, cssPublicDirectory, isAllowed, sassOptions);
+}
+
+function minify() {
+  _getFileList(clientPublicDirectory, function(files) {
+    for (var i = files.length - 1; i >= 0; i--) {
+      var filename = files[i];
+
+      if (/\.min\.js$/.test(filename)) {
+        fse.removeSync(filename);
+        log.deleteFile(filename);
+
+        files.splice(i, 1);
+      }
+    }
+
+    files.forEach(function(filename) {
+      log.minifyStart(filename);
+
+      var outFilename = filename.replace(/\.js$/, '.min.js');
+      var startTime = new Date().getTime();
+      var result = uglifyJS.minify(filename);
+      // console.log(result.code); // minified output
+      fse.outputFile(outFilename, result.code, function(err) {
+        if (err)
+          return console.error(err.message);
+
+        log.minifySuccess(filename, outFilename, startTime);
+      });
+    });
+  });
+}
+
+/* --------------------------------------------------------------------------
+ * Process and execute the given command.
+ * -------------------------------------------------------------------------- */
+
+var command = process.argv[2];
+var args = process.argv.slice(3);
+var argv = {};
+for (var i = 0; i < args.length; i += 2) {
+  argv[args[i]] = args[i + 1];
+}
+
+switch (command) {
+  case '--watch':
+    commands.watch();
+    break;
+  case '--transpile':
+    commands.transpile();
+    break;
+  case '--start':
+    commands.start();
+    break;
+  case '--minify':
+    commands.minify();
+    break;
+}
+
+/* --------------------------------------------------------------------------
+ * -------------------------------------------------------------------------- */

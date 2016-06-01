@@ -1,0 +1,110 @@
+// ------------------------------------------------------------
+// VIEW COMPONENTS
+// ------------------------------------------------------------
+
+// @todo - change to id
+.space {
+  svg {
+    overflow: hidden;
+    background-color: #121212;
+  }
+
+  .point {
+    fill: $foregroundColor;
+
+    &.selected {
+      fill: darken($foregroundColor, 70%);
+    }
+  }
+
+  .line {
+    stroke: $foregroundColor;
+    stroke-width: 1px;
+
+    &.arrow {
+      marker-mid: url(#marker-arrow);
+    }
+  }
+
+  // .marker-circle {
+  //   stroke: none;
+  //   fill: $foregroundColor;
+  // }
+
+  .marker-arrow {
+    fill: $foregroundColor;
+  }
+}
+
+
+.buttons {
+  .btn {
+    width: 90%;
+    margin: 5%;
+  }
+}
+
+.select {
+  color: $backgroundColor;
+  background-color: $foregroundColor;
+  font-size: 1.3rem;
+  line-height: 3rem;
+  height: 3rem;
+}
+
+// ------------------------------------------------------------
+// CHECKIN
+// ------------------------------------------------------------
+
+#service-checkin {
+  .checkin-label {
+    margin: 0 auto;
+    background-color: $belize-hole;
+    border-radius: 50%;
+  }
+
+  $portraitBoxSize: 160px;
+  $landscapeBoxSize: 120px;
+
+  &.portrait .checkin-label {
+    flex-basis: $portraitBoxSize;
+    height: $portraitBoxSize;
+
+    p {
+      line-height: $portraitBoxSize;
+    }
+  }
+
+  &.landscape .checkin-label {
+    flex-basis: $landscapeBoxSize;
+    height: $landscapeBoxSize;
+
+    p {
+      line-height: $landscapeBoxSize;
+    }
+  }
+}
+
+// ------------------------------------------------------------
+// LOADER
+// ------------------------------------------------------------
+
+#service-loader {
+  .progress-wrap {
+    margin: 12px auto 0;
+    border: solid 1px white;
+    border-radius: 5px;
+    height: $loaderProgressBarHeight;
+    overflow: hidden;
+    flex-basis: 80%;
+  }
+
+  .progress-bar {
+    background-color: white;
+    height: $loaderProgressBarHeight;
+    width: 0; // updated from javascript
+    @include transition(width 150ms);
+  }
+}
+
+

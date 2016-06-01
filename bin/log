@@ -1,0 +1,117 @@
+#!/usr/bin/env node
+var pkg = require('../package.json');
+var colors = require('colors');
+var ora = require('ora');
+var path = require('path');
+
+'use strict';
+
+var prefix = '[' + pkg.name + ']\t';
+var cwd = process.cwd();
+
+function toRel(target) {
+  return path.relative(cwd, target);
+}
+
+function getDeltaTime(time) {
+  return new Date().getTime() - time;
+}
+
+var spinners = {};
+
+var log = {
+  transpileSuccess: function(src, dest, startTime) {
+    var time = getDeltaTime(startTime);
+    var msg = prefix + '%s: successfully transpiled to "%s" (%sms)'.green;
+
+    console.log(msg, toRel(src), toRel(dest), time);
+  },
+
+  transpileError: function(err) {
+    var parts = err.message.split(':');
+    var msg = prefix + '%s'.red;
+
+    console.log(msg, toRel(err.message));
+    console.log(err.codeFrame);
+  },
+
+  bundleStart: function(dest) {
+    var msg = prefix + (toRel(dest) + ': bundle start').yellow;
+    var spinner = ora({ color: 'white', text: msg });
+    spinner.start();
+
+    spinners[dest] = spinner;
+  },
+
+  bundleSuccess: function(dest, startTime) {
+    var spinner = spinners[dest];
+    var time = getDeltaTime(startTime);
+    var msg = prefix + '%s: successfully created (%sms)'.green;
+
+    spinner.stop();
+    console.log(msg, toRel(dest), time);
+  },
+
+  bundleError: function(dest, err) {
+    var spinner = spinners[dest];
+    var msg = prefix + '%s: bundle error'.red;
+
+    spinner.stop();
+    console.log(msg, toRel(dest));
+    console.log('> ' + err.message);
+  },
+
+  deleteFile: function(filename) {
+    var msg = prefix + '%s: successfully removed'.yellow;
+    console.log(msg, toRel(filename));
+  },
+
+  minifyStart: function(filename) {
+    var msg = prefix + (toRel(filename) + ': minify start').yellow;
+    var spinner = ora({ color: 'white', text: msg });
+    spinner.start();
+
+    spinners[filename] = spinner;
+  },
+
+  minifySuccess: function(filename, outFilename, startTime) {
+    var spinner = spinners[filename];
+    var msg = prefix + '%s: minified version successfully created (%sms)'.green;
+    var time = getDeltaTime(startTime);
+
+    spinner.stop();
+    console.log(msg, toRel(outFilename), time);
+  },
+
+  sassSuccess: function(dest) {
+    var msg = prefix + '%s: successfully written'.green
+    console.log(msg, toRel(dest));
+  },
+
+  sassError: function(err) {
+    // console.log(err);
+    var msg = prefix + ('%s (%s:%s): sass error').red;
+    console.log(msg, toRel(err.file), err.line, err.column);
+    console.log('> ' + err.message);
+  },
+
+  serverStart: function() {
+    console.log(prefix + 'server start'.cyan);
+  },
+
+  serverStop: function() {
+    console.log(prefix + 'server stop'.cyan);
+  },
+
+  serverError: function(serverIndex) {
+    var msg = prefix + '%s: not found, run `npm run transpile`'.red;
+    console.log(msg, toRel(serverIndex));
+  },
+
+  watchWarning: function(directory) {
+    var msg = prefix + '%s: is not a directory, restart the script to watch it'.yellow;
+    console.log(msg, toRel(directory));
+  }
+};
+
+module.exports = log;
