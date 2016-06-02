@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <!-- settings -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
 
@@ -12,7 +11,6 @@
     <meta name="msapplication-tap-highlight" content="no">
     <% } %>
 
-    <!-- title -->
     <title>
       <%= data.appName %>
       <% if (data.clientType !== data.defaultType) { %>
@@ -20,18 +18,15 @@
       <% } %>
     </title>
 
-    <!-- stylesheets -->
     <link rel="stylesheet" href="<%= data.assetsDomain %>css/main.css?<%= data.version %>">
   </head>
 
   <body>
     <div id="container" class="container"></div>
 
-
     <% if (data.includeCordovaTags) { %>
     <script src="cordova.js"></script>
     <% } %>
-    <!-- pass configuration to the client -->
     <script>
       window.soundworksConfig = JSON.parse('<%- JSON.stringify(data) %>');
     </script>
