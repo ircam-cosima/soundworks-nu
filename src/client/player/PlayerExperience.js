@@ -31,6 +31,7 @@ export default class PlayerExperience extends soundworks.Experience {
     this.viewTemplate = viewTemplate;
     this.viewContent = { title: `Let's go!` };
     this.viewCtor = soundworks.CanvasView;
+    this.viewOptions = { preservePixelRatio: true };
     this.view = this.createView();
   }
 
@@ -62,11 +63,15 @@ export default class PlayerExperience extends soundworks.Experience {
     this.renderer = new PlayerRenderer(100, 100);
     this.view.addRenderer(this.renderer);
     // this given function is called before each update (`Renderer.render`) of the canvas
+    let _ctx;
+
     this.view.setPreRender(function(ctx, dt) {
+      console.log(ctx.width, ctx.height);
       ctx.save();
       ctx.globalAlpha = 0.05;
       ctx.fillStyle = '#000000';
-      ctx.fillRect(0, 0, ctx.width, ctx.height);
+      ctx.rect(0, 0, ctx.canvas.width, ctx.canvas.height);
+      ctx.fill();
       ctx.restore();
     });
   }
