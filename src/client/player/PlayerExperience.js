@@ -62,11 +62,9 @@ export default class PlayerExperience extends soundworks.Experience {
     // initialize rendering
     this.renderer = new PlayerRenderer(100, 100);
     this.view.addRenderer(this.renderer);
-    // this given function is called before each update (`Renderer.render`) of the canvas
-    let _ctx;
 
+    // this function is called before each update (`Renderer.render`) of the canvas
     this.view.setPreRender(function(ctx, dt) {
-      console.log(ctx.width, ctx.height);
       ctx.save();
       ctx.globalAlpha = 0.05;
       ctx.fillStyle = '#000000';

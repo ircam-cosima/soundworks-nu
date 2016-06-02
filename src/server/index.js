@@ -2,9 +2,11 @@ import 'source-map-support/register'; // enable sourcemaps in node
 import * as soundworks from 'soundworks/server';
 import PlayerExperience from './PlayerExperience';
 
-// name of the environement
 const envConfig = {
-  env: (process.env.ENV || 'DEV'),
+  // name of the environement,
+  // use NODE_ENV=production to configure express at the same time.
+  env: (process.env.NODE_ENV || 'development'),
+  // id of the google analytics account, is used only if env='production'
   gaId: '',
 };
 
