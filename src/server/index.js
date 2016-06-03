@@ -2,14 +2,14 @@ import 'source-map-support/register'; // enable sourcemaps in node
 import * as soundworks from 'soundworks/server';
 import PlayerExperience from './PlayerExperience';
 
-const envConfig = {
-  // name of the environement,
-  // use NODE_ENV=production to configure express at the same time.
+const config = {
+  appName: 'Template',
+  // name of the environement, (use NODE_ENV=production to configure express at the same time.)
   env: (process.env.NODE_ENV || 'development'),
 };
 
 // initialize application with configuration options
-soundworks.server.init({ appName: 'Template' }, envConfig);
+soundworks.server.init(config);
 
 const standalone = false;
 
