@@ -1,5 +1,5 @@
 {
-  "name": "template",
+  "name": "soundworks-template",
   "authors": [
     "Benjamin Matuszewski",
     "Sébastien Robaszkiewicz",
@@ -22,7 +22,7 @@
   "dependencies": {
     "babel-runtime": "^6.6.1",
     "debug": "^2.1.2",
-    "soundworks": "collective-soundworks/soundworks.git#v1.1.0",
+    "soundworks": "collective-soundworks/soundworks#v1.1.0",
     "source-map-support": "^0.4.0"
   },
   "devDependencies": {

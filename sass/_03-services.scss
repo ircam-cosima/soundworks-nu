@@ -6,7 +6,7 @@
 .space {
   svg {
     overflow: hidden;
-    background-color: #121212;
+    background-color: #242424;
   }
 
   .point {
@@ -50,6 +50,24 @@
   font-size: 1.3rem;
   line-height: 3rem;
   height: 3rem;
+}
+
+// ------------------------------------------------------------
+// AUTH
+// ------------------------------------------------------------
+
+#service-auth {
+  input[type=password], .btn {
+    width: 100%;
+  }
+
+  input[type=password] {
+    font-size: 1.4rem;
+    height: 30px;
+    margin-bottom: 12px;
+    text-align: center;
+    color: #343434;
+  }
 }
 
 // ------------------------------------------------------------
