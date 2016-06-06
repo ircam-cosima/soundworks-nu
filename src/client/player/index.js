@@ -13,12 +13,12 @@ const init = () => {
   // configuration received from the server through the `index.html`
   // @see {~/src/server/index.js}
   // @see {~/html/default.ejs}
-  const { appName, clientType, socketIO, standalone }  = window.soundworksConfig;
+  const { appName, clientType, socketIO, assetsDomain, standalone }  = window.soundworksConfig;
   // initialize the 'player' client
-  soundworks.client.init(clientType, { socketIO, appName });
+  soundworks.client.init(clientType, { appName, socketIO });
 
   // create client side (player) experience
-  const experience = new PlayerExperience(standalone, files);
+  const experience = new PlayerExperience(assetsDomain, standalone, files);
 
   // start the client
   soundworks.client.start();
