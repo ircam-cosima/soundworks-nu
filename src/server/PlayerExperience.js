@@ -6,6 +6,13 @@ export default class PlayerExperience extends Experience {
     super(clientType);
 
     this.checkin = this.require('checkin');
+
+    this.sharedConfig = this.require('shared-config');
+  }
+
+  // if anything needs to append when the experience starts
+  start() {
+
   }
 
   // if anything needs to happen when a client enters the performance (*i.e.*
