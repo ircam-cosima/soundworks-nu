@@ -1,30 +1,16 @@
-/**
- * The default view templates for the services. Each key correspond
- * to the `id` attribute of the activity it is associated to.
- *
- * The view templates are internally parsed using the `lodash.template` system,
- * see [https://lodash.com/docs#template]{@link https://lodash.com/docs#template}
- * for more information.
- * Each variable used inside a given template is declared inside the
- * [`defaultContent`]{@link module:soundworks/client.defaultContent} inside
- * an object with the same key.
- *
- * These default templates can be overriden by passing an object to the
- * [`client.setViewTemplateDefinitions`]{@link module:soundworks/client.client.setViewTemplateDefinitions}
- * method.
- *
- * @namespace
- * @memberof module:soundworks/client
- *
- * @see {@link module:soundworks/client.defaultViewContent}
- * @see {@link module:soundworks/client.client}
- * @see {@link https://lodash.com/docs#template}
- */
-const defaultViewTemplates = {
-  /**
-   * Default template of the `auth` service.
-   * @type {String}
-   */
+// Definition of the templates used in the view of `Activity` instances. The key
+// of the returned object match the id of the activities.
+// These template should be seen as a starting point and modified according
+// to the need of the application. Also, the `exprience` template could be
+// defined here.
+//
+// The templates are internally parsed using the `lodash.template` system
+// (see [https://lodash.com/docs#template]{@link https://lodash.com/docs#template}
+// for more information).
+// Variables used inside a given template are declared inside the
+// `~/src/client/shared/viewContent.js` file.
+export default {
+  // template of the `auth` service
   'service:auth': `
     <% if (!rejected) { %>
       <div class="section-top flex-middle">
@@ -46,10 +32,7 @@ const defaultViewTemplates = {
     <% } %>
   `,
 
-  /**
-   * Default template of the `checkin` service.
-   * @type {String}
-   */
+  // template of the `checkin` service
   'service:checkin': `
     <% if (label) { %>
       <div class="section-top flex-middle">
@@ -72,10 +55,7 @@ const defaultViewTemplates = {
     <% } %>
   `,
 
-  /**
-   * Default template of the `loader` service.
-   * @type {String}
-   */
+  // template of the `loader` service
   'service:loader': `
     <div class="section-top flex-middle">
       <p><%= loading %></p>
@@ -90,10 +70,7 @@ const defaultViewTemplates = {
     <div class="section-bottom"></div>
   `,
 
-  /**
-   * Default template of the `locator` service.
-   * @type {String}
-   */
+  // template of the `locator` service
   'service:locator': `
     <div class="section-square"></div>
     <div class="section-float flex-middle">
@@ -105,10 +82,7 @@ const defaultViewTemplates = {
     </div>
   `,
 
-  /**
-   * Default template of the `placer` service.
-   * @type {String}
-   */
+  // template of the `placer` service
   'service:placer': `
     <div class="section-square<%= mode === 'list' ? ' flex-middle' : '' %>">
       <% if (rejected) { %>
@@ -130,10 +104,7 @@ const defaultViewTemplates = {
     </div>
   `,
 
-  /**
-   * Default template of the `platform` service.
-   * @type {String}
-   */
+  // template of the `platform` service
   'service:platform': `
     <% if (!isCompatible) { %>
       <div class="section-top"></div>
@@ -156,10 +127,7 @@ const defaultViewTemplates = {
     <% } %>
   `,
 
-  /**
-   * Default template of the `sync` service.
-   * @type {String}
-   */
+  // template of the `sync` service
   'service:sync': `
     <div class="section-top"></div>
     <div class="section-center flex-center">
@@ -168,7 +136,7 @@ const defaultViewTemplates = {
     <div class="section-bottom"></div>
   `,
 
-  /** @private */
+  // template of the `survey` scene
   survey: `
     <div class="section-top">
       <% if (counter <= length) { %>
@@ -191,5 +159,3 @@ const defaultViewTemplates = {
     </div>
   `,
 };
-
-export default defaultViewTemplates;

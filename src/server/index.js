@@ -1,9 +1,17 @@
 import 'source-map-support/register'; // enable sourcemaps in node
 import * as soundworks from 'soundworks/server';
 import PlayerExperience from './PlayerExperience';
-import config from './config/default';
+import defaultConfig from './config/default';
 
-// configure express environment
+let config = null;
+
+switch(process.env.ENV) {
+  default:
+    config = defaultConfig;
+    break;
+}
+
+// configure express environment ('production' enable cache systems)
 process.env.NODE_ENV = config.env;
 
 // initialize application with configuration options

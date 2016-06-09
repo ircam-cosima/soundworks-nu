@@ -1,34 +1,17 @@
-/**
- * The default view contents for the services. Each key correspond to the `id`
- * attribute of the activity it is associated to.
- *
- * Each content defines the variables that are used inside the corresponding
- * [`template`]{@link module soundworks/client.defaultViewTemplates}. A special
- * key `globals` is accessible among all templates and can then be used to share
- * variables among all the views of the application.
- *
- * These default content can be overriden by passing an object to the
- * [`client.setViewContentDefinitions`]{@link module:soundworks/client.client.setViewContentDefinitions}
- * method.
- *
- * @namespace
- * @memberof module:soundworks/client
- *
- * @see {@link module:soundworks/client.defaultViewTemplates}
- * @see {@link module:soundworks/client.client}
- */
-const defaultViewContent = {
-  /**
-   * Special entry used to share variables among all the templates of the
-   * application (for example the application name).
-   * @type {Object}
-   */
+// Definition of the content used in the view of `Activity` instances. The key
+// of the returned object match the id of the activities.
+//
+// Each content defines the variables that are used inside the corresponding
+// [`template`]{@link module soundworks/client.defaultViewTemplates}. A special
+// key `globals` is accessible among all templates and can then be used to share
+// variables among all the views of the application.
+// These objects are used to populate the templates declared inside the
+// `~/src/client/shared/viewTemplate.js` file.
+export default {
+  // variables shared among all templates through the global namespace
   'globals': {},
 
-  /**
-   * Default content for the `checkin` service
-   * @type {Object}
-   */
+   // content of the `auth` service
   'service:auth': {
     instructions: 'Login',
     send: 'Send',
@@ -36,10 +19,7 @@ const defaultViewContent = {
     rejected: false,
   },
 
-  /**
-   * Default content for the `checkin` service
-   * @type {Object}
-   */
+  // content of the `checkin` service
   'service:checkin': {
     labelPrefix: 'Go to',
     labelPostfix: 'Touch the screen<br class="portrait-only" />when you are ready.',
@@ -49,28 +29,19 @@ const defaultViewContent = {
     label: '',
   },
 
-  /**
-   * Default content for the `loader` service
-   * @type {Object}
-   */
+  // content of the `loader` service
   'service:loader': {
     loading: 'Loading sounds…',
   },
 
-  /**
-   * Default content for the `locator` service
-   * @type {Object}
-   */
+  // content of the `locator` service
   'service:locator': {
     instructions: 'Define your position in the area',
     send: 'Send',
     showBtn: false,
   },
 
-  /**
-   * Default content for the `placer` service
-   * @type {Object}
-   */
+  // content of the `placer` service
   'service:placer': {
     instructions: 'Select your position',
     send: 'Send',
@@ -79,10 +50,7 @@ const defaultViewContent = {
     rejected: false,
   },
 
-  // /**
-  //  * Default content for the `platform` service
-  //  * @type {Object}
-  //  */
+  // content of the `platform` service
   'service:platform': {
     isCompatible: null,
     errorMessage: 'Sorry,<br />Your device is not compatible with the application.',
@@ -90,15 +58,12 @@ const defaultViewContent = {
     instructions: 'Touch the screen to join !',
   },
 
-  /**
-   * Default content for the `sync` service
-   * @type {Object}
-   */
+  // content of the `sync` service
   'service:sync': {
     wait: `Clock syncing,<br />stand by&hellip;`,
   },
 
-  /** @private */
+  // content of the `survey` scene
   'survey': {
     next: 'Next',
     validate: 'Validate',
@@ -106,5 +71,3 @@ const defaultViewContent = {
     length: '-',
   },
 };
-
-export default defaultViewContent;

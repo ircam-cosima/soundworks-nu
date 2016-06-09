@@ -12,15 +12,15 @@ export default {
   // the `platform` service to populate its view
   appName: 'Template',
 
-  // name of the environnement
+  // name of the environnement ('production' enable cache in express application)
   env: 'development',
 
   // version of application, can be used to force reload css and js files
   // from server (cf. `html/default.ejs`)
   version: '0.0.1',
 
-  // name of the default client type,
-  // i.e. the client that can access the application at its root URL
+  // name of the default client type, i.e. the client that can access the
+  // application at its root URL
   defaultClient: 'player',
 
   // define from where the assets (static files) should be loaded, these value
@@ -38,7 +38,7 @@ export default {
     area: {
       width: 1,
       height: 1,
-      // path to a image to could be used to represent the area
+      // path to an image to be used in the area representation
       background: null,
     },
     // list of predefined labels
@@ -76,6 +76,9 @@ export default {
     cert: null,
   },
 
+  // password to be used by the `auth` service
+  password: '',
+
   // configuration of the `osc` service
   osc: {
     // IP of the currently running node server
@@ -91,7 +94,7 @@ export default {
   // define if the server should use gzip compression for static files
   enableGZipCompression: true,
 
-  // location of the public directory (accessible through http requests)
+  // location of the public directory (accessible through http(s) requests)
   publicDirectory: path.join(cwd, 'public'),
 
   // directory where the server templating system looks for the `ejs` templates
