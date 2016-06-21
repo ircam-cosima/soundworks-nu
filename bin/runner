@@ -272,7 +272,7 @@ function watchClientJavascriptFiles(srcDirectory, distDirectory, publicDirectory
     var transpiler = javascripts.getTranspiler(srcDirectory, distDirectory, isAllowed, babelOptions, browserifyOptions);
 
     const sharedRegExp = sharedSrcDirectories.map(function(dirname) {
-      return new RegExp('^' + dirname);
+      return new RegExp('^' + dirname + fse.path);
     });
 
     function isSharedFile(filename) {
@@ -431,7 +431,7 @@ function transpile() {
 }
 
 function minify() {
-  _getFileList(clientPublicDirectory, function(files) {
+  _getFileList(clientPublicDirectory, [], function(files) {
     for (var i = files.length - 1; i >= 0; i--) {
       var filename = files[i];
 
