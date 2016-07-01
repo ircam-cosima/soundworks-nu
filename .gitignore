@@ -6,6 +6,10 @@
 /client
 /common
 
+# ignore all config except default
+/src/server/config/*
+!/src/server/config/default.js
+
 # Application instance specific
 /logs
 /db
