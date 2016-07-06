@@ -4,6 +4,7 @@
 /public/css
 /server
 /client
+/shared
 /common
 
 # ignore all config except default
@@ -18,3 +19,9 @@
 npm-debug.log
 .DS_Store
 Thumbs.db
+
+# ignore cordova extra files
+/app-player/platforms/*
+/app-player/www/*
+/app-player/plugins/*
+/app-player/hooks/*
