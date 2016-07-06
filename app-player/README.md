@@ -53,3 +53,12 @@ The command below are to be exectuted in a terminal open in this directory. Do n
 ```sh
 cordova plugin add https://github.com/petermetz/cordova-plugin-ibeacon.git
 ```
+
+
+## Build standalone Cordova application
+
+The process is exactly the same as described in the Build Cordova application section above, but for one step that will allow the serverless execution of the cordova-soundworks application (indeed, you otherwise need a running soundworks server).
+
+* changing the flag ``standalone`` in ``../src/server/index.js`` to ``true``
+
+* make sure none of the soundworks services required in ``../src/client/player/PlayerExperience.js`` do not themselves require a server connection.

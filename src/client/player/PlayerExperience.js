@@ -22,8 +22,11 @@ export default class PlayerExperience extends soundworks.Experience {
     // disable socket connection - use for standalone application
     super(!standalone);
 
+    if (!standalone) {
+      this.checkin = this.require('checkin', { showDialog: false });
+    }
+
     this.platform = this.require('platform', { features: ['web-audio', 'wake-lock'] });
-    this.checkin = this.require('checkin', { showDialog: false });
     this.loader = this.require('loader', {
       assetsDomain: assetsDomain,
       files: audioFiles,
