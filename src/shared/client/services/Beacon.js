@@ -3,18 +3,22 @@ import {
   serviceManager
 } from 'soundworks/client';
 
+/* based on cordova-plugin-ibeacon: https://github.com/petermetz/cordova-plugin-ibeacon.git */
 const SERVICE_ID = 'service:beacon';
-/* need cordova plugin add https://github.com/petermetz/cordova-plugin-ibeacon.git*/
+
+const CORDOVA_PLUGIN_NAME = 'com.unarin.cordova.beacon';
+const CORDOVA_PLUGIN_ASSERTED_VERSION = '3.3.0';
+const CORDOVA_PLUGIN_REPOSITORY = 'https://github.com/petermetz/cordova-plugin-ibeacon.git';
 
 class Beacon extends Service {
   /** _<span class="warning">__WARNING__</span> This class should never be instanciated manually_ */
   constructor() {
-    console.log('constructor beacon');
-    super(SERVICE_ID, false); // true: needs netwok connection
+    super(SERVICE_ID, false); // false: does not need netwok connection
 
     // local attributes
     this._beaconData = {};
     this._callbacks = new Set();
+    this._cordova_plugin_installed = false;
 
     // bind local methods
     this._startAdvertising = this._startAdvertising.bind(this);
@@ -22,11 +26,11 @@ class Beacon extends Service {
     this._startRanging = this._startRanging.bind(this);
     this._stopRanging = this._stopRanging.bind(this);
     this._didRangeBeaconsInRegion = this._didRangeBeaconsInRegion.bind(this);
+    this._checkPlugin = this._checkPlugin.bind(this);
   }
 
   /** @private */
   init() {
-    console.log('init beacon');
 
     /**
      * - uuid represent the beacon region. a given ranging callback can obly monitor
@@ -42,19 +46,18 @@ class Beacon extends Service {
       minor: Math.floor(Math.random() * 65500)
     }
 
-    // withtout this setTimeout (delayed execution), the call to
-    // var beaconRegion = new cordova.plugins.locationManager.BeaconRegion(identifier, uuid, major, minor);
-    // in startAdvertising / startRanging raises an undefined error
-    var lameTechniqueToBeCleaned = setTimeout(() => {
+    document.addEventListener("deviceready", () => {
+      // awaits cordova fully loaded (plugins most of all) and check if plugin deps installed to start service
+
+      this._checkPlugin();
+
       this._startAdvertising();
       this._startRanging();
-
-    }, 1000);
+    }, false);
   }
 
   /** @private */
   start() {
-    console.log('start beacon');
     super.start();
 
     if (!this.hasStarted)
@@ -63,13 +66,11 @@ class Beacon extends Service {
     this.ready();
   }
 
-  /** @private */
+  /** @private
+  /*  automatically called with this.ready()
+  */
   stop() {
-    console.log('stop beacon');
     super.stop();
-    // // COMMENTED BECAUSE THE STOP METHOD SOMEHOW RUNS AT SOUDNWORK START
-    // this._stopAdvertising();
-    // this._stopRanging();
   }
 
   /**
@@ -92,55 +93,64 @@ class Beacon extends Service {
 
   /** @private */
   _startAdvertising() {
-    // define beacon parameters
-    var uuid = this._beaconData.uuid;
-    var identifier = this._beaconData.identifier;
-    var minor = this._beaconData.minor;
-    var major = this._beaconData.major;
-    var beaconRegion = new cordova.plugins.locationManager.BeaconRegion(identifier, uuid, major, minor);
 
-    // verify the platform supports transmitting as a beacon
-    cordova.plugins.locationManager.isAdvertisingAvailable()
-      .then(function(isSupported) {
+    if (this._cordova_plugin_installed){
 
-        if (isSupported) {
-          // start advertising
-          cordova.plugins.locationManager.startAdvertising(beaconRegion)
-            .fail(console.error)
-            .done();
-        } else {
-          console.log("Advertising not supported");
-        }
-      })
-      .fail(function(e) { console.error(e); })
-      .done();
+      // define beacon parameters
+      var uuid = this._beaconData.uuid;
+      var identifier = this._beaconData.identifier;
+      var minor = this._beaconData.minor;
+      var major = this._beaconData.major;
+      var beaconRegion = new cordova.plugins.locationManager.BeaconRegion(identifier, uuid, major, minor);
+
+      // verify the platform supports transmitting as a beacon
+      cordova.plugins.locationManager.isAdvertisingAvailable()
+        .then(function(isSupported) {
+
+          if (isSupported) {
+            // start advertising
+            cordova.plugins.locationManager.startAdvertising(beaconRegion)
+              .fail(console.error)
+              .done();
+          } else {
+            console.log("Advertising not supported");
+          }
+        })
+        .fail(function(e) { console.error(e); })
+        .done();
+    }
   }
 
   /** @private */
   _stopAdvertising() {
-    cordova.plugins.locationManager.stopAdvertising()
-      .fail(function(e) { console.error(e); })
-      .done();
+    if (this._cordova_plugin_installed){
+      cordova.plugins.locationManager.stopAdvertising()
+        .fail(function(e) { console.error(e); })
+        .done();
+      }
   }
 
   /** @private */
   _startRanging() {
 
-    var delegate = new cordova.plugins.locationManager.Delegate();
-    delegate.didRangeBeaconsInRegion = this._didRangeBeaconsInRegion;
-    cordova.plugins.locationManager.setDelegate(delegate);
+    if (this._cordova_plugin_installed){
 
-    var uuid = this._beaconData.uuid;
-    var identifier = this._beaconData.identifier;
-    var beaconRegion = new cordova.plugins.locationManager.BeaconRegion(identifier, uuid);
+      var delegate = new cordova.plugins.locationManager.Delegate();
+      delegate.didRangeBeaconsInRegion = this._didRangeBeaconsInRegion;
+      cordova.plugins.locationManager.setDelegate(delegate);
 
-    // required in iOS 8+
-    cordova.plugins.locationManager.requestWhenInUseAuthorization();
-    // or cordova.plugins.locationManager.requestAlwaysAuthorization()
+      var uuid = this._beaconData.uuid;
+      var identifier = this._beaconData.identifier;
+      var beaconRegion = new cordova.plugins.locationManager.BeaconRegion(identifier, uuid);
 
-    cordova.plugins.locationManager.startRangingBeaconsInRegion(beaconRegion)
-      .fail(function(e) { console.error(e); })
-      .done();
+      // required in iOS 8+
+      cordova.plugins.locationManager.requestWhenInUseAuthorization();
+      // or cordova.plugins.locationManager.requestAlwaysAuthorization()
+
+      cordova.plugins.locationManager.startRangingBeaconsInRegion(beaconRegion)
+        .fail(function(e) { console.error(e); })
+        .done();
+    }
   }
 
   /** @private */
@@ -153,14 +163,36 @@ class Beacon extends Service {
 
   /** @private */
   _stopRanging() {
+    if (this._cordova_plugin_installed){
+      var uuid = this._beaconData.uuid;
+      var identifier = this._beaconData.identifier;
+      var beaconRegion = new cordova.plugins.locationManager.BeaconRegion(identifier, uuid);
 
-    var uuid = this._beaconData.uuid;
-    var identifier = this._beaconData.identifier;
-    var beaconRegion = new cordova.plugins.locationManager.BeaconRegion(identifier, uuid);
+      cordova.plugins.locationManager.stopRangingBeaconsInRegion(beaconRegion)
+        .fail(function(e) { console.error(e); })
+        .done();
+    }
+  }
 
-    cordova.plugins.locationManager.stopRangingBeaconsInRegion(beaconRegion)
-      .fail(function(e) { console.error(e); })
-      .done();
+  /** @private */
+  _checkPlugin() {
+
+    var display_install_instruction = false;
+
+    var plugins = cordova.require("cordova/plugin_list").metadata;
+    if (typeof plugins[CORDOVA_PLUGIN_NAME] === "undefined") {
+      console.warn('Cordova plugin <cordova-plugin-ibeacon> not installed -> beacon service disabled');
+      display_install_instruction = true;
+    } else {
+      if (plugins[CORDOVA_PLUGIN_NAME] != CORDOVA_PLUGIN_ASSERTED_VERSION) {
+        console.warn('Cordova plugin <cordova-plugin-ibeacon> version mismatch: installed: ' + plugins[CORDOVA_PLUGIN_NAME] + ' required: ' + CORDOVA_PLUGIN_ASSERTED_VERSION + ' (version not tested, use at your own risk)');
+        display_install_instruction = true;
+      }
+      this._cordova_plugin_installed = true;
+    }
+    if (display_install_instruction){
+      console.log('-> to install ' + CORDOVA_PLUGIN_NAME + ' v' + CORDOVA_PLUGIN_ASSERTED_VERSION + ', use:', 'cordova plugin add ' + CORDOVA_PLUGIN_REPOSITORY + '#' + CORDOVA_PLUGIN_ASSERTED_VERSION);
+    }
   }
 
   /**
@@ -188,8 +220,10 @@ class Beacon extends Service {
   */
   set uuid(val) { // USE AT YOUR OWN RISKS
     this._stopAdvertising();
+    this._stopRanging();
     this._beaconData.uuid = val;
     this._startAdvertising();
+    this._startRanging();
   }
 
   /**
