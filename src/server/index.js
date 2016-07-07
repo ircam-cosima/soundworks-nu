@@ -16,7 +16,7 @@ process.env.NODE_ENV = config.env;
 // initialize application with configuration options
 soundworks.server.init(config);
 
-const standalone = false;
+const standalone = true;
 
 // define the configuration object to be passed to the `.ejs` template
 soundworks.server.setClientConfigDefinition((clientType, config, httpRequest) => {

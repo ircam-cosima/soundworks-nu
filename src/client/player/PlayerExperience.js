@@ -1,83 +1,75 @@
 import * as soundworks from 'soundworks/client';
-import PlayerRenderer from './PlayerRenderer';
+
+// import Beacon from 'soundworks/client';
+import Beacon from '../../shared/client/services/Beacon';
 
 const audioContext = soundworks.audioContext;
 
 const viewTemplate = `
   <canvas class="background"></canvas>
   <div class="foreground">
-    <div class="section-top flex-middle"></div>
-    <div class="section-center flex-center">
-      <p class="big"><%= title %></p>
+    <div class="section-center flex-middle">
+    <p class="small" id="logValues"></p>
     </div>
-    <div class="section-bottom flex-middle"></div>
+
+    <div class="section-top flex-middle">
+    <p class="small" id="localInfo"></p>
+    </div>
+
+    <div class="section-bottom flex-center">
+      <p class="small soft-blink"><%= title %></p>
+    </div>
+    <hr>
+
+
   </div>
 `;
 
-// this experience plays a sound when it starts, and plays another sound when
-// other clients join the experience
+// this experience display neighboring iBeacons and setup the device itself as an iBeacon,
+// illustrating basic use of the soundworks beacon service
 export default class PlayerExperience extends soundworks.Experience {
 
   constructor(assetsDomain, standalone, audioFiles) {
     // disable socket connection - use for standalone application
     super(!standalone);
-
-    if (!standalone) {
-      this.checkin = this.require('checkin', { showDialog: false });
-    }
-
-    this.platform = this.require('platform', { features: ['web-audio', 'wake-lock'] });
-    this.loader = this.require('loader', {
-      assetsDomain: assetsDomain,
-      files: audioFiles,
-    });
+    // beacon only work in cordova mode since it needs access right to BLE
+    if (window.cordova) { this.beacon = this.require('beacon', { showDialog: false }); }
   }
 
   init() {
     // initialize the view
     this.viewTemplate = viewTemplate;
-    this.viewContent = { title: `Let's go!` };
+    this.viewContent = { title: `Scanning iBeacons...` };
     this.viewCtor = soundworks.CanvasView;
     this.viewOptions = { preservePixelRatio: true };
     this.view = this.createView();
+
+    // initialize ibeacon service
+    if (this.beacon) {
+      // add callback, invoked whenever beacon scan is executed
+      this.beacon.addCallback(this.beaconCallback);
+      // add local beacon info on screen
+      // document.getElementById('localInfo').innerHTML = 'local iBeacon ID: ' + this.beacon.major + '.' + this.beacon.minor;
+    }
   }
+
 
   start() {
-    super.start(); // don't forget this
-
-    if (!this.hasStarted)
-      this.init();
-
+    super.start();
+    if (!this.hasStarted) { this.init(); }
     this.show();
-
-    // play the first loaded buffer immediately
-    const src = audioContext.createBufferSource();
-    src.buffer = this.loader.buffers[0];
-    src.connect(audioContext.destination);
-    src.start(audioContext.currentTime);
-
-    // play the second loaded buffer when the message `play` is received from
-    // the server, the message is send when another player joins the experience.
-    this.receive('play', () => {
-      const delay = Math.random();
-      const src = audioContext.createBufferSource();
-      src.buffer = this.loader.buffers[1];
-      src.connect(audioContext.destination);
-      src.start(audioContext.currentTime + delay);
-    });
-
-    // initialize rendering
-    this.renderer = new PlayerRenderer(100, 100);
-    this.view.addRenderer(this.renderer);
-
-    // this function is called before each update (`Renderer.render`) of the canvas
-    this.view.setPreRender(function(ctx, dt) {
-      ctx.save();
-      ctx.globalAlpha = 0.05;
-      ctx.fillStyle = '#000000';
-      ctx.rect(0, 0, ctx.canvas.width, ctx.canvas.height);
-      ctx.fill();
-      ctx.restore();
-    });
   }
+
+  beaconCallback(pluginResult) {
+    // get beacon list
+    var log = '';
+    pluginResult.beacons.forEach((beacon) => {
+      log += 'iBeacon maj.min: ' + beacon.major + '.' + beacon.minor + '</br>' +
+             'rssi: ' + beacon.rssi + 'dB' + '</br>' +
+             '(' + beacon.proximity + ')' + '</br></br>';
+    });
+    // diplay beacon list on screen
+    document.getElementById('logValues').innerHTML = log;
+  }
+
 }
