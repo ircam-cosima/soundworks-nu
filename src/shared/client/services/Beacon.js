@@ -15,10 +15,16 @@ class Beacon extends Service {
   constructor() {
     super(SERVICE_ID, false); // false: does not need netwok connection
 
+    const defaults = {
+      uuid: '74278BDA-B644-4520-8F0C-720EAF059935',
+    };
+
+    this.configure(defaults);
+
     // local attributes
     this._beaconData = {};
     this._callbacks = new Set();
-    this._cordova_plugin_installed = false;
+    this._cordovaPluginInstalled = false;
 
     // bind local methods
     this._startAdvertising = this._startAdvertising.bind(this);
@@ -27,6 +33,7 @@ class Beacon extends Service {
     this._stopRanging = this._stopRanging.bind(this);
     this._didRangeBeaconsInRegion = this._didRangeBeaconsInRegion.bind(this);
     this._checkPlugin = this._checkPlugin.bind(this);
+
   }
 
   /** @private */
@@ -40,7 +47,7 @@ class Beacon extends Service {
      * unique soundwork client.
      */
     this._beaconData = {
-      uuid: '74278BDA-B644-4520-8F0C-720EAF059935',
+      uuid: this.options.uuid,
       identifier: 'advertisedBeacon',
       major: Math.floor(Math.random() * 65500),
       minor: Math.floor(Math.random() * 65500)
@@ -78,14 +85,14 @@ class Beacon extends Service {
    * (i.e. every nth millisec. once a single beacon is registered)
    * @param {Function} callback
    */
-  addCallback(callback) {
+  addListener(callback) {
     this._callbacks.add(callback);
   }
 
   /**
   * remove registered callback from stack (see "addCallback")
   */
-  rmCallback(callback) {
+  removeListener(callback) {
     if (this._callbacks.has(callback)) {
       this._callbacks.delete(callback);
     }
@@ -94,7 +101,7 @@ class Beacon extends Service {
   /** @private */
   _startAdvertising() {
 
-    if (this._cordova_plugin_installed){
+    if (this._cordovaPluginInstalled){
 
       // define beacon parameters
       var uuid = this._beaconData.uuid;
@@ -123,7 +130,7 @@ class Beacon extends Service {
 
   /** @private */
   _stopAdvertising() {
-    if (this._cordova_plugin_installed){
+    if (this._cordovaPluginInstalled){
       cordova.plugins.locationManager.stopAdvertising()
         .fail(function(e) { console.error(e); })
         .done();
@@ -133,7 +140,7 @@ class Beacon extends Service {
   /** @private */
   _startRanging() {
 
-    if (this._cordova_plugin_installed){
+    if (this._cordovaPluginInstalled){
 
       var delegate = new cordova.plugins.locationManager.Delegate();
       delegate.didRangeBeaconsInRegion = this._didRangeBeaconsInRegion;
@@ -163,7 +170,7 @@ class Beacon extends Service {
 
   /** @private */
   _stopRanging() {
-    if (this._cordova_plugin_installed){
+    if (this._cordovaPluginInstalled){
       var uuid = this._beaconData.uuid;
       var identifier = this._beaconData.identifier;
       var beaconRegion = new cordova.plugins.locationManager.BeaconRegion(identifier, uuid);
@@ -188,7 +195,7 @@ class Beacon extends Service {
         console.warn('Cordova plugin <cordova-plugin-ibeacon> version mismatch: installed: ' + plugins[CORDOVA_PLUGIN_NAME] + ' required: ' + CORDOVA_PLUGIN_ASSERTED_VERSION + ' (version not tested, use at your own risk)');
         display_install_instruction = true;
       }
-      this._cordova_plugin_installed = true;
+      this._cordovaPluginInstalled = true;
     }
     if (display_install_instruction){
       console.log('-> to install ' + CORDOVA_PLUGIN_NAME + ' v' + CORDOVA_PLUGIN_ASSERTED_VERSION + ', use:', 'cordova plugin add ' + CORDOVA_PLUGIN_REPOSITORY + '#' + CORDOVA_PLUGIN_ASSERTED_VERSION);
@@ -222,6 +229,7 @@ class Beacon extends Service {
     this._stopAdvertising();
     this._stopRanging();
     this._beaconData.uuid = val;
+    this.options.uuid = val;
     this._startAdvertising();
     this._startRanging();
   }

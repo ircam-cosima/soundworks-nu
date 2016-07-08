@@ -16,8 +16,6 @@ process.env.NODE_ENV = config.env;
 // initialize application with configuration options
 soundworks.server.init(config);
 
-const standalone = true;
-
 // define the configuration object to be passed to the `.ejs` template
 soundworks.server.setClientConfigDefinition((clientType, config, httpRequest) => {
   let includeCordovaTags = false;
@@ -34,7 +32,7 @@ soundworks.server.setClientConfigDefinition((clientType, config, httpRequest) =>
   }
 
   const data = {
-    standalone: standalone,
+    standalone: config.standalone,
     clientType: clientType,
     env: config.env,
     appName: config.appName,
@@ -42,6 +40,7 @@ soundworks.server.setClientConfigDefinition((clientType, config, httpRequest) =>
     version: config.version,
     defaultType: config.defaultClient,
     assetsDomain: config.assetsDomain,
+    beaconUUID: config.beaconUUID,
 
     includeCordovaTags: includeCordovaTags,
 
@@ -51,7 +50,7 @@ soundworks.server.setClientConfigDefinition((clientType, config, httpRequest) =>
 
   };
 
-  if (!standalone)
+  if (!config.standalone)
     data.socketIO = socketIOConfig;
 
   return data;
@@ -64,7 +63,7 @@ soundworks.server.setClientConfigDefinition((clientType, config, httpRequest) =>
 // `src/server/playerExperience.js`) and the server side `playerExperience`.
 // - we could also map activities to additional client types (thus defining a
 //   route (url) of the following form: `/${clientType}`)
-const experience = new PlayerExperience('player', standalone);
+const experience = new PlayerExperience('player');
 
 // start application
 soundworks.server.start();

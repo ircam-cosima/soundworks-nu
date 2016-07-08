@@ -115,4 +115,10 @@ export default {
 
   // directory where error reported from the clients are written
   errorReporterDirectory: path.join(cwd, 'logs', 'clients'),
+
+  // iBeacon UUID
+  beaconUUID: '74278BDA-B644-4520-8F0C-720EAF059935',
+
+  // standalone mode (server-less)
+  standalone: true,
 }
