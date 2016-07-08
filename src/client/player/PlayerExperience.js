@@ -28,11 +28,11 @@ const viewTemplate = `
 // illustrating basic use of the soundworks beacon service
 export default class PlayerExperience extends soundworks.Experience {
 
-  constructor(assetsDomain, standalone, audioFiles) {
+  constructor(standalone, assetsDomain, beaconUUID) {
     // disable socket connection - use for standalone application
     super(!standalone);
     // beacon only work in cordova mode since it needs access right to BLE
-    if (window.cordova) { this.beacon = this.require('beacon'); }
+    if (window.cordova) { this.beacon = this.require('beacon', { uuid: beaconUUID }); }
   }
 
   init() {
@@ -46,7 +46,7 @@ export default class PlayerExperience extends soundworks.Experience {
     // initialize ibeacon service
     if (this.beacon) {
       // add callback, invoked whenever beacon scan is executed
-      this.beacon.addCallback(this.beaconCallback);
+      this.beacon.addListener(this.beaconCallback);
     }
   }
 
