@@ -23,6 +23,6 @@ const init = () => {
 };
 
 if (!!window.cordova)
-  document.addEventListener('deviceready', init());
+  document.addEventListener('deviceready', init);
 else
-  window.addEventListener('load', init());
+  window.addEventListener('load', init);

@@ -53,14 +53,9 @@ class Beacon extends Service {
       minor: Math.floor(Math.random() * 65500)
     }
 
-    document.addEventListener("deviceready", () => {
-      // awaits cordova fully loaded (plugins most of all) and check if plugin deps installed to start service
-
       this._checkPlugin();
-
       this._startAdvertising();
       this._startRanging();
-    }, false);
   }
 
   /** @private */
