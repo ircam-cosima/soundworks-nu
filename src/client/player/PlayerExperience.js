@@ -19,8 +19,6 @@ const viewTemplate = `
       <p class="small soft-blink"><%= title %></p>
     </div>
     <hr>
-
-
   </div>
 `;
 
@@ -32,7 +30,10 @@ export default class PlayerExperience extends soundworks.Experience {
     // disable socket connection - use for standalone application
     super(!standalone);
     // beacon only work in cordova mode since it needs access right to BLE
-    if (window.cordova) { this.beacon = this.require('beacon', { uuid: beaconUUID }); }
+    if (window.cordova) {
+      this.beacon = this.require('beacon', { uuid: beaconUUID });
+      this.beaconCallback = this.beaconCallback.bind(this);
+    }
   }
 
   init() {
@@ -45,6 +46,7 @@ export default class PlayerExperience extends soundworks.Experience {
 
     // initialize ibeacon service
     if (this.beacon) {
+      this.beaconList = new Map(); // neighboring beacon list
       // add callback, invoked whenever beacon scan is executed
       this.beacon.addListener(this.beaconCallback);
     }
@@ -64,13 +66,17 @@ export default class PlayerExperience extends soundworks.Experience {
 
   beaconCallback(pluginResult) {
     // get beacon list
-    var log = '';
     pluginResult.beacons.forEach((beacon) => {
+      this.beaconList.set(beacon.major + '.' + beacon.minor, beacon);
+    });
+
+    // diplay beacon list on screen
+    var log = '';
+    this.beaconList.forEach((beacon) => {
       log += 'iBeacon maj.min: ' + beacon.major + '.' + beacon.minor + '</br>' +
              'rssi: ' + beacon.rssi + 'dB' + '</br>' +
              '(' + beacon.proximity + ')' + '</br></br>';
-    });
-    // diplay beacon list on screen
+    })
     document.getElementById('logValues').innerHTML = log;
   }
 
