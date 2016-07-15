@@ -33,6 +33,8 @@ class Beacon extends Service {
     this._stopRanging = this._stopRanging.bind(this);
     this._didRangeBeaconsInRegion = this._didRangeBeaconsInRegion.bind(this);
     this._checkPlugin = this._checkPlugin.bind(this);
+    this.restartAdvertising = this.restartAdvertising.bind(this);
+    this.restartRanging = this.restartRanging.bind(this);
 
   }
 
@@ -221,11 +223,9 @@ class Beacon extends Service {
   * @param {String} val - new UUID
   */
   set uuid(val) { // USE AT YOUR OWN RISKS
-    this._stopAdvertising();
-    this._stopRanging();
     this._beaconData.uuid = val;
     this.options.uuid = val;
-    this._startAdvertising();
+    this._stopRanging();
     this._startRanging();
   }
 
@@ -235,9 +235,7 @@ class Beacon extends Service {
   */
   set major (val) {
     if ( (val <= 65535) && (val >= 0) ){
-      this._stopAdvertising();
       this._beaconData.major = val;
-      this._startAdvertising();
     }
     else {
       console.warn('WARNING: attempt to define invalid major value: ', val, ' (must be in range [0,65535]');
@@ -250,13 +248,27 @@ class Beacon extends Service {
   */
   set minor (val) {
     if ( (val <= 65535) && (val >= 0) ){
-      this._stopAdvertising();
       this._beaconData.minor = val;
-      this._startAdvertising();
     }
     else {
       console.warn('WARNING: attempt to define invalid minor value: ', val, ' (must be in range [0,65535]');
     }
+  }
+
+  /**
+  * Restart advertising to take into acount uuid, major or minor change.
+  */
+  restartAdvertising() {
+    this._stopAdvertising();
+    this._startAdvertising();
+  }
+
+  /**
+  * Restart ranging to take into acount uuid change.
+  */
+  restartRanging() {
+    this._stopRanging();
+    this._startRanging();
   }
 
 }
