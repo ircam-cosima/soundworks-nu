@@ -25,6 +25,8 @@ class Beacon extends Service {
     this._beaconData = {};
     this._callbacks = new Set();
     this._cordovaPluginInstalled = false;
+    this._txPower = -55;
+    this._hasBeenCalibrated = false;
 
     // bind local methods
     this._startAdvertising = this._startAdvertising.bind(this);
@@ -93,6 +95,18 @@ class Beacon extends Service {
     if (this._callbacks.has(callback)) {
       this._callbacks.delete(callback);
     }
+  }
+
+  /**
+  * remove registered callback from stack (see "addCallback")
+  */
+  rssiToDist(rssi) {
+    if (!this._hasBeenCalibrated) {
+      console.warn('rssiToDist called prior to txPower definition (calibration), using default value:', this._txPower, 'dB');
+      this._hasBeenCalibrated = true
+    }
+    let dist = this._calculateAccuracy(this.txPower, rssi);
+    return dist;
   }
 
   /** @private */
@@ -199,6 +213,23 @@ class Beacon extends Service {
     }
   }
 
+  /** @private
+  * convert rssi to distance, naming (_calculateAccuracy rather than calculateDistance)
+  * is intentional: USE WITH CAUTION, as explained @
+  * http://stackoverflow.com/questions/20416218/understanding-ibeacon-distancing
+  */
+  _calculateAccuracy(txPower, rssi) {
+    if (rssi == 0) {
+      return 0.0;
+    }
+    let ratio = rssi * 1.0 / txPower;
+    if (ratio < 1.0) {
+      return Math.pow(ratio, 10);
+    } else {
+      return (0.89976 * Math.pow(ratio, 7.7095) + 0.111);
+    }
+  }
+
   /**
   * Get advertising iBeacon region UUID
   */
@@ -216,6 +247,14 @@ class Beacon extends Service {
   */
   get minor () {
     return this._beaconData.minor;
+  }
+  /**
+  * Get reference signal strength, used for distance estimation.
+  * txPower is the rssi (in dB) as mesured by another beacon
+  * located at 1 meter away from this beacon.
+  */
+  get txPower () {
+    return this._txPower;
   }
 
   /**
@@ -252,6 +291,22 @@ class Beacon extends Service {
     }
     else {
       console.warn('WARNING: attempt to define invalid minor value: ', val, ' (must be in range [0,65535]');
+    }
+  }
+
+  /**
+  * Get reference signal strength, used for distance estimation.
+  * txPower is the rssi (in dB) as mesured by another beacon
+  * located at 1 meter away from this beacon.
+  * @param {Number} val - new signal strength reference
+  */
+  set txPower (val) {
+    if ( (val <= 0) && (val >= -200) ){
+      this._txPower = val;
+      this._hasBeenCalibrated = true;
+    }
+    else {
+      console.warn('WARNING: a reference txPower value of: ', val, ' dB is unlikely (set has been rejected)');
     }
   }
 

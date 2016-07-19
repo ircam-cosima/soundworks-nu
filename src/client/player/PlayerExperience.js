@@ -46,9 +46,12 @@ export default class PlayerExperience extends soundworks.Experience {
 
     // initialize ibeacon service
     if (this.beacon) {
-      this.beaconList = new Map(); // neighboring beacon list
+      // neighboring beacon list
+      this.beaconList = new Map();
       // add callback, invoked whenever beacon scan is executed
       this.beacon.addListener(this.beaconCallback);
+      // fake calibration
+      this.beacon.txPower = -55; // in dB (see beacon service for detail)
     }
   }
 
@@ -74,7 +77,8 @@ export default class PlayerExperience extends soundworks.Experience {
     var log = '';
     this.beaconList.forEach((beacon) => {
       log += 'iBeacon maj.min: ' + beacon.major + '.' + beacon.minor + '</br>' +
-             'rssi: ' + beacon.rssi + 'dB' + '</br>' +
+             'rssi: ' + beacon.rssi + 'dB ~ dist: ' +
+             Math.round( this.beacon.rssiToDist(beacon.rssi)*100, 2 ) / 100 + 'm' + '</br>' +
              '(' + beacon.proximity + ')' + '</br></br>';
     })
     document.getElementById('logValues').innerHTML = log;
