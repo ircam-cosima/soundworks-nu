@@ -16,6 +16,21 @@ process.env.NODE_ENV = config.env;
 // initialize application with configuration options
 soundworks.server.init(config);
 
+// define parameters shared by different clients
+const sharedParams = soundworks.server.require('shared-params');
+// sharedParams.addText('numPlayers', 'num players', 0, ['conductor']);
+// sharedParams.addEnum('state', 'state', ['reset', 'running', 'end'], 'reset');
+// sharedParams.addTrigger('clear', 'clear');
+sharedParams.addNumber('masterGain', 'master gain (SI)', 0, 10.0, 0.1, 1.0);
+sharedParams.addNumber('propagationSpeed', 'propagation speed (m.s-1)', 1, 400, 1, 10); // min, max, step, value
+sharedParams.addNumber('propagationGain', 'propagation gain (SI.m-1)', 0.1, 0.99, 0.01, 0.9);
+sharedParams.addNumber('emitterGain', 'emitter gain (SI)', 0.1, 1, 0.01, 1);
+sharedParams.addNumber('thresholdReceiveGain', 'threshold receive gain (SI)', 0, 0.5, 0.01, 0.01);
+sharedParams.addNumber('thresholdReceiveTime', 'threshold receive time (sec)', 0, 20.0, 0.1, 10.0);
+
+// create server side conductor experience
+const conductor = new soundworks.BasicSharedController('conductor');
+
 // define the configuration object to be passed to the `.ejs` template
 soundworks.server.setClientConfigDefinition((clientType, config, httpRequest) => {
   let includeCordovaTags = false;
@@ -25,7 +40,7 @@ soundworks.server.setClientConfigDefinition((clientType, config, httpRequest) =>
     includeCordovaTags = true;
 
     Object.assign(socketIOConfig, {
-      url: 'http://10.0.0.1:8000',
+      url: 'http://129.102.60.190:8000',
     });
 
     config.assetsDomain = '';

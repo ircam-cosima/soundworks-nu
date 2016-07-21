@@ -10,7 +10,7 @@ const cwd = process.cwd();
 export default {
   // name of the application, used in the `.ejs` template and by default in
   // the `platform` service to populate its view
-  appName: 'Template',
+  appName: 'Woodland',
 
   // name of the environnement ('production' enable cache in express application)
   env: 'development',
@@ -120,5 +120,5 @@ export default {
   beaconUUID: '74278BDA-B644-4520-8F0C-720EAF059935',
 
   // standalone mode (server-less)
-  standalone: true,
+  standalone: false,
 }
