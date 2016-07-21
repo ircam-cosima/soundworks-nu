@@ -55,6 +55,7 @@ export default class PlayerExperience extends soundworks.Experience {
     this.updateIRs = this.updateIRs.bind(this);
     this.getIrTaps = this.getIrTaps.bind(this);
     this.playFlutter = this.playFlutter.bind(this);
+    this.getSummedBuffer = this.getSummedBuffer.bind(this);
     this.updateBkgColor = this.updateBkgColor.bind(this);
 
     // LOCAL ATTRIBUTES
@@ -92,7 +93,6 @@ export default class PlayerExperience extends soundworks.Experience {
     this.audioAnalyser = new AudioAnalyser();
 
     // shared parameters binding
-
     this.params.addParamListener('masterGain', (value) => this.propagParams.masterGain = value);
     this.params.addParamListener('propagationSpeed', (value) => this.propagParams.speed = value);
     this.params.addParamListener('propagationGain', (value) => this.propagParams.gain = value);
@@ -115,10 +115,10 @@ export default class PlayerExperience extends soundworks.Experience {
       // decide on when to play the sound (now + delay network transmission)
       let time = this.sync.getSyncTime() + this.networkDelay;
       this.send('server:soundLaunch', (time));
+
       // setup "play bounces between me and the other clients"
-      this.beaconList.forEach((beacon) => {
-        this.playFlutter(beacon.minor, time );
-      });
+      this.playFlutter(-1, time);
+
     });
 
     // DEBUG (for non-cordova runs)
@@ -126,11 +126,11 @@ export default class PlayerExperience extends soundworks.Experience {
     {
       this.beacon = {major:0, minor: 0};
       this.beacon.restartAdvertising = function(){};
-      this.beacon.rssiToDist = function(){return 1.0 + Math.random()};
+      this.beacon.rssiToDist = function(){return 1.0 + 1.0*Math.random()};
       this.beaconList = [];
       window.setInterval(() => {
         var pluginResult = { beacons : [] };
-        for (let i = 0; i < 1; i++) {
+        for (let i = 0; i < 4; i++) {
           var beacon = {
             major: 0,
             minor: i,
@@ -231,7 +231,13 @@ export default class PlayerExperience extends soundworks.Experience {
 
       // create audio source based on IR buffer
       var src = audioContext.createBufferSource();
-      src.buffer = this.irBuffers[beaconID];
+      if (beaconID >= 0) { // I'm not launcher: simply fecth launcher related IR
+        src.buffer = this.irBuffers[beaconID];
+      }
+      else { // I'm launcher, add all IRs and play
+        src.buffer = this.getSummedBuffer();
+      }
+
       // create a convolver based on audio sound
       var conv = audioContext.createConvolver();
       conv.buffer = this.loader.buffers[0];
@@ -253,9 +259,10 @@ export default class PlayerExperience extends soundworks.Experience {
       if (timeBeforePlayStart > 0) {
         var startTime = audioContext.currentTime + timeBeforePlayStart;
         src.start(startTime);
+        console.log('play scheduled at:', Math.round(time*1000)/1000);
       }
       else{
-        console.warn('no sound played, I received the instruction to play to late: (network delay has been underestimated). estimated:', this.networkDelay, 'sec, true:', this.networkDelay - timeBeforePlayStart, 'sec');
+        console.warn('no sound played, I received the instruction to play to late: (network delay has been underestimated). estimated:', this.networkDelay, 'sec, true delay:', this.networkDelay - timeBeforePlayStart, 'sec');
       }
 
       // start screen color update = f(amplitude) routine
@@ -266,6 +273,28 @@ export default class PlayerExperience extends soundworks.Experience {
         this.isPlaying = false;
       }, (this.networkDelay + src.buffer.duration + conv.buffer.duration) * 1000);
 
+  }
+
+  getSummedBuffer() {
+    // get maximum buffer duration
+    let maxDuration = 0.0;
+    this.irBuffers.forEach( (irBuffer) => {
+      if (irBuffer.duration > maxDuration) maxDuration = irBuffer.duration;
+    });
+
+    // loop over IR buffers to sum IRs
+    var irBufferSumData = new Float32Array(Math.ceil(maxDuration * audioContext.sampleRate));
+    this.irBuffers.forEach( (irBuffer) => {
+      let bufferData = irBuffer.getChannelData(0);
+      for(let s = 0; s < Math.min(irBufferSumData.length, bufferData.length); ++s) {
+        irBufferSumData[s] += bufferData[s];
+      }
+    });
+
+    var irBufferSum = audioContext.createBuffer(1, irBufferSumData.length, audioContext.sampleRate);
+    irBufferSum.getChannelData(0).set(irBufferSumData);
+
+    return irBufferSum;
   }
 
   updateBkgColor() {
