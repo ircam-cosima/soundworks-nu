@@ -17,12 +17,16 @@ window.addEventListener('load', () => {
   const conductor = new soundworks.BasicSharedController({
     // numPlayers: { readOnly: true },
     // state: { type: 'buttons' },
+    numPlayers: { readOnly: true },
     masterGain: { type: 'slider', size: defaultSliderSize },
     propagationSpeed: { type: 'slider', size: defaultSliderSize },
     propagationGain: { type: 'slider', size: defaultSliderSize },
     emitterGain: { type: 'slider', size: defaultSliderSize },
     thresholdReceiveGain: { type: 'slider', size: defaultSliderSize },
     thresholdReceiveTime: { type: 'slider', size: defaultSliderSize },
+    reset: { type: 'buttons' },
+    interDeviceDist: { type: 'slider', size: defaultSliderSize },
+    estimatedSimulationTime: { readOnly: true },
   });
 
   // start client
