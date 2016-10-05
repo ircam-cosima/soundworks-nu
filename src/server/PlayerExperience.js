@@ -41,6 +41,7 @@ export default class PlayerExperience extends Experience {
     this.params.addParamListener('propagationGain', () => { this.estimateSimulationTime() });
     this.params.addParamListener('emitterGain', () => { this.estimateSimulationTime() });
     this.params.addParamListener('thresholdReceiveGain', () => { this.estimateSimulationTime() });
+    // this.params.addParamListener('estimatedSimulationTime', () => { this.estimateSimulationTime() });
   }
 
   enter(client) {
