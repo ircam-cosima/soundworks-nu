@@ -1,188 +1,127 @@
-import { Experience } from 'soundworks/server';
+import * as soundworks from 'soundworks/server';
+
+const server = soundworks.server;
 
 // server-side 'player' experience.
-export default class PlayerExperience extends Experience {
+export default class PlayerExperience extends soundworks.Experience {
   constructor(clientType) {
     super(clientType);
 
-    // services
+    // require services
     this.checkin = this.require('checkin');
+    this.sharedConfig = this.require('shared-config');
     this.params = this.require('shared-params');
     this.sync = this.require('sync');
 
     // bind methods
-    this.checkStateCallback = this.checkStateCallback.bind(this);
-    this.reset = this.reset.bind(this);
-    this.estimateSimulationTime = this.estimateSimulationTime.bind(this);
+    this.propagationWorkerOnMsg = this.propagationWorkerOnMsg.bind(this);
+    this.enterPlayer = this.enterPlayer.bind(this);
 
     // local attributes
-    this.players = [];
-    this.lastReceivedMsgTime = 0.0;
-    this.numPlayerReady = 0;
-    this.state = 0;
-    // 0: initial state, quiet
-    // 1: propagation, awaiting for nodes to finish sending messages
-    // 2: computation: awaiting for nodes to finish local IR computation based on taps exchanged in state 1
-    // 3: playing: awaiting for nodes to finish playing IR based buffers before restarting simulation
-
-    this.debugCountTransmissions = 0;
+    this.playerMap = new Map();
+    this.ackowledgedLastIrReceivedMap = new Map();
+    this.wsMap = new Map();    
+    this.wss = null;
   }
 
   start() {
-    this.params.addParamListener('reset', () => { this.reset(); });
-    this.params.addParamListener('replayLast', () => {
-      // instruct nodes to start playing
-      let startPlayingTime = this.sync.getSyncTime() + 1.0;
-      this.broadcast('player', null, 'player:startPlayingDown', startPlayingTime);
+
+    // setup worker (run method on separate thread)
+    var Worker = require('webworker-threads').Worker;
+    this.propagationWorker = new Worker('./server/propagationWorker.js');
+    this.propagationWorker.onmessage = this.propagationWorkerOnMsg;
+    this.propagationWorker.postMessage( { cmd: 'reset' } );
+    setInterval(() => {
+      // set interval on estimate IRs callback
+      this.propagationWorker.postMessage({ cmd: 'run' });
+    }, 100);
+
+    // setup dedicated websocket server (to handle IR msg: avoid to flood main communication socket)
+    var WebSocketServer = require('ws').Server
+    let host = server.config.socketIO.url.split(":")[1].split("/")[2];
+    this.wss = new WebSocketServer({port: 8080, host: host});
+    this.wss.on('connection', (ws) => {
+      // associate websocket to client index on connection for latter use
+      ws.on('message', (message) => { this.wsMap.set( parseInt(message), ws ); });
     });
 
-    // DEBUG: estimate simulation time based on parameters
-    this.params.addParamListener('numPlayers', () => { this.estimateSimulationTime() });
-    this.params.addParamListener('propagationGain', () => { this.estimateSimulationTime() });
-    this.params.addParamListener('emitterGain', () => { this.estimateSimulationTime() });
-    this.params.addParamListener('thresholdReceiveGain', () => { this.estimateSimulationTime() });
-    // this.params.addParamListener('estimatedSimulationTime', () => { this.estimateSimulationTime() });
+    // shared parameters binding
+    this.params.addParamListener('propagationSpeed', (value) => this.propagationWorker.postMessage({ cmd: 'propagParam', subcmd: 'speed', data: value }) );
+    this.params.addParamListener('propagationGain', (value) => this.propagationWorker.postMessage({ cmd: 'propagParam', subcmd: 'gain', data: value }) );
+    this.params.addParamListener('thresholdReceiveGain', (value) => this.propagationWorker.postMessage({ cmd: 'propagParam', subcmd: 'rxMinGain', data: value }) );
+    this.params.addParamListener('reset', () => { this.propagationWorker.postMessage({ cmd: 'reset' }); });
   }
 
   enter(client) {
     super.enter(client);
 
-    // find room for client in local list
-    var emptyInd = this.findFirstEmpty(this.players);
-    if (emptyInd < 0) emptyInd = this.players.length;
-    this.players[emptyInd] = client.uuid;
-    this.params.update('numPlayers', this.getArrayLength(this.players) );
+    switch (client.type) {
+      case 'player':
+        this.enterPlayer(client);
+        break;
+    }
+  }
 
-    // define client beacon parameters
-    var beaconInfo = { major: 0, minor: emptyInd };
-    this.send(client, 'player:beaconSetup', beaconInfo);
-    console.log('welcoming client:', emptyInd, this.players[emptyInd]);
+  enterPlayer(client){
 
-    // msg callback
-    this.receive(client, 'player:emitUp', (time, gain) => {
+    // update local attributes
+    this.playerMap.set( client.index, client );
+    this.ackowledgedLastIrReceivedMap.set( client.index, true );
+    this.params.update('numPlayers', this.playerMap.size);
 
-      // update propagation finished check timer
-      this.lastReceivedMsgTime = this.sync.getSyncTime();
+    // update worker
+    this.propagationWorker.postMessage({ cmd: 'reset' });
 
-      // setup state at first emit
-      if (this.state == 0) {
-        this.state = 1;
-        this.checkStateCallbackInterval = setInterval(() => {
-            this.checkStateCallback();
-        }, 500);
-      }
-
-      // get index in local list (used to identify launch beacon in clients)
-      var emitterBeaconMinorID = this.players.map((x) => { return x; }).indexOf(client.uuid);
-      // broadcast to all clients but the one who sent it
-      this.broadcast('player', client, 'player:emitDown', emitterBeaconMinorID, time, gain);
-      // count number of exchanged packets
-      this.debugCountTransmissions += 1;
+    // msg callback: add client beaconMap to worker's
+    this.receive(client, 'beaconMap', (beaconMap) => {
+      this.propagationWorker.postMessage({ cmd: 'addToBeaconMap', index: client.index, data: beaconMap });
     });
 
-    // when all node finished to compute IR (and are ready to play)
-    this.receive(client, 'player:computeIrUp', () => {
-      this.numPlayerReady += 1;
-      if( this.numPlayerReady == this.getArrayLength(this.players) ) {
-        // reset counter
-        this.numPlayerReady = 0;
-        // change state
-        this.state = 3;
-        // instruct nodes to start playing
-        let startPlayingTime = this.sync.getSyncTime() + 1.0;
-        this.broadcast('player', null, 'player:startPlayingDown', startPlayingTime);
-      }
+    // msg callback: forward 'play sound' instruction
+    this.receive(client, 'playUp', (rdvTime) => {
+      this.broadcast('player', null, 'playDown', rdvTime);
     });
 
-    // when all nodes finished playing: reset
-    this.receive(client, 'player:startPlayingUp', () => {
-      this.numPlayerReady += 1;
-      if( this.numPlayerReady == this.getArrayLength(this.players) ) { this.reset(); }
+    // msg callback: flag client as ready to receive new IR when it received at processed last one
+    this.receive(client, 'ackIrReceived', () => {
+      this.ackowledgedLastIrReceivedMap.set( client.index, true );
     });
 
   }
 
-  // when client disconnects
   exit(client) {
     super.exit(client);
 
-    var elmtPos = this.players.map((x) => { return x; }).indexOf(client.uuid);
-    console.log('removing client:', elmtPos, this.players[elmtPos]);
-    // this.players.splice(elmtPos, 1);
-    this.players[elmtPos] = null; // can't use splice, have to keep index consistent since it points to clients' beacon minor IDs.
-    // update client count, a bit special here because this.player is used so that indices won't change even if client removed
-    this.params.update('numPlayers', this.getArrayLength(this.players) );
-  }
-
-  // callback used to survey the end of propagation (msg exchange) phase,
-  // i.e. when no cellphone re-emitted propagation msg for 'a while'
-  checkStateCallback() {
-    console.log(this.state, 'last message received:', Math.round( (this.sync.getSyncTime() - this.lastReceivedMsgTime) * 1e5)/1e5, 'sec ago, total trans packets:', this.debugCountTransmissions);
-    // assume propagation over if no messages from nodes after .. secs
-    if( (this.state == 1) && ( (this.sync.getSyncTime() - this.lastReceivedMsgTime) > 1) ) {
-      // instruct nodes to compute local IR
-      this.broadcast('player', null, 'player:computeIrDown');
-      // change state
-      this.state = 2;
-      console.log('propagation over in', this.debugCountTransmissions, 'steps');
-      // remove callback
-      clearInterval(this.checkStateCallbackInterval);
-    }
-
-  }
-
-  reset(){
-    console.log('reset server');
-    // reset
-    this.numPlayerReady = 0;
-    this.state = 0;
-    this.lastReceivedMsgTime = 0.0;
-    this.debugCountTransmissions = 0.0;
-    // wipe callback (for when reset is calleb when server stuck in propagation stage)
-    if (this.checkStateCallbackInterval) clearInterval(this.checkStateCallbackInterval);
-  }
-
-  findFirstEmpty(array) {
-    var emptyInd = -1;
-    for (var i = 0; i < array.length; i++) {
-      if (array[i] == null) {
-        emptyInd = i;
+    switch (client.type) {
+      case 'player':
+        // update local attributes
+        this.playerMap.delete( client.index );
+        this.ackowledgedLastIrReceivedMap.delete( client.index );
+        this.params.update('numPlayers', this.playerMap.size);
+        // update worker attributes
+        this.propagationWorker.postMessage({ cmd: 'removeFromBeaconMap', index: client.index });
         break;
+    }    
+  }
+
+  // defines what to do with msg sent by worker thread. msg is IR table: send each client its associated IR
+  propagationWorkerOnMsg (event) {
+
+    // loop over received IRs
+    let irTapsTable = event.data;
+    irTapsTable.forEach( (item, index) => {
+    
+      // avoid sending: 1) empty table, 2) to clients who did not receive or process the last IR
+      if( (item !== null) && (item.length > 0) && this.ackowledgedLastIrReceivedMap.get( index ) ){
+        this.ackowledgedLastIrReceivedMap.set( index, false ); // flag client as busy from now
+
+        // format and send IR via dedicated websocket
+        let msgArray = new Float32Array(item);
+        let ws = this.wsMap.get( index );
+        ws.send( msgArray.buffer, { binary: true, mask: false } );
       }
-    }
-    return emptyInd;
-  }
-
-  getArrayLength(array){
-    // special here because this.player is used so that indices won't change even if client removed
-    var size = array.filter(function(value) { return value !== null }).length;
-    return size;
-  }
-
-  estimateSimulationTime() {
-    var numPlayers, propagationGain, emitterGain, thresholdReceiveGain, interDeviceDist;
-
-    this.params._paramData.forEach( (param) => {
-      if (param.name == 'numPlayers') numPlayers = param.value;
-      if (param.name == 'propagationGain') propagationGain = param.value;
-      if (param.name == 'emitterGain') emitterGain = param.value;
-      if (param.name == 'thresholdReceiveGain') thresholdReceiveGain = param.value;
-      if (param.name == 'interDeviceDist') interDeviceDist = param.value;
     });
-    // console.log(numPlayers, propagationGain, emitterGain, thresholdReceiveGain);
 
-    var gainTrans = Math.pow(propagationGain, interDeviceDist)
-
-    var countTrans = 0;
-    while (emitterGain > thresholdReceiveGain) {
-      emitterGain *= gainTrans;
-      countTrans += 1;
-    }
-
-    var delayServer = 0.7e-3; // sec (roughly calibrated)
-    let numExchanges = Math.pow(numPlayers-1, countTrans);
-    let timeExchange = numExchanges * delayServer;
-    this.params.update('estimatedSimulationTime', timeExchange );
   }
 
 }

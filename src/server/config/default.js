@@ -54,7 +54,7 @@ export default {
 
   // socket.io configuration
   socketIO: {
-    url: '',
+    url: 'http://169.254.176.196:8000', // (for cordova app: this url is soundwork server's)
     transports: ['websocket'],
     // @note: EngineIO defaults
     // pingTimeout: 3000,
@@ -119,6 +119,6 @@ export default {
   // iBeacon UUID
   beaconUUID: '74278BDA-B644-4520-8F0C-720EAF059935',
 
-  // standalone mode (server-less)
-  standalone: false,
+  // standalone mode (server-less Cordova application)
+  standalone: false,  
 }

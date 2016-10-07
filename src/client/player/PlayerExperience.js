@@ -1,27 +1,30 @@
 import * as soundworks from 'soundworks/client';
-
-import Beacon from '../../shared/client/services/Beacon';
+import * as soundworksCordova from 'soundworks-cordova/client';
 
 import PlayerRenderer from './PlayerRenderer';
 import AudioAnalyser from './AudioAnalyser';
 
+import AudioSynthSwoosher from './utils';
+
 const audioContext = soundworks.audioContext;
+const client = soundworks.client;
 
 const viewTemplate = `
   <canvas id='main-canvas' class="background"></canvas>
   <div class="foreground">
-    <div class="section-center flex-middle">
-    <p class="small" id="logValues"></p>
-    </div>
 
     <div class="section-top flex-middle">
-    <p class="small" id="localInfo"></p>
+      <p class="big">Beacon ID: <%= major %>.<%= minor %></p>
+    </div>
+
+    <div class="section-center flex-middle">
+      <p class="small" id="logValues"></p>
     </div>
 
     <div class="section-bottom flex-center">
-      <p class="small soft-blink"><%= title %></p>
+      <p class="small soft-blink"><%= subtitle %></p>
     </div>
-    <hr>
+    
   </div>
 `;
 
@@ -37,267 +40,173 @@ of the experiment.
 */
 
 export default class PlayerExperience extends soundworks.Experience {
+  constructor(assetsDomain, audioFiles) {
+    super(true);
 
-  constructor(standalone, assetsDomain, beaconUUID, audioFiles) {
-    // disable socket connection - use for standalone application
-    super(!standalone);
-
-    // SERVICES
-    // beacon only work in cordova mode since it needs access right to BLE (bluetooth)
-    if (window.cordova) this.beacon = this.require('beacon', { uuid: beaconUUID });
+    // require services
     this.platform = this.require('platform', { features: ['web-audio'] });
     this.params = this.require('shared-params');
     this.sync = this.require('sync');
+    this.checkin = this.require('checkin', { showDialog: false });
     this.loader = this.require('loader', {
       assetsDomain: assetsDomain,
       files: audioFiles,
     });
 
-    // BINDING
-    this.beaconCallback = this.beaconCallback.bind(this);
-    this.reset = this.reset.bind(this);
-    this.updateBkgColor = this.updateBkgColor.bind(this);
-    this.onBeaconSetup = this.onBeaconSetup.bind(this);
-    this.onEmitDown = this.onEmitDown.bind(this);
-    this.onComputeIrDown = this.onComputeIrDown.bind(this);
-    this.onStartPlayingDown = this.onStartPlayingDown.bind(this);
+    // beacon only work in cordova mode since it needs access right to BLE
+    if (window.cordova) {
+      this.beacon = this.require('beacon', { uuid: beaconUUID });
+    }   
 
-    // LOCAL ATTRIBUTES
-    this.irTaps = [];
+    // binding
+    this.initBeacon = this.initBeacon.bind(this);
+    this.beaconCallback = this.beaconCallback.bind(this);
+    this.updateBkgColor = this.updateBkgColor.bind(this);
+    this.onPlay = this.onPlay.bind(this);
+    this.onWebSocketOpen = this.onWebSocketOpen.bind(this);
+    this.onWebSocketEvent = this.onWebSocketEvent.bind(this);
+
+    // local attributes
+    this.status = 0;
     this.propagParams = {};
-    this.initEmitTime = -1.0;
-    this.irBuffer = undefined;
+    this.audioAnalyser = new AudioAnalyser();
+    this.audioSynthSwoosher = new AudioSynthSwoosher({duration: 1.0, gain:0.4});    
   }
 
   init() {
-    // initialize the view
+    // init view (GUI)
     this.viewTemplate = viewTemplate;
-    this.viewContent = { title: `Scanning iBeacons...` };
+    this.viewContent = { subtitle: `in the forest, at night`, major: this.beacon.major, minor: this.beacon.minor };
     this.viewCtor = soundworks.CanvasView;
     this.viewOptions = { preservePixelRatio: true };
     this.view = this.createView();
-
-    // initialize beacon service
-    if (this.beacon) {
-      this.beaconList = []; // neighboring beacon list
-      this.beacon.addListener(this.beaconCallback); // add callback, invoked whenever beacon scan is executed
-      // this.beacon.txPower = -55; // fake calibration in dB (see beacon service for detail)
-    }
+    this.renderer = new PlayerRenderer();
+    this.view.addRenderer(this.renderer);    
   }
 
-
   start() {
-    // constructor
     super.start();
-    if (!this.hasStarted) { this.init(); }
+
+    if (!this.hasStarted) {
+      this.initBeacon();
+      this.init();
+    }
+
     this.show();
 
-    // local attributes
-    this.renderer = new PlayerRenderer();
-    this.view.addRenderer(this.renderer);
-    this.audioAnalyser = new AudioAnalyser();
+    // define message callbacks
+    this.receive('playDown', this.onPlay);
+    this.receive('updateIr', this.onUpdateIr);
 
-    // shared parameters binding
+    // param listeners
     this.params.addParamListener('masterGain', (value) => this.propagParams.masterGain = value);
-    this.params.addParamListener('propagationSpeed', (value) => this.propagParams.speed = value);
-    this.params.addParamListener('propagationGain', (value) => this.propagParams.gain = value);
-    this.params.addParamListener('emitterGain', (value) => this.propagParams.txGain = value);
-    this.params.addParamListener('thresholdReceiveGain', (value) => this.propagParams.rxMinGain = value);
-    this.params.addParamListener('thresholdReceiveTime', (value) => this.propagParams.rxMaxTime = value);
-    this.params.addParamListener('reset', () => { this.reset(); });
-
-    // bind callbacks to server messages
-    this.receive('player:beaconSetup', this.onBeaconSetup);
-    this.receive('player:emitDown', this.onEmitDown);
-    this.receive('player:computeIrDown', this.onComputeIrDown);
-    this.receive('player:startPlayingDown', this.onStartPlayingDown);
-
-
-    // add local beacon info on screen
-    if (this.beacon) {
-      document.getElementById('localInfo').innerHTML = 'local iBeacon ID: ' + this.beacon.major + '.' + this.beacon.minor;
-    }
 
     // create touch event, used to send the first message
     const surface = new soundworks.TouchSurface(this.view.$el);
     surface.addListener('touchstart', (id, normX, normY) => {
       // only if propagation has not already started
-      if (this.initEmitTime < 0) {
-        // set first tap time / gain
-        let time = this.sync.getSyncTime();
-        let gain = this.propagParams.txGain;
-        this.initEmitTime = time;
-        // add tap to local IR
-        this.irTaps.push([0.0, gain]);
-        // broadcast tap
-        this.send('player:emitUp', time, gain);
-        // set background color for status feedback
+      if (this.status == 0) {
+
+        // send play msg with fixed rdv time (sync. clients players)
+        this.send('playUp', this.sync.getSyncTime() + this.audioSynthSwoosher.duration);
+        // visual feedback
         this.renderer.setBkgColor([255, 128, 0]);
+        // audio feedback
+        this.audioSynthSwoosher.play();
+
+        // play sound (first ping) when finish swoosh
+        let src = audioContext.createBufferSource();
+        src.buffer = this.loader.buffers[0];
+        let gain = audioContext.createGain();
+        gain.gain.value = 0.025*this.propagParams.masterGain;
+        src.connect(gain);
+        gain.connect(audioContext.destination);
+        src.start( audioContext.currentTime + this.audioSynthSwoosher.duration );
       }
     });
 
-    // DEBUG (for non-cordova runs, e.g. on laptop)
-    if (!this.beacon)
-    {
-      this.beacon = {major:0, minor: 0};
-      this.beacon.restartAdvertising = function(){};
-      this.beacon.rssiToDist = function(){return 3 + 1*Math.random()};
-      this.beaconList = [];
-      window.setInterval(() => {
-        var pluginResult = { beacons : [] };
-        for (let i = 0; i < 4; i++) {
-          var beacon = {
-            major: 0,
-            minor: i,
-            rssi: -45 - i * 5,
-            proximity : 'fake/debug beacon',
-          };
-          pluginResult.beacons.push(beacon);
-        }
-        this.beaconCallback(pluginResult);
-      }, 1000);
+    // init websocket
+    let url = "ws:" + client.config.socketIO.url.split(":")[1] + ":8080";
+    console.log('connecting websocket to', url);
+    this.ws = new WebSocket(url);
+    this.ws.binaryType = 'arraybuffer';
+    this.ws.onopen = this.onWebSocketOpen;
+    this.ws.onmessage = this.onWebSocketEvent;
+  }
+
+  // send client index (at websocket opening) to associate socket / index in server
+  onWebSocketOpen(){
+    this.ws.send( client.index, { binary: false, mask: true }, (error) => { console.log('websocket error:', error); } );
+  }
+
+  /*
+  * callback when websocket event (msg containing new IR sent by server) is received
+  */
+  onWebSocketEvent(event) {
+
+    // de-interleave + get max delay for IR buffer size
+    let interleavedIrArray = new Float32Array(event.data);
+    let irTime = [], irGain = [], irDuration = 0.0;
+    for( let i = 0; i < interleavedIrArray.length / 2; i++ ){
+      irTime[i] = interleavedIrArray[2*i];
+      irGain[i] = interleavedIrArray[2*i + 1];
+      irDuration = Math.max(irDuration, irTime[i]);
     }
-
-  }
-
-  /*
-  * callback that runs every time a beacon scan occurs:
-  * store a list of neighboring beacons
-  */
-  beaconCallback(pluginResult) {
-    // get beacon list
-    pluginResult.beacons.forEach((beacon) => {
-      // add time of last update to beacon for latter "remove beacons not seen for long" mechanism
-      beacon.lastUpdated = audioContext.currentTime;
-      this.beaconList[beacon.minor] = beacon;
-    });
-
-    // remove beacons not seen for a long time
-    this.beaconList.forEach((beacon, beaconIndexInList) => {
-      if ((audioContext.currentTime - beacon.lastUpdated) > 3.0) {
-        delete this.beaconList[beaconIndexInList];
-      }
-    });
-
-    // display beacon list on screen
-    var log = '';
-    this.beaconList.forEach((beacon) => {
-      log += 'iBeacon maj.min: ' + beacon.major + '.' + beacon.minor + '</br>' +
-             'rssi: ' + beacon.rssi + 'dB ~ dist: ' +
-             Math.round( this.beacon.rssiToDist(beacon.rssi)*100, 2 ) / 100 + 'm' + '</br>' +
-             '(' + beacon.proximity + ')' + '</br></br>';
-    });
-    document.getElementById('logValues').innerHTML = log;
-
-    // Note: various loops kept separate for clarity's sake,
-    // since beacon update is scarce (~every sec)
-  }
-
-
-  /*
-  * message callback: re-define local beacon parameters from server
-  * (enforce unique id)
-  */
-  onBeaconSetup(beaconInfo) {
-    console.log('server defined new beacon setup:', beaconInfo);
-    if (this.beacon) {
-      // change local beacon info
-      this.beacon.major = beaconInfo.major;
-      this.beacon.minor = beaconInfo.minor;
-      this.beacon.restartAdvertising();
-      // add local beacon info on screen
-      document.getElementById('localInfo').innerHTML = 'local iBeacon ID: ' + this.beacon.major + '.' + this.beacon.minor;
-      this.reset();
-    }
-  }
-
-  /*
-  * message callback: run when I receive a message from another node in the network,
-  * store and re-emit if said node is in my neighborhood
-  */
-  onEmitDown(beaconID, departureTime, departureGain) {
-
-    // if emitter beacon in my neighborhood
-    if ( this.beaconList[beaconID] !== undefined ) {
-
-      // if original (first) message: store emission time zero
-      // warning: first emitter doesn't go there (its zero time is setup at touch event)
-      if( this.initEmitTime < 0 ) {
-        this.initEmitTime = departureTime;
-        // set background color for status feedback
-        this.renderer.setBkgColor([255, 128, 0]);
-      }
-
-      // get tap time and gain
-      let distFromEmitter = this.beacon.rssiToDist(this.beaconList[beaconID].rssi);
-      let arrivalTime = departureTime + (distFromEmitter / this.propagParams.speed);
-      let arrivalGain = departureGain * Math.pow(this.propagParams.gain, distFromEmitter);
-
-      // DEBUG: to avoid exponential increase of exchanged packet number
-      arrivalGain = Math.min(arrivalGain, departureGain * 0.9);
-
-      // check if valid tap: below time and gain threshold
-      if( ( (arrivalTime - this.initEmitTime) < this.propagParams.rxMaxTime) && (arrivalGain > this.propagParams.rxMinGain) )
-      {
-        // add tap to local IR
-        this.irTaps.push([arrivalTime - this.initEmitTime, arrivalGain]);
-        // send new emit message
-        this.send('player:emitUp', arrivalTime, arrivalGain);
-      }
-    }
-  }
-
-  /*
-  * message callback: run when propagation is over:
-  * compute IR (transform (time, gain) array of taps to IR buffer,
-  * and stand ready to play
-  */
-  onComputeIrDown() {
-    console.log('compute IR started:', this.irTaps);
-
-    // get max delay for IR buffer size
-    let irDuration = 0.0;
-    this.irTaps.forEach((timeGain, tapIndex) => {
-      irDuration = Math.max(irDuration, timeGain[0]);
-    });
 
     // create IR as float array
-    var ir = new Float32Array(Math.ceil(irDuration * audioContext.sampleRate));
-    for(let s = 0; s < this.irTaps.length; ++s) {
-        ir[Math.floor(this.irTaps[s][0] * audioContext.sampleRate)] = this.irTaps[s][1];
+    let ir = new Float32Array(Math.ceil(irDuration * audioContext.sampleRate));
+    for(let s = 0; s < irTime.length; ++s) {
+        ir[Math.floor(irTime[s] * audioContext.sampleRate)] = irGain[s];
     }
 
     // transform IR float array to web audio buffer
+    this.futureIrBuffer = audioContext.createBuffer(1, Math.max(ir.length, 512), audioContext.sampleRate);
+    this.futureIrBuffer.getChannelData(0).set(ir);
     this.irBuffer = audioContext.createBuffer(1, Math.max(ir.length, 512), audioContext.sampleRate);
-    this.irBuffer.getChannelData(0).set(ir);
 
-    // inform server I'm ready to play
-    this.send('player:computeIrUp');
+    // inform server we're ready to receive new IR
+    this.send('ackIrReceived');
+
+    // feedback user that IR has been loaded 
+    this.renderer.setBkgColor([50, 50, 50]);
   }
+
 
   /*
   * message callback: play final sound. Run when all nodes in the network
   * have their IR ready
   */
-  onStartPlayingDown(syncstartTime) {
+  onPlay(syncstartTime) {
+
+    
+    if( (this.futureIrBuffer !== undefined) && ( this.status == 0 ) ){
+      
+      this.irBuffer.getChannelData(0).set( this.futureIrBuffer.getChannelData(0) );
+
+      // indicate propagation started
+      this.status = 1;
 
       // Note: In order to be able to render long impulse responses, the
       // `ConvolverNode.buffer` is the original sound, while the
       // `AudioBufferSourceNode.buffer` is the actual impulse response.
 
       // create audio source based on IR buffer
+      
       var src = audioContext.createBufferSource();
       src.buffer = this.irBuffer;
 
       // create a convolver based on audio sound
+      
       var conv = audioContext.createConvolver();
       conv.buffer = this.loader.buffers[0];
 
       // create master gain (shared param, controlled from conductor)
+      
       var gain = audioContext.createGain();
       gain.gain.value = this.propagParams.masterGain;
 
       // connect graph
+      
       src.connect(conv);
       conv.connect(gain);
       gain.connect(audioContext.destination);
@@ -312,28 +221,25 @@ export default class PlayerExperience extends soundworks.Experience {
         console.warn('no sound played, I received the instruction to play to late');
         this.renderer.setBkgColor([255, 0, 0]);
       }
-
+      
       // setup screen color = f(amplitude) callback
       conv.connect(this.audioAnalyser.in);
-      this.isPlaying = true;
+      
       requestAnimationFrame(this.updateBkgColor);
 
-      // timeout callback, runs when I finished playing
+      // timeout callback, runs when we finished playing
       setTimeout(() => {
-        // stop background update color callback
-        this.isPlaying = false;
-        // inform server on playing over for global reset
-        this.send('player:startPlayingUp');
-        // local reset
-        this.reset();
+        this.status = 0;
+        this.renderer.setBkgColor([0,0,0]);
       }, ( syncstartTime - this.sync.getSyncTime() + src.buffer.duration + conv.buffer.duration) * 1000);
+    }
   }
 
   /*
   * Change GUI background color based on current amplitude of sound being played
   */
   updateBkgColor() {
-    if (this.isPlaying) {
+    if (this.status == 1) {
       // call me once, I'll call myself over and over
       requestAnimationFrame(this.updateBkgColor);
       // change background color based on current amplitude
@@ -343,15 +249,70 @@ export default class PlayerExperience extends soundworks.Experience {
     }
   }
 
+
+  // -------------------------------------------------------------------------------------------
+  // BEACON-RELATED METHODS
+  // -------------------------------------------------------------------------------------------
+  
   /*
-  * Reset, stand ready for next simulation
-  */
-  reset(){
-    console.log('reset client');
-    this.beaconList = [];
-    this.irTaps = [];
-    this.initEmitTime = -1.0;
-    this.renderer.setBkgColor([0,0,0]);
+  * Init beacon service
+  */  
+  initBeacon() {
+
+    // initialize ibeacon service
+    if (this.beacon) {
+      this.beacon.addListener(this.beaconCallback);
+      this.beacon.txPower = -55; // fake calibration (in dB)
+      this.beacon.major = 0;
+      this.beacon.minor = client.index;
+      this.beacon.restartAdvertising();
+    }
+
+    // INIT FAKE BEACON (for computer based debug)
+    else { 
+      this.beacon = {major:0, minor: client.index};
+      this.beacon.rssiToDist = function(){return 0.01 + 0.1*Math.random()};
+      this.beacon.restartAdvertising = function(){};
+      window.setInterval(() => {
+        var pluginResult = { beacons : [] };
+        for (let i = 0; i < 4; i++) {
+          if( i != client.index ){
+            var beacon = { major: 0, minor: i, rssi: -45 - i * 5, proximity : 'fake, nearby', };
+            pluginResult.beacons.push(beacon);
+          }
+        }
+        this.beaconCallback(pluginResult);
+      }, 1000);
+    }
   }
+
+  /*
+  * callback that runs every time a beacon scan occurs:
+  * store a list of neighboring beacons
+  */
+  beaconCallback(pluginResult) {
+    // loop over beacons to fill simplified beacon Map
+    const beaconMap = new Map();
+    pluginResult.beacons.forEach((beacon) => {
+      const id = beacon.minor;
+      const dist = this.beacon.rssiToDist(beacon.rssi)
+      beaconMap.set(id, dist);
+    });
+    // upload beacon to server
+    this.send('beaconMap', beaconMap);
+
+
+    // log beacons on screen
+    var log = 'Closeby Beacons: </br></br>';
+    pluginResult.beacons.forEach((beacon) => {
+      log += beacon.major + '.' + beacon.minor + ' dist: ' 
+            + Math.round( this.beacon.rssiToDist(beacon.rssi)*100, 2 ) / 100 + 'm' + '</br>' +
+             '(' + beacon.proximity + ')' + '</br></br>';
+    });
+    // diplay beacon list on screen
+    document.getElementById('logValues').innerHTML = log;
+
+  }
+  // -------------------------------------------------------------------------------------------  
 
 }

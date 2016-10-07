@@ -1,5 +1,6 @@
 // import client side soundworks and player experience
 import * as soundworks from 'soundworks/client';
+import * as soundworksCordova from 'soundworks-cordova/client';
 import PlayerExperience from './PlayerExperience.js';
 import viewTemplates from '../shared/viewTemplates';
 import viewContent from '../shared/viewContent';
@@ -22,7 +23,7 @@ const init = () => {
   soundworks.client.setViewTemplateDefinitions(viewTemplates);
 
   // create client side (player) experience
-  const experience = new PlayerExperience(standalone,  assetsDomain, beaconUUID, audioFiles);
+  const experience = new PlayerExperience(assetsDomain, audioFiles);
 
   // start the client
   soundworks.client.start();
