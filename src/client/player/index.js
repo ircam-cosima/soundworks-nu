@@ -7,8 +7,9 @@ import viewContent from '../shared/viewContent';
 
 // list of files to load (passed to the experience)
 const audioFiles = [
-  // 'sounds/Claves.mp3'
-  'sounds/Va-pizz-sec-AD4-ff-2c_c.mp3'
+  'sounds/Va-pizz-sec-AD4-ff-2c_c.mp3',
+  'sounds/Va-pizz-sec-CD4-ff-2c_c.mp3',
+  'sounds/Va-pizz-sec-ED4-ff-2c_c.mp3'
 ];
 
 // launch application when document is fully loaded
@@ -23,7 +24,7 @@ const init = () => {
   soundworks.client.setViewTemplateDefinitions(viewTemplates);
 
   // create client side (player) experience
-  const experience = new PlayerExperience(assetsDomain, audioFiles);
+  const experience = new PlayerExperience(assetsDomain, audioFiles, beaconUUID);
 
   // start the client
   soundworks.client.start();

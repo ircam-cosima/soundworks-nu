@@ -8,6 +8,7 @@ import AudioSynthSwoosher from './utils';
 
 const audioContext = soundworks.audioContext;
 const client = soundworks.client;
+const ButtonView = soundworks.ButtonView;
 
 const viewTemplate = `
   <canvas id='main-canvas' class="background"></canvas>
@@ -28,6 +29,17 @@ const viewTemplate = `
   </div>
 `;
 
+const defaultTemplate = `
+<% definitions.forEach(function(def, index) { %>
+   <button class="btn <%= def.state %>"
+           data-index="<%= index %>"
+           <%= def.state === 'disabled' ? 'disabled' : '' %>
+   >
+     <%= convertName(def.label) %>
+   </button>
+ <% }); %>
+`;
+
 /* Description:
 Reproducing propagation in a forest, where every connected cellphone represents
 a tree. After emission of a first message by a cellphone in the network, the
@@ -40,7 +52,7 @@ of the experiment.
 */
 
 export default class PlayerExperience extends soundworks.Experience {
-  constructor(assetsDomain, audioFiles) {
+  constructor(assetsDomain, audioFiles, beaconUUID) {
     super(true);
 
     // require services
@@ -51,6 +63,9 @@ export default class PlayerExperience extends soundworks.Experience {
     this.loader = this.require('loader', {
       assetsDomain: assetsDomain,
       files: audioFiles,
+    });
+    this.motionInput = this.require('motion-input', {
+      descriptors: ['accelerationIncludingGravity']
     });
 
     // beacon only work in cordova mode since it needs access right to BLE
@@ -65,12 +80,15 @@ export default class PlayerExperience extends soundworks.Experience {
     this.onPlay = this.onPlay.bind(this);
     this.onWebSocketOpen = this.onWebSocketOpen.bind(this);
     this.onWebSocketEvent = this.onWebSocketEvent.bind(this);
+    this.onButtonSelect = this.onButtonSelect.bind(this);
+    this.onButtonUnselect = this.onButtonUnselect.bind(this);
 
     // local attributes
     this.status = 0;
     this.propagParams = {};
     this.audioAnalyser = new AudioAnalyser();
-    this.audioSynthSwoosher = new AudioSynthSwoosher({duration: 1.0, gain:0.4});    
+    this.audioSynthSwoosher = new AudioSynthSwoosher({duration: 1.0, gain:0.4});
+    this.audioFileIndex = 0;
   }
 
   init() {
@@ -81,7 +99,11 @@ export default class PlayerExperience extends soundworks.Experience {
     this.viewOptions = { preservePixelRatio: true };
     this.view = this.createView();
     this.renderer = new PlayerRenderer();
-    this.view.addRenderer(this.renderer);    
+    this.view.addRenderer(this.renderer);
+
+    const buttonList = [{label:'Sound 1'}, {label:'Sound 2'}, {label:'Sound 3'}];
+    this.playerButton = new ButtonView( buttonList, this.onButtonSelect, this.onButtonUnselect, {template: defaultTemplate, defaultState: 'unselected'} );
+    this.view.setViewComponent('.section-center', this.playerButton);
   }
 
   start() {
@@ -97,33 +119,67 @@ export default class PlayerExperience extends soundworks.Experience {
     // define message callbacks
     this.receive('playDown', this.onPlay);
     this.receive('updateIr', this.onUpdateIr);
+    this.receive('reload', () => { window.location.reload(true); });
 
     // param listeners
     this.params.addParamListener('masterGain', (value) => this.propagParams.masterGain = value);
 
-    // create touch event, used to send the first message
-    const surface = new soundworks.TouchSurface(this.view.$el);
-    surface.addListener('touchstart', (id, normX, normY) => {
-      // only if propagation has not already started
-      if (this.status == 0) {
+    // // create touch event, used to send the first message
+    // const surface = new soundworks.TouchSurface(this.view.$el);
+    // surface.addListener('touchstart', (id, normX, normY) => {
+    //   // only if propagation has not already started
+    //   if (this.status == 0) {
 
-        // send play msg with fixed rdv time (sync. clients players)
-        this.send('playUp', this.sync.getSyncTime() + this.audioSynthSwoosher.duration);
-        // visual feedback
-        this.renderer.setBkgColor([255, 128, 0]);
-        // audio feedback
-        this.audioSynthSwoosher.play();
+    //     // send play msg with fixed rdv time (sync. clients players)
+    //     this.send('playUp', this.sync.getSyncTime() + this.audioSynthSwoosher.duration);
+    //     // visual feedback
+    //     this.renderer.setBkgColor([255, 128, 0]);
+    //     // audio feedback
+    //     this.audioSynthSwoosher.play();
 
-        // play sound (first ping) when finish swoosh
-        let src = audioContext.createBufferSource();
-        src.buffer = this.loader.buffers[0];
-        let gain = audioContext.createGain();
-        gain.gain.value = 0.025*this.propagParams.masterGain;
-        src.connect(gain);
-        gain.connect(audioContext.destination);
-        src.start( audioContext.currentTime + this.audioSynthSwoosher.duration );
-      }
-    });
+    //     // play sound (first ping) when finish swoosh
+    //     let src = audioContext.createBufferSource();
+    //     console.log(this.loader.buffers, this.audioFileIndex, this.loader.buffers[ this.audioFileIndex ]);
+    //     src.buffer = this.loader.buffers[ this.audioFileIndex ];
+    //     let gain = audioContext.createGain();
+    //     gain.gain.value = 0.025*this.propagParams.masterGain;
+    //     src.connect(gain);
+    //     gain.connect(audioContext.destination);
+    //     src.start( audioContext.currentTime + this.audioSynthSwoosher.duration );
+    //   }
+    // });
+
+    // setup motion input listeners
+    if (this.motionInput.isAvailable('accelerationIncludingGravity')) {
+      this.motionInput.addListener('accelerationIncludingGravity', (data) => {
+        const mag = Math.sqrt(data[0] * data[0] + data[1] * data[1] + data[2] * data[2]);
+        // console.log(mag, data);
+        // clear screen on shaking
+        if( (mag > 50) && (this.status == 0) ){
+
+          // special status state for the emitter, to avoid potential 'double sending' scenarii when shaking the device too lively
+          this.status = -1;
+
+          // send play msg with fixed rdv time (sync. clients players)
+          this.send('playUp', this.sync.getSyncTime() + this.audioSynthSwoosher.duration);
+          // visual feedback
+          this.renderer.setBkgColor([255, 128, 0]);
+          // audio feedback
+          this.audioSynthSwoosher.play();
+
+          // play sound (first ping) when finish swoosh
+          let src = audioContext.createBufferSource();
+          console.log(this.loader.buffers, this.audioFileIndex, this.loader.buffers[ this.audioFileIndex ]);
+          src.buffer = this.loader.buffers[ this.audioFileIndex ];
+          let gain = audioContext.createGain();
+          gain.gain.value = 0.025*this.propagParams.masterGain;
+          src.connect(gain);
+          gain.connect(audioContext.destination);
+          src.start( audioContext.currentTime + this.audioSynthSwoosher.duration );
+
+        }
+      });
+    }
 
     // init websocket
     let url = "ws:" + client.config.socketIO.url.split(":")[1] + ":8080";
@@ -179,7 +235,7 @@ export default class PlayerExperience extends soundworks.Experience {
   onPlay(syncstartTime) {
 
     
-    if( (this.futureIrBuffer !== undefined) && ( this.status == 0 ) ){
+    if( (this.futureIrBuffer !== undefined) && ( this.status < 1 ) ){
       
       this.irBuffer.getChannelData(0).set( this.futureIrBuffer.getChannelData(0) );
 
@@ -198,7 +254,7 @@ export default class PlayerExperience extends soundworks.Experience {
       // create a convolver based on audio sound
       
       var conv = audioContext.createConvolver();
-      conv.buffer = this.loader.buffers[0];
+      conv.buffer = this.loader.buffers[ this.audioFileIndex ];
 
       // create master gain (shared param, controlled from conductor)
       
@@ -249,6 +305,21 @@ export default class PlayerExperience extends soundworks.Experience {
     }
   }
 
+  /*
+  * 
+  */
+  onButtonSelect(index, def) {
+    // this.playerButton.content.definitions.forEach( (value, index2) => { 
+    //   if( index !== index2 ){ value.state = 'unselected'; }
+    // });
+    this.audioFileIndex = index;
+  }
+
+  /*
+  * 
+  */
+  onButtonUnselect(index, def) {
+  }
 
   // -------------------------------------------------------------------------------------------
   // BEACON-RELATED METHODS
@@ -302,15 +373,15 @@ export default class PlayerExperience extends soundworks.Experience {
     this.send('beaconMap', beaconMap);
 
 
-    // log beacons on screen
-    var log = 'Closeby Beacons: </br></br>';
-    pluginResult.beacons.forEach((beacon) => {
-      log += beacon.major + '.' + beacon.minor + ' dist: ' 
-            + Math.round( this.beacon.rssiToDist(beacon.rssi)*100, 2 ) / 100 + 'm' + '</br>' +
-             '(' + beacon.proximity + ')' + '</br></br>';
-    });
-    // diplay beacon list on screen
-    document.getElementById('logValues').innerHTML = log;
+    // // log beacons on screen
+    // var log = 'Closeby Beacons: </br></br>';
+    // pluginResult.beacons.forEach((beacon) => {
+    //   log += beacon.major + '.' + beacon.minor + ' dist: ' 
+    //         + Math.round( this.beacon.rssiToDist(beacon.rssi)*100, 2 ) / 100 + 'm' + '</br>' +
+    //          '(' + beacon.proximity + ')' + '</br></br>';
+    // });
+    // // diplay beacon list on screen
+    // document.getElementById('logValues').innerHTML = log;
 
   }
   // -------------------------------------------------------------------------------------------  

@@ -20,13 +20,18 @@ soundworks.server.init(config);
 const sharedParams = soundworks.server.require('shared-params');
 sharedParams.addText('numPlayers', 'num players', 0, ['conductor']);
 sharedParams.addNumber('masterGain', 'master gain (SI)', 0, 10.0, 0.1, 4.0);
-sharedParams.addNumber('propagationSpeed', 'propagation speed (m.s-1)', 1, 400, 1, 10); // min, max, step, value
+sharedParams.addNumber('propagationSpeed', 'propagation speed (m.s-1)', 1, 344, 1, 10); // min, max, step, value
 sharedParams.addNumber('propagationGain', 'propagation gain (SI.m-1)', 0.1, 0.99, 0.01, 0.8);
 // sharedParams.addNumber('emitterGain', 'emitter gain (SI)', 0.1, 1, 0.01, 1);
 sharedParams.addNumber('thresholdReceiveGain', 'threshold receive gain (SI)', 0.01, 0.5, 0.01, 0.3);
+
+sharedParams.addText('currentPropagationDepth', 'current propag. depth (SI)', 0, ['conductor']);
+sharedParams.addNumber('maxPropagationDepth', 'max propag. depth (SI)', 2, 15, 1, 5);
+
 // sharedParams.addNumber('thresholdReceiveTime', 'threshold receive time (sec)', 0, 20.0, 0.1, 10.0);
 // sharedParams.addTrigger('replayLast', 'replay last');
 sharedParams.addTrigger('reset', 'reset');
+sharedParams.addTrigger('reloadPlayers', 'reload clients (players only)');
 // sharedParams.addNumber('interDeviceDist', 'est. iner device dist (m)', 0.01, 10, 0.01, 1);
 // sharedParams.addText('estimatedSimulationTime', 'est. simulation time (sec)', 0, ['conductor']);
 

@@ -14,11 +14,15 @@ export default class AudioSynthSwoosher  {
         this.filter = audioContext.createBiquadFilter();
         this.filter.type = 'bandpass';
         this.minFreq = 10;
-        this.maxFreq = 20000;
-        this.filter.frequency.value = this.minFreq;
+        this.maxFreq = 4000;
+        this.filter.frequency.value = this.maxFreq;
         this.filter.Q.value = 3;
 
         this.filter.connect(audioContext.destination);
+
+        // bind
+        this.play = this.play.bind(this);
+        this.createNoiseBuffer = this.createNoiseBuffer.bind(this);
     }
 
 
@@ -45,18 +49,20 @@ export default class AudioSynthSwoosher  {
         src.start(0);
 
         this.intervalHandle = setInterval(() => {
-            if( this.filter.frequency.value < this.maxFreq ){
-                let freqStep = (this.maxFreq-this.minFreq) * this.intervalTime / (this.duration * 1000) ;
-                this.filter.frequency.value += freqStep;
-                console.log('jk1');
+            console.log('in interval')
+            if( this.filter.frequency.value > this.minFreq ){
+                console.log(this.filter.frequency.value);
+                // let freqStep = (this.maxFreq-this.minFreq) * this.intervalTime / (this.duration * 1000) ;
+                let freqStep = (this.filter.frequency.value - this.minFreq) / 2 ;
+                this.filter.frequency.value -= freqStep;
             }
-            else{
-                clearInterval(this.intervalHandle);
-                this.filter.frequency.value = this.minFreq;
-                console.log('jk2');
-            } 
+        }, this.intervalTime);
 
-        }, this.intervalTime);        
+        setTimeout( () => {
+            this.filter.frequency.value = this.maxFreq;
+            clearInterval(this.intervalHandle);
+            console.log('reset', this.filter.frequency.value);
+        }, this.duration * 1000);      
     }
 
 

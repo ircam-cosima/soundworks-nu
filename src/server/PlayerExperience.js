@@ -16,6 +16,8 @@ export default class PlayerExperience extends soundworks.Experience {
     // bind methods
     this.propagationWorkerOnMsg = this.propagationWorkerOnMsg.bind(this);
     this.enterPlayer = this.enterPlayer.bind(this);
+    this.startWorker = this.startWorker.bind(this);
+    this.stopWorker = this.stopWorker.bind(this);
 
     // local attributes
     this.playerMap = new Map();
@@ -27,14 +29,7 @@ export default class PlayerExperience extends soundworks.Experience {
   start() {
 
     // setup worker (run method on separate thread)
-    var Worker = require('webworker-threads').Worker;
-    this.propagationWorker = new Worker('./server/propagationWorker.js');
-    this.propagationWorker.onmessage = this.propagationWorkerOnMsg;
-    this.propagationWorker.postMessage( { cmd: 'reset' } );
-    setInterval(() => {
-      // set interval on estimate IRs callback
-      this.propagationWorker.postMessage({ cmd: 'run' });
-    }, 100);
+    this.startWorker();
 
     // setup dedicated websocket server (to handle IR msg: avoid to flood main communication socket)
     var WebSocketServer = require('ws').Server
@@ -49,7 +44,10 @@ export default class PlayerExperience extends soundworks.Experience {
     this.params.addParamListener('propagationSpeed', (value) => this.propagationWorker.postMessage({ cmd: 'propagParam', subcmd: 'speed', data: value }) );
     this.params.addParamListener('propagationGain', (value) => this.propagationWorker.postMessage({ cmd: 'propagParam', subcmd: 'gain', data: value }) );
     this.params.addParamListener('thresholdReceiveGain', (value) => this.propagationWorker.postMessage({ cmd: 'propagParam', subcmd: 'rxMinGain', data: value }) );
-    this.params.addParamListener('reset', () => { this.propagationWorker.postMessage({ cmd: 'reset' }); });
+    this.params.addParamListener('maxPropagationDepth', (value) => this.propagationWorker.postMessage({ cmd: 'propagParam', subcmd: 'maxDepth', data: value }) );
+    this.params.addParamListener('reset', () => { this.stopWorker(); this.startWorker(); });
+    this.params.addParamListener('reloadPlayers', () => { this.broadcast('player', null, 'reload'); });
+    
   }
 
   enter(client) {
@@ -104,24 +102,58 @@ export default class PlayerExperience extends soundworks.Experience {
     }    
   }
 
-  // defines what to do with msg sent by worker thread. msg is IR table: send each client its associated IR
-  propagationWorkerOnMsg (event) {
+  // -------------------------------------------------------------------------------------------
+  // WORKER (PROPAGATION) RELATED METHODS
+  // -------------------------------------------------------------------------------------------
 
-    // loop over received IRs
-    let irTapsTable = event.data;
-    irTapsTable.forEach( (item, index) => {
+  startWorker() {
+    // init worker
+    var Worker = require('webworker-threads').Worker;
+    this.propagationWorker = new Worker('./server/propagationWorker.js');
+    this.propagationWorker.onmessage = this.propagationWorkerOnMsg;
+    this.propagationWorker.postMessage( { cmd: 'reset' } );
     
-      // avoid sending: 1) empty table, 2) to clients who did not receive or process the last IR
-      if( (item !== null) && (item.length > 0) && this.ackowledgedLastIrReceivedMap.get( index ) ){
-        this.ackowledgedLastIrReceivedMap.set( index, false ); // flag client as busy from now
-
-        // format and send IR via dedicated websocket
-        let msgArray = new Float32Array(item);
-        let ws = this.wsMap.get( index );
-        ws.send( msgArray.buffer, { binary: true, mask: false } );
-      }
+    // update worker param based on shared params (usefull after reset)
+    const dataToUpdate = ['propagationSpeed', 'maxPropagationDepth', 'propagationGain', 'thresholdReceiveGain'];
+    this.params._paramData.forEach( (value, index) => {
+      if( dataToUpdate.indexOf(value.name) > -1 )
+        this.params.update(value.name, value.value);
     });
 
+    // set interval on estimate IRs callback
+    this.workerIntervalHandle = setInterval(() => {
+      if( this.propagationWorker !== undefined )
+        this.propagationWorker.postMessage({ cmd: 'run' });
+    }, 100);
+  }
+
+  stopWorker() {
+    clearInterval( this.workerIntervalHandle );
+    this.propagationWorker.postMessage = function() {}; // to avoid raising errors when calling postMessage once worker terminated
+    this.propagationWorker.terminate();
+  }
+
+  // defines what to do with msg sent by worker thread. msg is IR table: send each client its associated IR
+  propagationWorkerOnMsg (event) {
+    if( event.data.type === 'ir' ){
+      // loop over received IRs
+      let irTapsTable = event.data.data;
+      irTapsTable.forEach( (item, index) => {
+      
+        // avoid sending: 1) empty table, 2) to clients who did not receive or process the last IR
+        if( (item !== null) && (item.length > 0) && this.ackowledgedLastIrReceivedMap.get( index ) ){
+          this.ackowledgedLastIrReceivedMap.set( index, false ); // flag client as busy from now
+
+          // format and send IR via dedicated websocket
+          let msgArray = new Float32Array(item);
+          let ws = this.wsMap.get( index );
+          ws.send( msgArray.buffer, { binary: true, mask: false } );
+        }
+      });
+    }
+    else if ( event.data.type === 'depth' ){
+      this.params.update('currentPropagationDepth', event.data.data);
+    }
   }
 
 }

@@ -1,11 +1,9 @@
-self.minDepth = 3;
-self.maxDepth = 5;
-self.currentMaxDepth = self.minDepth;
 self.lastRunningCallbackOver = true;
 self.beaconArrays = [];
 self.beaconArraysFuture = [];
 self.irTapsTable = [];
-self.propagParams = {speed: 10, gain: 0.8, rxMinGain:0.3};
+self.propagParams = {speed: 10, gain: 0.8, rxMinGain:0.3, minDepth:2, maxDepth:5};
+self.currentMaxDepth = self.propagParams.minDepth;
 self.stopRecursiveCalculation = false;
 
 self.onmessage = function (event) {
@@ -34,9 +32,11 @@ self.onmessage = function (event) {
 
         case 'propagParam':
             self.propagParams[event.data.subcmd] = event.data.data;
-            // to get effect as fast as possible
-            self.currentMaxDepth = self.minDepth;
-            break; 
+            // to get effect as fast as possible: reset depth (but when depth concerned)
+            if( (event.data.subcmd !== 'maxDepth') || ( (event.data.subcmd === 'maxDepth') && (event.data.data < self.currentMaxDepth) ) ){
+                self.currentMaxDepth = self.propagParams.minDepth;
+            }
+            break;
 
         case 'close':
             self.close();
@@ -45,9 +45,10 @@ self.onmessage = function (event) {
 }
 
 self.reset = function() {
-    self.lastRunningCallbackOver = true;
+    // self.lastRunningCallbackOver = true;
     self.stopRecursiveCalculation = true;
-    self.currentMaxDepth = self.minDepth;
+    self.currentMaxDepth = self.propagParams.minDepth;
+    console.log('reset in worker');
 }
 
 self.run = function() {
@@ -62,7 +63,7 @@ self.runningCallback = function() {
     self.lastRunningCallbackOver = false;
     
     // reset brutal stop before starting a new calculation
-    if (self.stopRecursiveCalculation )
+    if ( self.stopRecursiveCalculation )
         self.stopRecursiveCalculation = false;
 
     self.beaconArrays = self.beaconArraysFuture;
@@ -80,12 +81,14 @@ self.runningCallback = function() {
     self.recursiveIrFill(emitterId, depth, emitTime, emitPower);
 
     if( self.irTapsTable.length > 0 ){ 
-        postMessage(self.irTapsTable);
+        postMessage( {type: 'ir', data: self.irTapsTable} );
     }
 
     // update max depth
-    self.currentMaxDepth = Math.min(self.currentMaxDepth + 1, self.maxDepth);
-    console.log('max depth:', self.currentMaxDepth);
+    if( self.currentMaxDepth < self.propagParams.maxDepth){
+        self.currentMaxDepth += 1;
+        postMessage( {type: 'depth', data: self.currentMaxDepth} );
+    }
     // if( self.irTapsTable[emitterId] !== undefined ) console.log('length of emitter IR table:', self.irTapsTable[emitterId].length);
 
     // release
