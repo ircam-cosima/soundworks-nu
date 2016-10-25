@@ -15,21 +15,27 @@ window.addEventListener('load', () => {
   // configure appearance of shared parameters
   let defaultSliderSize = 'medium';
   const conductor = new soundworks.BasicSharedController({
-    // numPlayers: { readOnly: true },
-    // state: { type: 'buttons' },
     numPlayers: { readOnly: true },
     masterGain: { type: 'slider', size: defaultSliderSize },
+
+    roomWidth: { type: 'slider', size: defaultSliderSize },
+    roomHeight: { type: 'slider', size: defaultSliderSize },
     propagationSpeed: { type: 'slider', size: defaultSliderSize },
     propagationGain: { type: 'slider', size: defaultSliderSize },
+    scatterAmpl: { type: 'slider', size: defaultSliderSize },
+    scatterAngle: { type: 'slider', size: defaultSliderSize },
+    absorption0: { type: 'slider', size: defaultSliderSize },
+    absorption1: { type: 'slider', size: defaultSliderSize },
+    absorption2: { type: 'slider', size: defaultSliderSize },
+    absorption3: { type: 'slider', size: defaultSliderSize },
+
     // emitterGain: { type: 'slider', size: defaultSliderSize },
     thresholdReceiveGain: { type: 'slider', size: defaultSliderSize },
-    currentPropagationDepth: { readOnly: true },
-    maxPropagationDepth: { type: 'slider', size: defaultSliderSize },
-    // thresholdReceiveTime: { type: 'slider', size: defaultSliderSize },
+    // currentPropagationDepth: { readOnly: true },
+    // maxPropagationDepth: { type: 'slider', size: defaultSliderSize },
     reset: { type: 'buttons' },
-    reloadPlayers: { type: 'buttons' }
-    // interDeviceDist: { type: 'slider', size: defaultSliderSize },
-    // estimatedSimulationTime: { readOnly: true },
+    reloadPlayers: { type: 'buttons' },
+    updatePropagation: { type: 'buttons' }
   });
 
   // start client

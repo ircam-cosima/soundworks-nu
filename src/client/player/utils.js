@@ -42,16 +42,16 @@ export default class AudioSynthSwoosher  {
     }
 
     play(){
-        console.log('play buffer');
+        // console.log('play buffer');
         let src = audioContext.createBufferSource();
         src.buffer = this.buffer;
         src.connect(this.filter);
         src.start(0);
 
         this.intervalHandle = setInterval(() => {
-            console.log('in interval')
+            // console.log('in interval')
             if( this.filter.frequency.value > this.minFreq ){
-                console.log(this.filter.frequency.value);
+                // console.log(this.filter.frequency.value);
                 // let freqStep = (this.maxFreq-this.minFreq) * this.intervalTime / (this.duration * 1000) ;
                 let freqStep = (this.filter.frequency.value - this.minFreq) / 2 ;
                 this.filter.frequency.value -= freqStep;
@@ -61,7 +61,7 @@ export default class AudioSynthSwoosher  {
         setTimeout( () => {
             this.filter.frequency.value = this.maxFreq;
             clearInterval(this.intervalHandle);
-            console.log('reset', this.filter.frequency.value);
+            // console.log('reset', this.filter.frequency.value);
         }, this.duration * 1000);      
     }
 

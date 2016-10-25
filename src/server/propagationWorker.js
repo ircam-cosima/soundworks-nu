@@ -1,3 +1,8 @@
+// import SimulatePropagation from 'SimulatePropagation';
+console.log('work 1');
+importScripts('./server/SimulatePropagation.js');
+console.log('work 2');
+
 self.lastRunningCallbackOver = true;
 self.beaconArrays = [];
 self.beaconArraysFuture = [];
@@ -54,6 +59,7 @@ self.reset = function() {
 self.run = function() {
     if( self.lastRunningCallbackOver ){
         self.runningCallback();
+        console.log('worker run');
     }
 }
 

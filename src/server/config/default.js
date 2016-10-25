@@ -1,6 +1,16 @@
 import path from 'path';
 const cwd = process.cwd();
 
+// build coordinates grid
+const W = 8;
+const H = 3;
+const coordinates = [];
+for(let i = 1; i < W; i ++ ){
+  for(let j = 1; j < H; j ++ ){
+    coordinates.push([i,j]);
+  }
+}
+console.log(coordinates);
 
 // Configuration of the application.
 // Other entries can be added (as long as their name doesn't conflict with
@@ -36,15 +46,15 @@ export default {
   // if one of these service is required, this entry shouldn't be removed.
   setup: {
     area: {
-      width: 1,
-      height: 1,
+      width: W,
+      height: H,
       // path to an image to be used in the area representation
       background: null,
     },
     // list of predefined labels
     labels: null,
     // list of predefined coordinates given as an array of `[x:Number, y:Number]`
-    coordinates: null,
+    coordinates: coordinates,
     // maximum number of clients allowed in a position
     maxClientsPerPosition: 1,
     // maximum number of positions (may limit or be limited by the number of
@@ -54,7 +64,7 @@ export default {
 
   // socket.io configuration
   socketIO: {
-    url: 'http://169.254.176.196:8000', // (for cordova app: this url is soundwork server's)
+    url: 'http://169.254.98.76:8000', // (for cordova app: this url is soundwork server's)
     transports: ['websocket'],
     // @note: EngineIO defaults
     // pingTimeout: 3000,

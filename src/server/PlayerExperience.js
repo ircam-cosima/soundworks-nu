@@ -1,5 +1,7 @@
 import * as soundworks from 'soundworks/server';
 
+import SimulatePropagation from './SimulatePropagation';
+
 const server = soundworks.server;
 
 // server-side 'player' experience.
@@ -10,17 +12,23 @@ export default class PlayerExperience extends soundworks.Experience {
     // require services
     this.checkin = this.require('checkin');
     this.sharedConfig = this.require('shared-config');
+    this.sharedConfig.share('setup', 'mapper'); // share `setup` entry to ... (crashes else)
+    this.sharedConfig.share('setup', 'player'); // share `setup` entry to ... (crashes else)
+    this.sharedConfig.share('socketIO', 'player'); // share `setup` entry to ... (crashes else)
     this.params = this.require('shared-params');
     this.sync = this.require('sync');
 
     // bind methods
-    this.propagationWorkerOnMsg = this.propagationWorkerOnMsg.bind(this);
+    // this.propagationWorkerOnMsg = this.propagationWorkerOnMsg.bind(this);
     this.enterPlayer = this.enterPlayer.bind(this);
-    this.startWorker = this.startWorker.bind(this);
-    this.stopWorker = this.stopWorker.bind(this);
+    this.updatePropagation = this.updatePropagation.bind(this);
+
+    // this.startWorker = this.startWorker.bind(this);
+    // this.stopWorker = this.stopWorker.bind(this);
 
     // local attributes
     this.playerMap = new Map();
+    this.coordinatesMap = new Map();
     this.ackowledgedLastIrReceivedMap = new Map();
     this.wsMap = new Map();    
     this.wss = null;
@@ -28,8 +36,8 @@ export default class PlayerExperience extends soundworks.Experience {
 
   start() {
 
-    // setup worker (run method on separate thread)
-    this.startWorker();
+    // setup and start worker (run method on separate thread)
+    // this.startWorker();
 
     // setup dedicated websocket server (to handle IR msg: avoid to flood main communication socket)
     var WebSocketServer = require('ws').Server
@@ -40,14 +48,31 @@ export default class PlayerExperience extends soundworks.Experience {
       ws.on('message', (message) => { this.wsMap.set( parseInt(message), ws ); });
     });
 
+    // simulate propagation
+    this.propagation = new SimulatePropagation();
+
     // shared parameters binding
-    this.params.addParamListener('propagationSpeed', (value) => this.propagationWorker.postMessage({ cmd: 'propagParam', subcmd: 'speed', data: value }) );
-    this.params.addParamListener('propagationGain', (value) => this.propagationWorker.postMessage({ cmd: 'propagParam', subcmd: 'gain', data: value }) );
-    this.params.addParamListener('thresholdReceiveGain', (value) => this.propagationWorker.postMessage({ cmd: 'propagParam', subcmd: 'rxMinGain', data: value }) );
-    this.params.addParamListener('maxPropagationDepth', (value) => this.propagationWorker.postMessage({ cmd: 'propagParam', subcmd: 'maxDepth', data: value }) );
-    this.params.addParamListener('reset', () => { this.stopWorker(); this.startWorker(); });
-    this.params.addParamListener('reloadPlayers', () => { this.broadcast('player', null, 'reload'); });
+    this.params.addParamListener('roomWidth', (value) => {  this.propagation.room.width = value; });
+    this.params.addParamListener('roomHeight', (value) => { this.propagation.room.height = value; });
+    this.params.addParamListener('scatterAmpl', (value) => { this.propagation.room.scatterAmpl = value; });
+    this.params.addParamListener('scatterAngle', (value) => { this.propagation.room.scatterAngle = value * (Math.PI / 180); });
+    this.params.addParamListener('absorption0', (value) => { this.propagation.room.absorption[0] = value; });
+    this.params.addParamListener('absorption1', (value) => { this.propagation.room.absorption[1] = value; });
+    this.params.addParamListener('absorption2', (value) => { this.propagation.room.absorption[2] = value; });
+    this.params.addParamListener('absorption3', (value) => { this.propagation.room.absorption[3] = value; });
+
+    this.params.addParamListener('propagationSpeed', (value) => { this.propagation.propagParam.speed = value; });
+    this.params.addParamListener('propagationGain', (value) => { this.propagation.propagParam.gain = value; });
+    this.params.addParamListener('thresholdReceiveGain', (value) => { this.propagation.propagParam.rxMinGain = value; });
+    this.params.addParamListener('updatePropagation', () => { this.updatePropagation(); });
     
+    // this.params.addParamListener('propagationSpeed', (value) => this.propagationWorker.postMessage({ cmd: 'propagParam', subcmd: 'speed', data: value }) );
+    // this.params.addParamListener('propagationGain', (value) => this.propagationWorker.postMessage({ cmd: 'propagParam', subcmd: 'gain', data: value }) );
+    // this.params.addParamListener('thresholdReceiveGain', (value) => this.propagationWorker.postMessage({ cmd: 'propagParam', subcmd: 'rxMinGain', data: value }) );
+    // this.params.addParamListener('maxPropagationDepth', (value) => this.propagationWorker.postMessage({ cmd: 'propagParam', subcmd: 'maxDepth', data: value }) );
+    // this.params.addParamListener('reset', () => { this.stopWorker(); this.startWorker(); });
+    // this.params.addParamListener('reloadPlayers', () => { this.broadcast('player', null, 'reload'); console.log('reload')});
+
   }
 
   enter(client) {
@@ -57,6 +82,20 @@ export default class PlayerExperience extends soundworks.Experience {
       case 'player':
         this.enterPlayer(client);
         break;
+      case 'mapper':
+        this.coordinatesMap.forEach( (item, key) => {
+          this.broadcast('mapper', null, 'mapper:playerCoordinates', {index: key, xy: item} );
+        });
+
+        // msg callback: forward 'play sound' instruction
+        this.receive(client, 'playUp', (emitterId) => {
+          // send play msg to clients 
+          let rdvTime = this.sync.getSyncTime() + 1.0;
+          this.broadcast('player', null, 'playDown', emitterId, rdvTime);
+          // console.log("play!!");
+        });      
+          
+        break;        
     }
   }
 
@@ -68,16 +107,42 @@ export default class PlayerExperience extends soundworks.Experience {
     this.params.update('numPlayers', this.playerMap.size);
 
     // update worker
-    this.propagationWorker.postMessage({ cmd: 'reset' });
+    // this.propagationWorker.postMessage({ cmd: 'reset' });
+
+    // msg callback: receive client coordinates (could use local service, this way lets open to auto pos estimation from client in the future)
+    this.receive(client, 'coordinates', (xy) => {
+      this.coordinatesMap.set( client.index, xy );
+      this.broadcast('mapper', null, 'mapper:playerCoordinates', {index: client.index, xy: xy} );
+
+      this.updatePropagation(); // here or after socket creation? need both..
+    });
 
     // msg callback: add client beaconMap to worker's
     this.receive(client, 'beaconMap', (beaconMap) => {
-      this.propagationWorker.postMessage({ cmd: 'addToBeaconMap', index: client.index, data: beaconMap });
+      // this.propagationWorker.postMessage({ cmd: 'addToBeaconMap', index: client.index, data: beaconMap });
     });
 
     // msg callback: forward 'play sound' instruction
-    this.receive(client, 'playUp', (rdvTime) => {
-      this.broadcast('player', null, 'playDown', rdvTime);
+    this.receive(client, 'playUp', (emitterId) => {
+
+      // // mode 1: rought: real-time, emitterPos is discareded for closest player pops which IR is already stored in devices
+      // // get index player of player closest to emitterPos
+      // let dist = Infinity, closestPlayerId = -1;
+      // this.coordinatesMap.forEach( (item, key) => {
+      //   let distTmp = Math.pow(item[0] - emitterPos[0], 2) + Math.pow(item[1] - emitterPos[1], 2);
+      //   if( distTmp < dist ) {
+      //     closestPlayerId = key;
+      //     dist = distTmp;
+      //   }
+      // });
+
+      // mode 2: based on direct emitterId
+
+      // send play msg to clients 
+      let rdvTime = this.sync.getSyncTime() + 1.0;
+      this.broadcast('player', null, 'playDown', emitterId, rdvTime);
+      console.log("play!!");
+
     });
 
     // msg callback: flag client as ready to receive new IR when it received at processed last one
@@ -94,66 +159,109 @@ export default class PlayerExperience extends soundworks.Experience {
       case 'player':
         // update local attributes
         this.playerMap.delete( client.index );
+        this.coordinatesMap.delete( client.index );
         this.ackowledgedLastIrReceivedMap.delete( client.index );
         this.params.update('numPlayers', this.playerMap.size);
+
+        // close socket
+        if( this.wsMap.has( client.index ) ){
+          this.wsMap.get( client.index ).close();
+          this.wsMap.delete( client.index );
+        }
         // update worker attributes
-        this.propagationWorker.postMessage({ cmd: 'removeFromBeaconMap', index: client.index });
+        // this.propagationWorker.postMessage({ cmd: 'removeFromBeaconMap', index: client.index });
+        // update mapper
+        this.broadcast('mapper', null, 'mapper:playerRemoved', client.index );
         break;
     }    
+  }
+
+
+  updatePropagation(){
+
+    // get array of clients positions
+    let posArray = [];
+    let clientIdArray = [];
+    this.coordinatesMap.forEach(( pos, key) => {
+      posArray.push( pos );
+      clientIdArray.push( key );
+    });
+
+    this.coordinatesMap.forEach(( emitterPos, emitterId) => {
+      // consider each client as potential emitter
+      this.propagation.computeSrcImg( emitterPos );
+      // get IR associated for each potential receiver (each client)
+      let data = this.propagation.getIrs( posArray );
+
+      // format and send IR via dedicated websocket
+      data.irsArray.forEach(( ir, receiverId) => {
+        ir.unshift( data.timeMin ); // add time min
+        ir.unshift( emitterId ); // add emitter id
+        let msgArray = new Float32Array( ir );
+        let ws = this.wsMap.get( clientIdArray[ receiverId ] );
+        if( ws !== undefined ){ // if socket connected
+          ws.send( msgArray.buffer, { binary: true, mask: false } );
+        }
+        // console.log(msgArray);
+      });
+
+    });
+    // this.propagation.simulate([2,2], [[2, 2], [3, 2]]);
   }
 
   // -------------------------------------------------------------------------------------------
   // WORKER (PROPAGATION) RELATED METHODS
   // -------------------------------------------------------------------------------------------
 
-  startWorker() {
-    // init worker
-    var Worker = require('webworker-threads').Worker;
-    this.propagationWorker = new Worker('./server/propagationWorker.js');
-    this.propagationWorker.onmessage = this.propagationWorkerOnMsg;
-    this.propagationWorker.postMessage( { cmd: 'reset' } );
+  // startWorker() {
+  //   // init worker
+  //   var Worker = require('webworker-threads').Worker;
+  //   // this.propagationWorker = new Worker('./server/propagationWorker.js');
+  //   this.propagationWorker = new Worker('./server/propagationWorker.js');
+  //   this.propagationWorker.onmessage = this.propagationWorkerOnMsg;
+  //   this.propagationWorker.postMessage( { cmd: 'reset' } );
     
-    // update worker param based on shared params (usefull after reset)
-    const dataToUpdate = ['propagationSpeed', 'maxPropagationDepth', 'propagationGain', 'thresholdReceiveGain'];
-    this.params._paramData.forEach( (value, index) => {
-      if( dataToUpdate.indexOf(value.name) > -1 )
-        this.params.update(value.name, value.value);
-    });
+  //   // update worker param based on shared params (usefull after reset)
+  //   const dataToUpdate = ['propagationSpeed', 'maxPropagationDepth', 'propagationGain', 'thresholdReceiveGain'];
+  //   this.params._paramData.forEach( (value, index) => {
+  //     if( dataToUpdate.indexOf(value.name) > -1 )
+  //       this.params.update(value.name, value.value);
+  //   });
 
-    // set interval on estimate IRs callback
-    this.workerIntervalHandle = setInterval(() => {
-      if( this.propagationWorker !== undefined )
-        this.propagationWorker.postMessage({ cmd: 'run' });
-    }, 100);
-  }
+  //   // set interval on estimate IRs callback
+  //   this.workerIntervalHandle = setInterval(() => {
+  //     if( this.propagationWorker !== undefined )
+  //       this.propagationWorker.postMessage({ cmd: 'run' });
+  //   }, 100);
+  // }
 
-  stopWorker() {
-    clearInterval( this.workerIntervalHandle );
-    this.propagationWorker.postMessage = function() {}; // to avoid raising errors when calling postMessage once worker terminated
-    this.propagationWorker.terminate();
-  }
+  // stopWorker() {
+  //   clearInterval( this.workerIntervalHandle );
+  //   this.propagationWorker.postMessage = function() {}; // to avoid raising errors when calling postMessage once worker terminated
+  //   this.propagationWorker.terminate();
+  // }
 
   // defines what to do with msg sent by worker thread. msg is IR table: send each client its associated IR
-  propagationWorkerOnMsg (event) {
-    if( event.data.type === 'ir' ){
-      // loop over received IRs
-      let irTapsTable = event.data.data;
-      irTapsTable.forEach( (item, index) => {
+  // propagationWorkerOnMsg (event) {
+  //   if( event.data.type === 'ir' ){
+  //     // loop over received IRs
+  //     let irTapsTable = event.data.data;
+  //     irTapsTable.forEach( (item, index) => {
       
-        // avoid sending: 1) empty table, 2) to clients who did not receive or process the last IR
-        if( (item !== null) && (item.length > 0) && this.ackowledgedLastIrReceivedMap.get( index ) ){
-          this.ackowledgedLastIrReceivedMap.set( index, false ); // flag client as busy from now
+  //       // avoid sending: 1) empty table, 2) to clients who did not receive or process the last IR
+  //       if( (item !== null) && (item.length > 0) && this.ackowledgedLastIrReceivedMap.get( index ) ){
+  //         this.ackowledgedLastIrReceivedMap.set( index, false ); // flag client as busy from now
 
-          // format and send IR via dedicated websocket
-          let msgArray = new Float32Array(item);
-          let ws = this.wsMap.get( index );
-          ws.send( msgArray.buffer, { binary: true, mask: false } );
-        }
-      });
-    }
-    else if ( event.data.type === 'depth' ){
-      this.params.update('currentPropagationDepth', event.data.data);
-    }
-  }
+  //         // format and send IR via dedicated websocket
+  //         let msgArray = new Float32Array(item);
+  //         let ws = this.wsMap.get( index );
+  //         ws.send( msgArray.buffer, { binary: true, mask: false } );
+  //       }
+  //     });
+  //   }
+  //   else if ( event.data.type === 'depth' ){
+  //     this.params.update('currentPropagationDepth', event.data.data);
+  //   }
+  // }
 
 }
