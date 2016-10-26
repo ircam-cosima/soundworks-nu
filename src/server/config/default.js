@@ -10,7 +10,6 @@ for(let i = 1; i < W; i ++ ){
     coordinates.push([i,j]);
   }
 }
-console.log(coordinates);
 
 // Configuration of the application.
 // Other entries can be added (as long as their name doesn't conflict with
@@ -64,7 +63,7 @@ export default {
 
   // socket.io configuration
   socketIO: {
-    url: 'http://169.254.98.76:8000', // (for cordova app: this url is soundwork server's)
+    url: 'http://127.0.0.1:8000', // (for cordova app: this url is soundwork server's)
     transports: ['websocket'],
     // @note: EngineIO defaults
     // pingTimeout: 3000,

@@ -17,11 +17,14 @@ export default class PlayerExperience extends soundworks.Experience {
     this.sharedConfig.share('socketIO', 'player'); // share `setup` entry to ... (crashes else)
     this.params = this.require('shared-params');
     this.sync = this.require('sync');
+    this.osc = this.require('osc');
 
     // bind methods
     // this.propagationWorkerOnMsg = this.propagationWorkerOnMsg.bind(this);
     this.enterPlayer = this.enterPlayer.bind(this);
     this.updatePropagation = this.updatePropagation.bind(this);
+    this.initOsc = this.initOsc.bind(this);
+
 
     // this.startWorker = this.startWorker.bind(this);
     // this.stopWorker = this.stopWorker.bind(this);
@@ -32,6 +35,8 @@ export default class PlayerExperience extends soundworks.Experience {
     this.ackowledgedLastIrReceivedMap = new Map();
     this.wsMap = new Map();    
     this.wss = null;
+
+    this.currentSoundId = 0;
   }
 
   start() {
@@ -40,7 +45,7 @@ export default class PlayerExperience extends soundworks.Experience {
     // this.startWorker();
 
     // setup dedicated websocket server (to handle IR msg: avoid to flood main communication socket)
-    var WebSocketServer = require('ws').Server
+    var WebSocketServer = require('ws').Server;
     let host = server.config.socketIO.url.split(":")[1].split("/")[2];
     this.wss = new WebSocketServer({port: 8080, host: host});
     this.wss.on('connection', (ws) => {
@@ -73,6 +78,8 @@ export default class PlayerExperience extends soundworks.Experience {
     // this.params.addParamListener('reset', () => { this.stopWorker(); this.startWorker(); });
     // this.params.addParamListener('reloadPlayers', () => { this.broadcast('player', null, 'reload'); console.log('reload')});
 
+    this.initOsc();
+
   }
 
   enter(client) {
@@ -82,18 +89,19 @@ export default class PlayerExperience extends soundworks.Experience {
       case 'player':
         this.enterPlayer(client);
         break;
-      case 'mapper':
-        this.coordinatesMap.forEach( (item, key) => {
-          this.broadcast('mapper', null, 'mapper:playerCoordinates', {index: key, xy: item} );
-        });
 
-        // msg callback: forward 'play sound' instruction
-        this.receive(client, 'playUp', (emitterId) => {
-          // send play msg to clients 
-          let rdvTime = this.sync.getSyncTime() + 1.0;
-          this.broadcast('player', null, 'playDown', emitterId, rdvTime);
-          // console.log("play!!");
-        });      
+      // case 'mapper':
+      //   this.coordinatesMap.forEach( (item, key) => {
+      //     this.broadcast('mapper', null, 'mapper:playerCoordinates', {index: key, xy: item} );
+      //   });
+
+      //   // msg callback: forward 'play sound' instruction
+      //   this.receive(client, 'playUp', (emitterId, audioFileId) => {
+      //     // send play msg to clients 
+      //     let rdvTime = this.sync.getSyncTime() + 1.0;
+      //     this.broadcast('player', null, 'playDown', emitterId, rdvTime, audioFileId);
+      //     // console.log("play!!");
+      //   });      
           
         break;        
     }
@@ -112,7 +120,10 @@ export default class PlayerExperience extends soundworks.Experience {
     // msg callback: receive client coordinates (could use local service, this way lets open to auto pos estimation from client in the future)
     this.receive(client, 'coordinates', (xy) => {
       this.coordinatesMap.set( client.index, xy );
-      this.broadcast('mapper', null, 'mapper:playerCoordinates', {index: client.index, xy: xy} );
+      // this.broadcast('mapper', null, 'mapper:playerCoordinates', {index: client.index, xy: xy} );
+      
+      // update client pos in osc client
+      this.osc.send('/room/playerPos', [client.index, xy[0], xy[1]] );
 
       this.updatePropagation(); // here or after socket creation? need both..
     });
@@ -122,28 +133,31 @@ export default class PlayerExperience extends soundworks.Experience {
       // this.propagationWorker.postMessage({ cmd: 'addToBeaconMap', index: client.index, data: beaconMap });
     });
 
-    // msg callback: forward 'play sound' instruction
-    this.receive(client, 'playUp', (emitterId) => {
 
-      // // mode 1: rought: real-time, emitterPos is discareded for closest player pops which IR is already stored in devices
-      // // get index player of player closest to emitterPos
-      // let dist = Infinity, closestPlayerId = -1;
-      // this.coordinatesMap.forEach( (item, key) => {
-      //   let distTmp = Math.pow(item[0] - emitterPos[0], 2) + Math.pow(item[1] - emitterPos[1], 2);
-      //   if( distTmp < dist ) {
-      //     closestPlayerId = key;
-      //     dist = distTmp;
-      //   }
-      // });
 
-      // mode 2: based on direct emitterId
 
-      // send play msg to clients 
-      let rdvTime = this.sync.getSyncTime() + 1.0;
-      this.broadcast('player', null, 'playDown', emitterId, rdvTime);
-      console.log("play!!");
+    // // msg callback: forward 'play sound' instruction
+    // this.receive(client, 'playUp', (emitterId, audioFileId) => {
 
-    });
+    //   // // mode 1: rought: real-time, emitterPos is discareded for closest player pops which IR is already stored in devices
+    //   // // get index player of player closest to emitterPos
+    //   // let dist = Infinity, closestPlayerId = -1;
+    //   // this.coordinatesMap.forEach( (item, key) => {
+    //   //   let distTmp = Math.pow(item[0] - emitterPos[0], 2) + Math.pow(item[1] - emitterPos[1], 2);
+    //   //   if( distTmp < dist ) {
+    //   //     closestPlayerId = key;
+    //   //     dist = distTmp;
+    //   //   }
+    //   // });
+
+    //   // mode 2: based on direct emitterId
+
+    //   // send play msg to clients 
+    //   let rdvTime = this.sync.getSyncTime() + 1.0;
+    //   console.log("play!!", audioFileId);
+    //   this.broadcast('player', null, 'playDown', emitterId, rdvTime, audioFileId);
+
+    // });
 
     // msg callback: flag client as ready to receive new IR when it received at processed last one
     this.receive(client, 'ackIrReceived', () => {
@@ -172,6 +186,8 @@ export default class PlayerExperience extends soundworks.Experience {
         // this.propagationWorker.postMessage({ cmd: 'removeFromBeaconMap', index: client.index });
         // update mapper
         this.broadcast('mapper', null, 'mapper:playerRemoved', client.index );
+        // update osc mapper
+        this.osc.send('/room/playerRemoved', client.index );
         break;
     }    
   }
@@ -263,5 +279,61 @@ export default class PlayerExperience extends soundworks.Experience {
   //     this.params.update('currentPropagationDepth', event.data.data);
   //   }
   // }
+
+
+  // ------------------------------------------------------------------------------------------------
+  // OSC Methods
+  // ------------------------------------------------------------------------------------------------
+
+  initOsc(){
+
+    // emit sound at pos in room
+    this.osc.receive('/room/emitPos', (values) => {
+      console.log(values);
+
+      let emitterPos = this.shapeOsc_NumberArray(values);
+
+      // get closest beacon to define as emitter
+      let dist = Infinity; let emitterId = -1;
+      this.coordinatesMap.forEach((item, key) => {
+        let distTmp = Math.sqrt( Math.pow(item[0] - emitterPos[0], 2) + Math.pow(item[1] - emitterPos[1], 2) );
+        console.log(emitterPos, item, distTmp, dist);
+        if( distTmp < dist ){
+          emitterId = key;
+          dist = distTmp;
+        } 
+      });
+      console.log('emitterId:', emitterId, 'dist', dist);
+      if( emitterId > -1 ){
+        let rdvTime = this.sync.getSyncTime() + 1.0;
+        this.broadcast('player', null, 'playDown', emitterId, rdvTime, this.currentSoundId);      
+      }
+    });    
+
+    // send back players position at osc client request
+    this.osc.receive('/room/posRequest', (values) => {
+      this.coordinatesMap.forEach((item, key)=>{
+        console.log(item);
+        this.osc.send('/room/playerPos', [key, item[0], item[1]] );
+      });
+    });    
+
+    // send back players position at osc client request
+    this.osc.receive('/room/emitSoundId', (values) => {      
+      this.currentSoundId = values;
+    });
+
+  }
+
+
+  // convert string to array of numbers
+  shapeOsc_NumberArray(msgIn) {
+    let out = [];
+    let stringArray = msgIn.split(' ');
+    stringArray.forEach((item, index)=>{
+      out.push(Number(item));
+    });
+    return out;
+  }
 
 }

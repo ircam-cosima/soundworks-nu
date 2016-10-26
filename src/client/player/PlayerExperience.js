@@ -92,7 +92,7 @@ export default class PlayerExperience extends soundworks.Experience {
     this.onButtonSelect = this.onButtonSelect.bind(this);
 
     // local attributes
-    this.status = 0;
+    this.status = 0; // counter of number of current sources being played
     this.propagParams = {};
     this.audioAnalyser = new AudioAnalyser();
     this.audioSynthSwoosher = new AudioSynthSwoosher({duration: 1.0, gain:0.4});
@@ -262,11 +262,11 @@ export default class PlayerExperience extends soundworks.Experience {
   * message callback: play final sound. Run when all nodes in the network
   * have their IR ready
   */
-  onPlayDown(irId, syncstartTime) {
+  onPlayDown(irId, syncstartTime, audioFileId) {
 
     // console.log('playing IR:', irId);
 
-    if( this.irBufferMap.has( irId ) && ( this.status < 1 ) ){
+    if( this.irBufferMap.has( irId ) ){
       
       // console.log(this.irBufferMap.get( irId ));
       // create new buffer to avoid clicks when stored buffer is modified by update in propagation
@@ -277,7 +277,7 @@ export default class PlayerExperience extends soundworks.Experience {
       // let irBuffer = this.irBufferMap.get( irId );
 
       // indicate propagation started
-      this.status = 1;
+      this.status += 1;
 
       // Note: In order to be able to render long impulse responses, the
       // `ConvolverNode.buffer` is the original sound, while the
@@ -291,7 +291,8 @@ export default class PlayerExperience extends soundworks.Experience {
       // create a convolver based on audio sound
       
       var conv = audioContext.createConvolver();
-      conv.buffer = this.loader.buffers[ this.audioFileIndex ];
+      conv.buffer = this.loader.buffers[ audioFileId ];
+      console.log('selected sound:', audioFileId, conv.buffer);
 
       // create master gain (shared param, controlled from conductor)
       
@@ -322,14 +323,13 @@ export default class PlayerExperience extends soundworks.Experience {
 
       // timeout callback, runs when we finished playing
       setTimeout(() => {
-        this.status = 0;
+        this.status -= 1;
         this.renderer.setBkgColor([0,0,0]);
       }, ( syncstartTime - this.sync.getSyncTime() + src.buffer.duration + conv.buffer.duration) * 1000);
     }
     else{ // if IR not yet available: slightly flash red then come back to black
       this.renderer.setBkgColor([160,0,0]);
       setTimeout(() => { this.renderer.setBkgColor([0,0,0]); }, 400);
-      this.status = 0; // reset status
     }
 
   }
@@ -338,7 +338,7 @@ export default class PlayerExperience extends soundworks.Experience {
   * Change GUI background color based on current amplitude of sound being played
   */
   updateBkgColor() {
-    if (this.status == 1) {
+    if (this.status >= 1) {
       // call me once, I'll call myself over and over
       requestAnimationFrame(this.updateBkgColor);
       // change background color based on current amplitude

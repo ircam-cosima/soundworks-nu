@@ -3,26 +3,53 @@ import * as soundworksCordova from 'soundworks-cordova/client';
 
 const client = soundworks.client;
 const SpaceView = soundworks.SpaceView;
+const ButtonView = soundworks.ButtonView;
 const View = soundworks.View;
 
 const viewTemplate = `
-  <div class="background fit-container"></div>
-
-  <div class="foreground background-mapper">
+  <div class="background fit-container">
     
-    <div class="section-top flex-middle">
-      <p class="big"> Woodland Map </p> <br>
+    <div class="backgroundMap section-top fit-container-half-top">
+    </div>
+
+    <div class="section-top fit-container-half-top">
+      <div class="backgroundBtn section-top fit-container-half-top"> 
       </div>
-      <div class="section-middle flex-middle">
-      <p class="small"> Room Dimension: &ensp; <%= roomWidth %> x <%= roomHeight %> m<sup>2</sup> </p>
     </div>
 
   </div>
+
+  <div class="foreground background-mapper">
+    <div class="backgroundMap fit-container-half-top">
+      <div class="section-top flex-middle"> 
+        <p class="big"> Woodland Map </p> 
+        <br> 
+      </div>
+  
+      <div class="section-middle flex-middle">
+        <p class="small"> Room Dimension: &ensp; <%= roomWidth %> x <%= roomHeight %> m<sup>2</sup> </p>
+      </div>
+
+
+
+    </div>
+  </div>
+`;
+
+const defaultTemplate = `
+<% definitions.forEach(function(def, index) { %>
+   <button class="btn <%= def.state %>"
+           data-index="<%= index %>"
+           <%= def.state === 'disabled' ? 'disabled' : '' %>
+   >
+     <%= convertName(def.label) %>
+   </button>
+ <% }); %>
 `;
 
 // Room viewer of the Woodland experience
 export default class PlayerExperience extends soundworks.Experience {
-  constructor(assetsDomain) {
+  constructor(assetsDomain, audioFiles) {
     super();
 
     // services 
@@ -32,6 +59,8 @@ export default class PlayerExperience extends soundworks.Experience {
 
     // local attributes
     this.pointsMap = new Map();
+    this.audioFiles = audioFiles;
+    this.currentAudioFileId = 0;
 
     // binding
     this.updateRoom = this.updateRoom.bind(this);
@@ -50,9 +79,19 @@ export default class PlayerExperience extends soundworks.Experience {
     this.view = this.createView();
 
     // create a background `SpaceView` to display players positions and add it to view
-    this.playersSpace = new SpaceView();
-    this.playersSpace.setArea(this.area);
-    this.view.setViewComponent('.background', this.playersSpace);
+    // this.playersSpace = new SpaceView();
+    // this.playersSpace.setArea(this.area);
+    // this.view.setViewComponent('.backgroundMap', this.playersSpace);
+
+    // create options select button
+    let buttonList = []
+    this.audioFiles.forEach((item, index) => { buttonList.push({ label: item.split('sounds/').pop() }) });
+    // const buttonList = [{label:'Sound 1'}, {label:'Sound 2'}, {label:'Sound 3'}];
+    this.playerButton = new ButtonView( buttonList, (index, def) => {this.currentAudioFileId = index;}, null, {template: defaultTemplate, defaultState: 'unselected'} );
+    console.log(this.playerButton.$el.style.height);
+    this.view.setViewComponent('.backgroundBtn', this.playerButton);
+    console.log(this.playerButton.$el.style.height);
+    console.log(this.view);
   }
 
   start() {
@@ -87,7 +126,7 @@ export default class PlayerExperience extends soundworks.Experience {
         } 
       });
       console.log('emitterId:', emitterId, 'dist', dist);
-      if( emitterId > -1 ) this.send('playUp', emitterId);
+      if( emitterId > -1 ) this.send('playUp', emitterId, this.currentAudioFileId);
 
     });
 

@@ -5,6 +5,13 @@ import PlayerExperience from './PlayerExperience.js';
 import viewTemplates from '../shared/viewTemplates';
 import viewContent from '../shared/viewContent';
 
+// list of files to load (passed to the experience)
+const audioFiles = [
+  'sounds/Va-pizz-sec-AD4-ff-2c_c.mp3',
+  'sounds/Va-pizz-sec-CD4-ff-2c_c.mp3',
+  'sounds/Va-pizz-sec-ED4-ff-2c_c.mp3'
+];
+
 // launch application when document is fully loaded
 const init = () => {
   // configuration received from the server through the `index.html`
@@ -17,7 +24,7 @@ const init = () => {
   soundworks.client.setViewTemplateDefinitions(viewTemplates);
 
   // create client side (player) experience
-  const experience = new PlayerExperience(assetsDomain);
+  const experience = new PlayerExperience(assetsDomain, audioFiles);
 
   // start the client
   soundworks.client.start();
