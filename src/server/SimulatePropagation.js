@@ -40,7 +40,6 @@ export default class SimulatePropagation {
 
 	  	});
   	});
-  	// console.log(irArray);
 
   	// return min time so that each client can apply global offset locally (for neg speed), 
   	// and avoids to do a double loop here again
@@ -79,9 +78,11 @@ export default class SimulatePropagation {
   		ampl *= ( 1.0 - this.room.absorption[i] );
   		time = dist / this.propagParam.speed;
   		
-  		// add sources images to array
-  		sourceImage = {order: 1, ampl: ampl, time: time, pos: pos, wallId: i};
-  		this.sourceImageArray.push( sourceImage );
+  		// add sources image to array
+      if( ampl >= this.propagParam.rxMinGain ){
+  		  sourceImage = {order: 1, ampl: ampl, time: time, pos: pos, wallId: i};
+  		  this.sourceImageArray.push( sourceImage );
+      }
 
   		// start direct path (orthogonal)
   		// ampl mod. added here and not before since scatterers are not added in the list themselves (see this as direct + scatterers at same pos)

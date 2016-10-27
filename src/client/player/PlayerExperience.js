@@ -97,7 +97,8 @@ export default class PlayerExperience extends soundworks.Experience {
     this.audioAnalyser = new AudioAnalyser();
     this.audioSynthSwoosher = new AudioSynthSwoosher({duration: 1.0, gain:0.4});
     this.audioFileIndex = 0;
-    this.irBufferMap = new Map();
+    // this.irBufferMap = new Map();
+    this.irMap = new Map();
     this.beaconMap = new Map();
   }
 
@@ -229,22 +230,26 @@ export default class PlayerExperience extends soundworks.Experience {
       irDuration = Math.max(irDuration, irTime[i]);
     }
 
+    // create output object
+    let ir = {times: irTime, gains: irGain, duration: irDuration};
+
     // console.log( irTime, irGain, minTime, emitterId );
 
-    // create IR as float array
-    let ir = new Float32Array(Math.ceil(irDuration * audioContext.sampleRate) + 1);
-    for(let s = 0; s < irTime.length; ++s) {
-        ir[Math.floor(irTime[s] * audioContext.sampleRate)] = irGain[s];
-        console.log('set sample', Math.floor(irTime[s] * audioContext.sampleRate), 'to', irGain[s])
-    }
+    // // create IR as float array
+    // let ir = new Float32Array(Math.ceil(irDuration * audioContext.sampleRate) + 1);
+    // for(let s = 0; s < irTime.length; ++s) {
+    //     ir[Math.floor(irTime[s] * audioContext.sampleRate)] = irGain[s];
+    //     console.log('set sample', Math.floor(irTime[s] * audioContext.sampleRate), 'to', irGain[s])
+    // }
 
-    // transform IR float array to web audio buffer
-    let irBuffer = audioContext.createBuffer(1, Math.max(ir.length, 512), audioContext.sampleRate);
-    irBuffer.getChannelData(0).set(ir);
-    // console.log(irBuffer);
+    // // transform IR float array to web audio buffer
+    // let irBuffer = audioContext.createBuffer(1, Math.max(ir.length, 512), audioContext.sampleRate);
+    // irBuffer.getChannelData(0).set(ir);
+    // // console.log(irBuffer);
 
     // store ir buffer
-    this.irBufferMap.set( emitterId, irBuffer );
+    // this.irBufferMap.set( emitterId, irBuffer );
+    this.irMap.set( emitterId, ir );
 
     // prepare for future use
   
@@ -266,71 +271,119 @@ export default class PlayerExperience extends soundworks.Experience {
 
     // console.log('playing IR:', irId);
 
-    if( this.irBufferMap.has( irId ) ){
-      
-      // console.log(this.irBufferMap.get( irId ));
-      // create new buffer to avoid clicks when stored buffer is modified by update in propagation
-      let irBuffer = audioContext.createBuffer(1, Math.max( this.irBufferMap.get( irId ).length , 512), audioContext.sampleRate);
-      irBuffer.getChannelData(0).set( this.irBufferMap.get( irId ).getChannelData(0) );
-      // console.log(irBuffer.getChannelData(0));
-      // get buffer from local storage
-      // let irBuffer = this.irBufferMap.get( irId );
-
-      // indicate propagation started
-      this.status += 1;
-
-      // Note: In order to be able to render long impulse responses, the
-      // `ConvolverNode.buffer` is the original sound, while the
-      // `AudioBufferSourceNode.buffer` is the actual impulse response.
-
-      // create audio source based on IR buffer
-      
-      var src = audioContext.createBufferSource();
-      src.buffer = irBuffer;
-
-      // create a convolver based on audio sound
-      
-      var conv = audioContext.createConvolver();
-      conv.buffer = this.loader.buffers[ audioFileId ];
-      console.log('selected sound:', audioFileId, conv.buffer);
-
-      // create master gain (shared param, controlled from conductor)
-      
-      var gain = audioContext.createGain();
-      gain.gain.value = this.propagParams.masterGain;
-
-      // connect graph
-      
-      src.connect(conv);
-      conv.connect(gain);
-      gain.connect(audioContext.destination);
-
-      // play sound if rendez-vous time is in the future (else report bug)
-      if (syncstartTime > this.sync.getSyncTime()) {
-        var audioContextStartTime = audioContext.currentTime + syncstartTime - this.sync.getSyncTime() ;
-        src.start(audioContextStartTime);
-        console.log('play scheduled in:', Math.round( (syncstartTime - this.sync.getSyncTime()) *1000)/1000, 'sec', 'at:', syncstartTime);
-      }
-      else {
-        console.warn('no sound played, I received the instruction to play to late');
-        this.renderer.setBkgColor([255, 0, 0]);
-      }
-      
-      // setup screen color = f(amplitude) callback
-      conv.connect(this.audioAnalyser.in);
-      
-      requestAnimationFrame(this.updateBkgColor);
-
-      // timeout callback, runs when we finished playing
-      setTimeout(() => {
-        this.status -= 1;
-        this.renderer.setBkgColor([0,0,0]);
-      }, ( syncstartTime - this.sync.getSyncTime() + src.buffer.duration + conv.buffer.duration) * 1000);
+    // check if designated audioFile exists in loader
+    if( this.loader.buffers[ audioFileId ] == undefined ){
+      console.warn('required audio file id', audioFileId,'not in client index, actual content:', this.loader.options.files);
+      return;
     }
-    else{ // if IR not yet available: slightly flash red then come back to black
+
+    // check if IR not available yet: slightly flash red otherwise
+    if( !this.irMap.has( irId ) ){
       this.renderer.setBkgColor([160,0,0]);
       setTimeout(() => { this.renderer.setBkgColor([0,0,0]); }, 400);
+      console.warn('IR', irId, 'not yet defined in client, need to update propagation');
+      return;
     }
+      
+    let ir = this.irMap.get( irId );
+
+    // console.log(this.irBufferMap.get( irId ));
+    // create new buffer to avoid clicks when stored buffer is modified by update in propagation
+    // let irBuffer = audioContext.createBuffer(1, Math.max( this.irBufferMap.get( irId ).length , 512), audioContext.sampleRate);
+    // irBuffer.getChannelData(0).set( this.irBufferMap.get( irId ).getChannelData(0) );
+    // console.log(irBuffer.getChannelData(0));
+    // get buffer from local storage
+    // let irBuffer = this.irBufferMap.get( irId );
+
+    // indicate propagation started
+    this.status += 1;
+
+    // Note: In order to be able to render long impulse responses, the
+    // `ConvolverNode.buffer` is the original sound, while the
+    // `AudioBufferSourceNode.buffer` is the actual impulse response.
+
+    // create audio source based on IR buffer
+    
+
+
+
+    // create empty sound src
+    let src = audioContext.createBufferSource();
+    let inputBuffer = this.loader.buffers[ audioFileId ];
+    let outputDuration = ir.duration + inputBuffer.duration + 1;
+    let outputBuffer = audioContext.createBuffer(1, Math.max( outputDuration * audioContext.sampleRate, 512), audioContext.sampleRate);
+    
+    // fill sound source with delayed audio buffer version (tap delay line mecanism)
+    // let tmpBuffer;
+    let inputData = inputBuffer.getChannelData(0);
+    let outputData = outputBuffer.getChannelData(0);
+    ir.times.forEach((tapTime, index)=>{
+      // create copy of input buffer and apply tap-specific gain
+      let tapGain = ir.gains[index];
+      // tmpBuffer = inputBuffer.getChannelData(0).map(x => x * tapGain); // doesn't work in safary
+      // tmpBuffer = inputBuffer.getChannelData(0).map(x => x * tapGain);
+      
+      // add input buffer to output buffer
+      let tapdelayInSample = Math.floor( tapTime * audioContext.sampleRate );
+
+      // outputBuffer.getChannelData(0).set(tmpBuffer, tapdelayInSample);
+
+      for( let i = 0; i < inputBuffer.length; i++ ){
+        outputData[tapdelayInSample + i] += ( tapGain * inputData[i] );
+      }
+      // tmpBuffer.copyFromChannel(tmpBuffer, 0, tapTime * audioContext.sampleRate);
+      // console.log('add', tmpBuffer.length, 'samples in', [tapdelayInSample, tmpBuffer.length + tapdelayInSample],'/', outputBuffer.length);
+      if( (inputBuffer.length + tapdelayInSample) > outputBuffer.length ) console.warn('HJKFDSHJKFDS')
+    });
+
+    // normalize
+    let maxOutputValue = 0.0; 
+    for( let i = 0; i < outputBuffer.length; i++ ){
+      maxOutputValue = Math.max(Math.abs(outputData[i]), maxOutputValue);
+    }      
+    // let normFactor = Math.max.apply(null, ir.gains) / Math.max.apply(null, outputBuffer); // bug if buffer too big
+    let normFactor = Math.max.apply(null, ir.gains) / Math.max(maxOutputValue, 1.0);
+    console.log('max:', maxOutputValue,'norm:', normFactor);
+    // outputBuffer.getChannelData(0).set( outputBuffer.getChannelData(0).map(x => x * normFactor) ); // not supported in safari yet
+
+
+
+    src.buffer = outputBuffer;
+
+    // create a convolver based on audio sound
+    // var conv = audioContext.createConvolver();
+    // conv.buffer = this.loader.buffers[ audioFileId ];
+    // console.log('selected sound:', audioFileId, conv.buffer);
+
+    // create master gain (shared param, controlled from conductor)
+    let gain = audioContext.createGain();
+    gain.gain.value = normFactor * this.propagParams.masterGain;
+
+    // connect graph
+    src.connect(gain);
+    gain.connect(audioContext.destination);
+
+    // play sound if rendez-vous time is in the future (else report bug)
+    if (syncstartTime > this.sync.getSyncTime()) {
+      var audioContextStartTime = audioContext.currentTime + syncstartTime - this.sync.getSyncTime() ;
+      src.start(audioContextStartTime);
+      console.log('play scheduled in:', Math.round( (syncstartTime - this.sync.getSyncTime()) *1000)/1000, 'sec', 'at:', syncstartTime);
+    }
+    else {
+      console.warn('no sound played, I received the instruction to play to late');
+      this.renderer.setBkgColor([255, 0, 0]);
+    }
+    
+    // setup screen color = f(amplitude) callback
+    src.connect(this.audioAnalyser.in);
+    
+    requestAnimationFrame(this.updateBkgColor);
+
+    // timeout callback, runs when we finished playing
+    setTimeout(() => {
+      this.status -= 1;
+      if( this.status == 0 ){ this.renderer.setBkgColor([0,0,0]); }
+    }, ( syncstartTime - this.sync.getSyncTime() + src.buffer.duration) * 1000);
 
   }
 
