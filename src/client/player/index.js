@@ -7,6 +7,7 @@ import viewContent from '../shared/viewContent';
 
 // list of files to load (passed to the experience)
 const audioFiles = [
+  'sounds/drum-loop.wav',
   'sounds/Va-pizz-sec-AD4-ff-2c_c.mp3',
   'sounds/Va-pizz-sec-CD4-ff-2c_c.mp3',
   'sounds/Va-pizz-sec-ED4-ff-2c_c.mp3'

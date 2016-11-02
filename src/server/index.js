@@ -20,7 +20,7 @@ soundworks.server.init(config);
 const sharedParams = soundworks.server.require('shared-params');
 sharedParams.addText('numPlayers', 'num players', 0, ['conductor']);
 
-sharedParams.addNumber('masterGain', 'master gain (SI)', 0, 10.0, 0.1, 4.0);
+sharedParams.addNumber('masterGain', 'master gain (SI)', 0, 10.0, 0.1, 1.0);
 sharedParams.addTrigger('reloadPlayers', 'reload clients (players only)');
 
 sharedParams.addText('', '', 'Room parameters:', ['conductor']);
