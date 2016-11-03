@@ -4,9 +4,10 @@ import * as soundworksCordova from 'soundworks-cordova/client';
 import PlayerRenderer from './PlayerRenderer';
 import NuRoomReverb from './NuRoomReverb';
 import NuGroups from './NuGroups';
+import NuPath from './NuPath';
 
 // import AudioSynthSwoosher from './utils';
-
+import * as utils from './utils';
 const audioContext = soundworks.audioContext;
 const client = soundworks.client;
 // const ButtonView = soundworks.ButtonView;
@@ -101,13 +102,14 @@ export default class PlayerExperience extends soundworks.Experience {
     this.send('coordinates', this.coordinates);
 
     // param listeners
-    this.params.addParamListener('masterGain', (value) => this.propagParams.masterGain = value);
+    // this.params.addParamListener('masterGain', (value) => this.propagParams.masterGain = value);
     this.params.addParamListener('reloadPlayers', () => { window.location.reload(true);
       console.log('RELOAD') });
 
     // init Nu modules
     this.nuRoomReverb = new NuRoomReverb(this);
     this.nuGroups = new NuGroups(this);
+    this.nuPath = new NuPath(this);
 
     // // create touch event, used to send the first message
     // const surface = new soundworks.TouchSurface(this.view.$el);

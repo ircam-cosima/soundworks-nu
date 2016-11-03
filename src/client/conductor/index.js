@@ -29,13 +29,10 @@ window.addEventListener('load', () => {
     absorption2: { type: 'slider', size: defaultSliderSize },
     absorption3: { type: 'slider', size: defaultSliderSize },
 
-    // emitterGain: { type: 'slider', size: defaultSliderSize },
-    thresholdReceiveGain: { type: 'slider', size: defaultSliderSize },
-    // currentPropagationDepth: { readOnly: true },
-    // maxPropagationDepth: { type: 'slider', size: defaultSliderSize },
-    reset: { type: 'buttons' },
-    reloadPlayers: { type: 'buttons' },
-    updatePropagation: { type: 'buttons' }
+    // thresholdReceiveGain: { type: 'slider', size: defaultSliderSize },
+    // reset: { type: 'buttons' },
+    // reloadPlayers: { type: 'buttons' },
+    // updatePropagation: { type: 'buttons' }
   });
 
   // start client

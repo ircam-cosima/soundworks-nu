@@ -20,7 +20,7 @@ soundworks.server.init(config);
 const sharedParams = soundworks.server.require('shared-params');
 sharedParams.addText('numPlayers', 'num players', 0, ['conductor']);
 
-sharedParams.addNumber('masterGain', 'master gain (SI)', 0, 10.0, 0.1, 1.0);
+// sharedParams.addNumber('masterGain', 'master gain (SI)', 0, 10.0, 0.1, 1.0);
 sharedParams.addTrigger('reloadPlayers', 'reload clients (players only)');
 
 sharedParams.addText('', '', 'Room parameters:', ['conductor']);
@@ -35,15 +35,15 @@ sharedParams.addNumber('absorption1', 'absorption up (%)', 0.0, 1.0, 0.01, 0.6);
 sharedParams.addNumber('absorption2', 'absorption right (%)', 0.0, 1.0, 0.01, 0.6);
 sharedParams.addNumber('absorption3', 'absorption down (%)', 0.0, 1.0, 0.01, 0.6);
 
-sharedParams.addText(' ', '', 'Propagation parameters:', ['conductor']); // change section (dummy param)
+// sharedParams.addText(' ', '', 'Propagation parameters:', ['conductor']); // change section (dummy param)
 
-sharedParams.addNumber('propagationSpeed', 'propagation speed (m.s-1)', -20, 340, 1, 4); // min, max, step, value
-sharedParams.addNumber('propagationGain', 'propagation gain (SI.m-1)', 0.1, 0.99, 0.01, 0.8);
-// sharedParams.addNumber('emitterGain', 'emitter gain (SI)', 0.1, 1, 0.01, 1);
-sharedParams.addNumber('thresholdReceiveGain', 'threshold receive gain (SI)', 0.01, 0.5, 0.01, 0.3);
+// sharedParams.addNumber('propagationSpeed', 'propagation speed (m.s-1)', -20, 340, 1, 4); // min, max, step, value
+// sharedParams.addNumber('propagationGain', 'propagation gain (SI.m-1)', 0.1, 0.99, 0.01, 0.8);
+// // sharedParams.addNumber('emitterGain', 'emitter gain (SI)', 0.1, 1, 0.01, 1);
+// sharedParams.addNumber('thresholdReceiveGain', 'threshold receive gain (SI)', 0.01, 0.5, 0.01, 0.3);
 
-sharedParams.addText(' ', '', 'Propagation parameters:', ['conductor']); // change section (dummy param)
-sharedParams.addTrigger('updatePropagation', 'update propagation');
+// sharedParams.addText(' ', '', 'Propagation parameters:', ['conductor']); // change section (dummy param)
+// sharedParams.addTrigger('updatePropagation', 'update propagation');
 
 // sharedParams.addText('currentPropagationDepth', 'current propag. depth (SI)', 0, ['conductor']);
 // sharedParams.addNumber('maxPropagationDepth', 'max propag. depth (SI)', 2, 15, 1, 5);

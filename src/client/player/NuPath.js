@@ -1,12 +1,12 @@
 /**
- * NuRoomReverb: Nu module that simulates room reverb
+ * NuPath: Nu module that simulates "lightning" (kind of..) 
  **/
 
 import * as soundworks from 'soundworks/client';
 const client = soundworks.client;
 const audioContext = soundworks.audioContext;
 
-export default class NuRoomReverb {
+export default class NuPath {
   constructor(soundworksClient) {
 
     // local attributes
@@ -17,25 +17,18 @@ export default class NuRoomReverb {
     // binding
     this.onWebSocketOpen = this.onWebSocketOpen.bind(this);
     this.onWebSocketEvent = this.onWebSocketEvent.bind(this);
+    this.startPath = this.startPath.bind(this);
 
     // setup receive callbacks
-    this.soundworksClient.receive('nuRoomReverb', (args) => {
-    	console.log(args);
-      let paramName = args.shift();
-      // function
-      if (paramName == 'emitAtPos') {
-        let irId = args.shift();
-        let syncStartTime = args.shift();
-        this.emitAtPos(irId, syncStartTime);
-      }
-      // or argument 
-      else {
-        this.params[paramName] = Number(args[0]);
-      }
+    this.soundworksClient.receive('nuPath', (args) => {
+		console.log(args);
+		let paramName = args.shift();
+		// update param
+		this.params[paramName] = Number(args);
     });
 
     // setup receive callbacks
-    this.soundworksClient.receive('nuRoomReverbInternal_initParam', (params) => {
+    this.soundworksClient.receive('nuPathInternal_initParam', (params) => {
         // set all local parameters based on server's 
         // (for late arrivals, if OSC client alreay defined some earlier)
         Object.keys(params).forEach( (key) => { 
@@ -43,8 +36,11 @@ export default class NuRoomReverb {
         });
     });    
 
+    // setup receive callbacks
+    this.soundworksClient.receive('nuPathInternal_startPath', this.startPath);   
+
     // init websocket (used to receive IR)
-    let port = 8080;
+    let port = 8081;
     let urlTmp = this.soundworksClient.sharedConfig.get('socketIO.url');
     let url = "ws:" + urlTmp.split(":")[1] + ":" + port;
     console.log('connecting websocket to', url);
@@ -68,10 +64,10 @@ export default class NuRoomReverb {
     let interleavedIrArray = new Float32Array(event.data);
 
     // extract header
-    let emitterId = interleavedIrArray[0];
+    let pathId = interleavedIrArray[0];
     let minTime = interleavedIrArray[1];
-    console.log(interleavedIrArray);
     interleavedIrArray = interleavedIrArray.slice(2, interleavedIrArray.length);
+    console.log('pathId', pathId, 'minTime', minTime, 'ir', interleavedIrArray);
 
     // de-interleave + get max delay for IR buffer size
     let irTime = [],
@@ -83,44 +79,18 @@ export default class NuRoomReverb {
       irDuration = Math.max(irDuration, irTime[i]);
     }
 
-    // create output object
+    // store ir
     let ir = { times: irTime, gains: irGain, duration: irDuration };
-
-    // console.log( irTime, irGain, minTime, emitterId );
-
-    // // create IR as float array
-    // let ir = new Float32Array(Math.ceil(irDuration * audioContext.sampleRate) + 1);
-    // for(let s = 0; s < irTime.length; ++s) {
-    //     ir[Math.floor(irTime[s] * audioContext.sampleRate)] = irGain[s];
-    //     console.log('set sample', Math.floor(irTime[s] * audioContext.sampleRate), 'to', irGain[s])
-    // }
-
-    // // transform IR float array to web audio buffer
-    // let irBuffer = audioContext.createBuffer(1, Math.max(ir.length, 512), audioContext.sampleRate);
-    // irBuffer.getChannelData(0).set(ir);
-    // // console.log(irBuffer);
-
-    // store ir buffer
-    // this.irBufferMap.set( emitterId, irBuffer );
-    this.irMap.set(emitterId, ir);
-
-    // prepare for future use
-
-
-
-    // inform server we're ready to receive new IR
-    // this.send('ackIrReceived');
+    this.irMap.set(pathId, ir);
 
     // feedback user that IR has been loaded 
     this.soundworksClient.renderer.setBkgColor([50, 50, 50]);
   }
 
-
-
   /*
    * message callback: play sound
    */
-  emitAtPos(irId, syncStartTime) {
+  startPath(irId, syncStartTime) {
 
     // check if designated audioFile exists in loader
     if (this.soundworksClient.loader.buffers[this.params.audioFileId] == undefined) {

@@ -84,8 +84,8 @@ export default class PlayerRenderer extends soundworks.Renderer {
       // call me once, I'll call myself over and over
       requestAnimationFrame(this.updateBkgColor);
       // change background color based on current amplitude
-      let amp = 200 * this.audioAnalyser.getAmplitude();
-      let rgb = [amp, 50 + amp, 50 + amp];
+      let amp = 250 * this.audioAnalyser.getAmplitude();
+      let rgb = [amp, amp, amp];
       this.setBkgColor(rgb);
     }
   }
@@ -122,7 +122,7 @@ class AudioAnalyser {
       amplitude += this.freqs[i];
     }
 
-    let norm = this.in.frequencyBinCount * 32; // arbitrary value, to be cleaned
+    let norm = this.in.frequencyBinCount * 100; // arbitrary value, to be cleaned
     return amplitude / norm;
   }
 

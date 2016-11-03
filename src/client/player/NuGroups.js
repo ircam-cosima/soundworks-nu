@@ -36,7 +36,7 @@ export default class NuGroups {
     });
 
     // setup receive callbacks
-    this.soundworksClient.receive('groupMap', (groupArrayFromMap) => {
+    this.soundworksClient.receive('nuGroupsInternal_groupMap', (groupArrayFromMap) => {
       // init local groups based on server's
       groupArrayFromMap.forEach((arrayFromMap) => {
         // extract data from array
@@ -112,7 +112,7 @@ export default class NuGroups {
     // get group
     let group = this.getGroup( groupId );
     // set group value
-    group.src.loop(value); 
+    group.src.loop = value;
   }
 
   getGroup(groupId) {
@@ -179,13 +179,8 @@ class AudioSourceNode {
 
     this.buffer = buffer;
     this.src = this.getNewSource();
-    // this.loop = false;
-    this.loopState = 0;
+    this._loop = 0;
 
-    this.status = 0;
-    // 0: full, ready to start
-    // 1 started
-    // -1: either finished or stopped: need to reset source
   }
 
   start(time = 0){
@@ -207,11 +202,10 @@ class AudioSourceNode {
     }
   }
 
-  loop(value){
-    // this.shouldLoop = value; // need different name than function to avoid recursive death
-    this.loopState = value;
+  set loop(value){
+    this._loop = value;
     this.src.loop = value;
-    console.log('set source loop', this.loopState);
+    console.log('set source loop', this._loop);
   }
 
   getNewSource(){
@@ -220,7 +214,7 @@ class AudioSourceNode {
     // fill in buffer
     src.buffer = this.buffer;
     // set src attributes
-    src.loop = this.loop;
+    src.loop = this._loop;
     // connect graph
     src.connect(this.out);
     return src;

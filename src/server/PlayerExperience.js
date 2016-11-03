@@ -3,6 +3,7 @@ import * as soundworks from 'soundworks/server';
 import RawSocketStreamer from './RawSocketStreamer';
 import NuRoomReverb from './NuRoomReverb';
 import NuGroups from './NuGroups';
+import NuPath from './NuPath';
 
 const server = soundworks.server;
 
@@ -38,6 +39,7 @@ export default class PlayerExperience extends soundworks.Experience {
     // init Nu modules
     this.nuRoomReverb = new NuRoomReverb(this);
     this.nuGroups = new NuGroups(this);
+    this.nuPath = new NuPath(this);
 
     // 
     this.initOsc();
@@ -70,7 +72,9 @@ export default class PlayerExperience extends soundworks.Experience {
     // this.propagationWorker.postMessage({ cmd: 'reset' });
 
     // init nu modules
+    this.nuRoomReverb.enterPlayer(client);
     this.nuGroups.enterPlayer(client);
+    this.nuPath.enterPlayer(client);
 
     // msg callback: receive client coordinates (could use local service, this way lets open to auto pos estimation from client in the future)
     this.receive(client, 'coordinates', (xy) => {
@@ -97,6 +101,9 @@ export default class PlayerExperience extends soundworks.Experience {
         this.playerMap.delete( client.index );
         this.coordinatesMap.delete( client.index );
         this.params.update('numPlayers', this.playerMap.size);
+
+        // close modules
+        this.nuPath.exitPlayer(client);
 
         // close socket
         this.rawSocketStreamer.close( client.index );
@@ -140,6 +147,10 @@ export default class PlayerExperience extends soundworks.Experience {
       let moduleName = args.shift();
       this.broadcast('player', null, moduleName, args);
     });
+
+    // send OSC client msg when server started 
+    // (TOFIX: delayed in setTimeout for now because OSC not init at start.)
+    setTimeout( () => { this.osc.send('/nuMain/serverStart', 1); }, 1000);
 
   }
 

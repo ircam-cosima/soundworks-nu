@@ -10,21 +10,31 @@ export default class NuRoomReverb {
 
     // local attributes
     this.soundworksServer = soundworksServer;
-    this.propagation = new SimulatePropagation();
+    this.propagation = new SimulatePropagation(this);
+    // to be saved params to send to client when connects:
+    this.params = { masterGain: 1.0, 
+                    propagationSpeed: 1.0, 
+                    propagationGain: 0.85, 
+                    propagationRxMinGain: 0.3, 
+                    audioFileId: 0, 
+                    perc: 1, 
+                    loop: true, 
+                    accSlope: 0, 
+                    timeBound: 0 };
 
     // general router towards internal functions when msg concerning the server (i.e. not player) is received
     this.soundworksServer.osc.receive('/server', (msg) => {
 
       // shape msg into array of arguments      
       let args = msg.split(' ');
-      console.log('roomreverb', args)
       // check if msg concerns current Nu module
       if (args[0] !== 'nuRoomReverb') return;
       else args.shift();
-      console.log('roomreverb', args)
+      console.log('roomreverb', args);
       // call function associated with first arg in msg
-      let functionName = args.shift();
-      this[functionName](args);
+      let name = args.shift();
+      if( name == 'emitAtPos' || name == 'updatePropagation' ) this[name](args); // function call
+      else this.params[name] = Number(args); // parameter set
     });
 
 
@@ -38,13 +48,15 @@ export default class NuRoomReverb {
     this.soundworksServer.params.addParamListener('absorption2', (value) => { this.propagation.room.absorption[2] = value; });
     this.soundworksServer.params.addParamListener('absorption3', (value) => { this.propagation.room.absorption[3] = value; });
 
-    this.soundworksServer.params.addParamListener('propagationSpeed', (value) => { this.propagation.propagParam.speed = value; });
-    this.soundworksServer.params.addParamListener('propagationGain', (value) => { this.propagation.propagParam.gain = value; });
-    this.soundworksServer.params.addParamListener('thresholdReceiveGain', (value) => { this.propagation.propagParam.rxMinGain = value; });
-    this.soundworksServer.params.addParamListener('updatePropagation', () => { this.updatePropagation(); });
-
+    // bind
     this.updatePropagation = this.updatePropagation.bind(this);
+    this.enterPlayer = this.enterPlayer.bind(this);
 
+  }
+
+  enterPlayer(client){
+    // send to new client information regarding current groups parameters
+    this.soundworksServer.send(client, 'nuRoomReverbInternal_initParam', this.params);
   }
 
   updatePropagation(){
@@ -97,10 +109,10 @@ export default class NuRoomReverb {
     });
     console.log('emitterId:', emitterId, 'dist', dist);
 
-    // if found discrete emitter pos (i.. player), broadcast msg to players to trigger propagation
+    // if found discrete emitter pos (i.e. player), broadcast msg to players to trigger propagation
     if (emitterId > -1) {
       let rdvTime = this.soundworksServer.sync.getSyncTime() + 2.0;
-      this.soundworksServer.broadcast('player', null, 'roomReverb', ['emitAtPos', emitterId, rdvTime] );
+      this.soundworksServer.broadcast('player', null, 'nuRoomReverb', ['emitAtPos', emitterId, rdvTime] );
     }
 
   }
@@ -111,7 +123,7 @@ export default class NuRoomReverb {
 
 
 class SimulatePropagation {
-  constructor() {
+  constructor(parent) {
 
     this.room = {
       origin: [0, 0],
@@ -122,10 +134,9 @@ class SimulatePropagation {
       scatterAngle: Math.PI / 13.5
     };
 
-    this.propagParam = { speed: 0.3, gain: 0.9, rxMinGain: 0.1 };
+    this.parent = parent;
 
     this.sourceImageArray = [];
-
   }
 
   getIrs(speakerPosArray) {
@@ -135,6 +146,11 @@ class SimulatePropagation {
     // this.sourceImageArray.forEach((value, index) => {
     //  console.log(value.order, value.ampl, value.time, value.pos[0], value.pos[1], value.wallId);
     // });
+    
+    let propagationGain = this.parent.params.propagationGain;
+    let propagationSpeed = this.parent.params.propagationSpeed;
+    if( Math.abs(propagationSpeed) < 0.1 ) propagationSpeed = 0.1;
+    let propagationRxMinGain = this.parent.params.propagationRxMinGain;
 
     // compute IR from sources images for all sensors (player)
     let irArray = [];
@@ -143,9 +159,9 @@ class SimulatePropagation {
       irArray[index] = [];
       this.sourceImageArray.forEach((srcImg, index2) => {
         dist = Math.sqrt(Math.pow(srcImg.pos[0] - spkPos[0], 2) + Math.pow(srcImg.pos[1] - spkPos[1], 2));
-        time = srcImg.time + (dist / this.propagParam.speed);
-        gain = srcImg.ampl * Math.pow(this.propagParam.gain, dist);
-        if (gain >= this.propagParam.rxMinGain) {
+        time = srcImg.time + ( dist / propagationSpeed );
+        gain = srcImg.ampl * Math.pow( propagationGain, dist );
+        if (gain >= propagationRxMinGain) {
           // push IR in array
           irArray[index].push(time, gain);
           // prepare handle neg speed
@@ -164,6 +180,11 @@ class SimulatePropagation {
   computeSrcImg(emitterPos) {
 
     this.sourceImageArray = [];
+
+    let propagationGain = this.parent.params.propagationGain;
+    let propagationSpeed = this.parent.params.propagationSpeed;
+    if( Math.abs(propagationSpeed) < 0.1 ) propagationSpeed = 0.1;
+    let propagationRxMinGain = this.parent.params.propagationRxMinGain;
 
     // add emitter to source images
     this.sourceImageArray.push({ order: 0, ampl: 1, time: 0, pos: emitterPos, wallId: -1 });
@@ -185,12 +206,12 @@ class SimulatePropagation {
         dist = this.room.height - emitterPos[1];
       }
 
-      ampl = Math.pow(this.propagParam.gain, dist);
+      ampl = Math.pow( propagationGain, dist );
       ampl *= (1.0 - this.room.absorption[i]);
-      time = dist / this.propagParam.speed;
+      time = dist / propagationSpeed;
 
       // add sources image to array
-      if (ampl >= this.propagParam.rxMinGain) {
+      if( ampl >= propagationRxMinGain ) {
         sourceImage = { order: 1, ampl: ampl, time: time, pos: pos, wallId: i };
         this.sourceImageArray.push(sourceImage);
       }
@@ -218,9 +239,11 @@ class SimulatePropagation {
   }
 
   propagateFrom(sourceImage, vectDir) {
-    // console.log('');
-    // console.log('sourceImage:', sourceImage, 'vectDir:', vectDir);
-    // console.log('sourceImage:', sourceImage);
+    
+    let propagationGain = this.parent.params.propagationGain;
+    let propagationSpeed = this.parent.params.propagationSpeed;
+    if( Math.abs(propagationSpeed) < 0.1 ) propagationSpeed = 0.1;
+    let propagationRxMinGain = this.parent.params.propagationRxMinGain;
 
     // get next source image pos
     let hitResult = this.getIntersectionWithWall(sourceImage.pos, vectDir);
@@ -233,13 +256,13 @@ class SimulatePropagation {
 
       // compute new ampl. (with wall abs)
       let dist = Math.sqrt(Math.pow(newPos[0] - sourceImage.pos[0], 2) + Math.pow(newPos[1] - sourceImage.pos[1], 2));
-      let newAmpl = sourceImage.ampl * Math.pow(this.propagParam.gain, dist) * (1.0 - this.room.absorption[hitWallIndex]);
+      let newAmpl = sourceImage.ampl * Math.pow(propagationGain, dist) * (1.0 - this.room.absorption[hitWallIndex]);
       // console.log(dist, sourceImage.ampl, newAmpl, hitWallIndex);
 
-      if (newAmpl >= this.propagParam.rxMinGain) {
+      if (newAmpl >= propagationRxMinGain) {
 
         // add source image to list
-        let newTime = sourceImage.time + dist / this.propagParam.speed;
+        let newTime = sourceImage.time + dist / propagationSpeed;
         let newSourceImage = { order: sourceImage.order + 1, ampl: newAmpl, time: newTime, pos: newPos, wallId: hitWallIndex };
         this.sourceImageArray.push(newSourceImage);
 

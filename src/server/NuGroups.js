@@ -62,7 +62,7 @@ export default class NuGroups {
 
   enterPlayer(client){
     // send to new client information regarding current groups parameters
-    this.soundworksServer.send(client, 'groupMap', this.groupMap);
+    this.soundworksServer.send(client, 'nuGroupsInternal_groupMap', this.groupMap);
   }
 
 
