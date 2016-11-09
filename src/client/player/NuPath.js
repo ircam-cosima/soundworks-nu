@@ -70,8 +70,8 @@ export default class NuPath {
     console.log('pathId', pathId, 'minTime', minTime, 'ir', interleavedIrArray);
 
     // de-interleave + get max delay for IR buffer size
-    let irTime = [],
-      irGain = [],
+    let irTime = [0.0], // init at zero to handle scenarii where IR array is empty
+      irGain = [0.0],
       irDuration = 0.0;
     for (let i = 0; i < interleavedIrArray.length / 2; i++) {
       irTime[i] = interleavedIrArray[2 * i] - minTime;

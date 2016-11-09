@@ -4,6 +4,7 @@ import RawSocketStreamer from './RawSocketStreamer';
 import NuRoomReverb from './NuRoomReverb';
 import NuGroups from './NuGroups';
 import NuPath from './NuPath';
+import NuLoop from './NuLoop';
 
 const server = soundworks.server;
 
@@ -40,6 +41,7 @@ export default class PlayerExperience extends soundworks.Experience {
     this.nuRoomReverb = new NuRoomReverb(this);
     this.nuGroups = new NuGroups(this);
     this.nuPath = new NuPath(this);
+    this.nuLoop = new NuLoop(this);
 
     // 
     this.initOsc();
@@ -75,6 +77,7 @@ export default class PlayerExperience extends soundworks.Experience {
     this.nuRoomReverb.enterPlayer(client);
     this.nuGroups.enterPlayer(client);
     this.nuPath.enterPlayer(client);
+    this.nuLoop.enterPlayer(client);
 
     // msg callback: receive client coordinates (could use local service, this way lets open to auto pos estimation from client in the future)
     this.receive(client, 'coordinates', (xy) => {
@@ -124,7 +127,7 @@ export default class PlayerExperience extends soundworks.Experience {
   initOsc(){  
 
     // osc related binding
-    this.posRequest = this.posRequest.bind(this);
+    this.updateRequest = this.updateRequest.bind(this);
 
     // general router towards internal functions when msg concerning the server (i.e. not player) is received
     this.osc.receive('/server', (msg) => {
@@ -150,14 +153,17 @@ export default class PlayerExperience extends soundworks.Experience {
 
     // send OSC client msg when server started 
     // (TOFIX: delayed in setTimeout for now because OSC not init at start.)
-    setTimeout( () => { this.osc.send('/nuMain/serverStart', 1); }, 1000);
+    setTimeout( () => { 
+            // sync. clocks
+      const clockInterval = 1.0; // refresh interval in seconds
+      setInterval(() => { this.osc.send('/nuMain/clock', this.sync.getSyncTime()); }, 1000 * clockInterval);
+    }, 1000);
 
   }
 
-  posRequest(){
+  updateRequest(){
     // send back players position at osc client request
     this.coordinatesMap.forEach((item, key)=>{
-      console.log(item);
       this.osc.send('/nuMain/playerPos', [key, item[0], item[1]] );
     });
   }

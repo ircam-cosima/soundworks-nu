@@ -13,16 +13,16 @@ export default class RawSocketStreamer {
     var WebSocketServer = require('ws').Server;
     let host = server.config.socketIO.url.split(":")[1].split("/")[2];    
     this.wss = new WebSocketServer({port: port, host: host});
+    this.port = port;
 
     // local attributes
     this.wsMap = new Map();
 
     // define what to do once a new socket connects to the server
     this.wss.on('connection', (ws) => {
-      console.log('connection sowket');
       // msg callback: associate websocket to client index on connection for latter use
       ws.on('message', (message) => { 
-        console.log('connection mesg', message);
+        console.log('websocket of client', message, 'connected on port', this.port);
         this.wsMap.set( parseInt(message), ws ); 
       });
     });

@@ -79,15 +79,14 @@ export default class NuGroups {
   // TODO: a player not in a group shouldn't play its sound as happends now with above on/off
   // function. Rather, only when both on/off and linked are ok should player start to play.
   // this would require a sync. mechanism with groups already started when linked to player.
-  linkPlayerToGroup(groupId, playerId, value){
+  linkPlayerToGroup(playerId, groupId, value){
     // ignore command if concerns different player
     if( playerId != client.index ) return;
     // get group
     let group = this.getGroup( groupId );
-    // apply fade in
-    if( value ) group.linkGain.gain.value = 1.0;
-    // apply fade out
-    else group.linkGain.gain.value = 0.0;
+    // apply value
+    group.linkGain.gain.value = value;
+    console.log('apply value', value)
   }
 
   volume(groupId, value){
@@ -116,7 +115,6 @@ export default class NuGroups {
   }
 
   getGroup(groupId) {
-    console.log(this.groupMap);
     // get already existing group
     if( this.groupMap.has(groupId) )
       return this.groupMap.get(groupId);
@@ -146,7 +144,7 @@ export default class NuGroups {
     group.src.out.connect(group.gain);
     group.gain.connect(group.linkGain);
     group.linkGain.connect(this.localGain);
-    console.log('connect source', groupId, 'to local gain', this.localGain);
+    // console.log('connect source', groupId, 'to local gain', this.localGain);
     // store new group in local map
     this.groupMap.set(groupId, group);
 
@@ -188,7 +186,6 @@ class AudioSourceNode {
     this.stop(0);
     // create new source
     this.src = this.getNewSource();
-    console.log('start source');
     // start source
     this.src.start(time);
   }
@@ -205,7 +202,6 @@ class AudioSourceNode {
   set loop(value){
     this._loop = value;
     this.src.loop = value;
-    console.log('set source loop', this._loop);
   }
 
   getNewSource(){

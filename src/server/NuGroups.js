@@ -51,7 +51,7 @@ export default class NuGroups {
       return this.groupMap.get(groupId);
 
     // create new group
-    let group = { time: 0, onOff: 0, volume: 0, loop: 0 };
+    let group = { time: 0, onOff: 0, volume: 1, loop: 1 };
 
     // store new group in local map
     this.groupMap.set(groupId, group);

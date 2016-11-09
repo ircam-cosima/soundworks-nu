@@ -5,6 +5,7 @@ import PlayerRenderer from './PlayerRenderer';
 import NuRoomReverb from './NuRoomReverb';
 import NuGroups from './NuGroups';
 import NuPath from './NuPath';
+import NuLoop from './NuLoop';
 
 // import AudioSynthSwoosher from './utils';
 import * as utils from './utils';
@@ -54,6 +55,7 @@ export default class PlayerExperience extends soundworks.Experience {
     this.sharedConfig = this.require('shared-config');
     this.sync = this.require('sync');
     this.checkin = this.require('checkin', { showDialog: false });
+    this.scheduler = this.require('scheduler', { lookahead: 0.050 });
     this.loader = this.require('loader', {
       assetsDomain: assetsDomain,
       files: audioFiles,
@@ -110,6 +112,7 @@ export default class PlayerExperience extends soundworks.Experience {
     this.nuRoomReverb = new NuRoomReverb(this);
     this.nuGroups = new NuGroups(this);
     this.nuPath = new NuPath(this);
+    this.nuLoop = new NuLoop(this);
 
     // // create touch event, used to send the first message
     // const surface = new soundworks.TouchSurface(this.view.$el);
