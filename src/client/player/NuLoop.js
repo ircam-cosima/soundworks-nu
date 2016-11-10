@@ -25,6 +25,7 @@ export default class NuLoop {
     this.remove = this.remove.bind(this);
     this.removeAll = this.removeAll.bind(this);
     this.updateNumDivisions = this.updateNumDivisions.bind(this);
+    this.getSlotTime = this.getSlotTime.bind(this);
     this.divisions = this.divisions.bind(this);
 
     // setup receive callbacks
@@ -42,7 +43,7 @@ export default class NuLoop {
         Object.keys(params).forEach( (key) => { 
           this.params[key] = params[key];
         });
-        // update looper params
+        // update loops  
         this.updateNumDivisions();
     });
 
@@ -54,21 +55,27 @@ export default class NuLoop {
   }
 
   period(value){
-    this.params.period = value;
+    this.params.period = Math.round(value * 10) / 10;
     // shut down all loops
-    this.removeAll();
+    // this.removeAll();
   }
 
+  jitter(value){
+    this.params.jitter = value;
+  }
+
+  jitterMemory(value){
+    this.params.jitterMemory = value;
+  }
+
+
+  // update loop maps size
   updateNumDivisions(){
-    // eventually update loop maps size
-    if( this.loops.i !== this.params.divisions ) {
-      // shut down all loops
-      this.removeAll();
-      // resize loop map
-      let numTracks = this.soundworksClient.loader.buffers.length;
-      this.loops = new Matrix(numTracks, this.params.divisions);
-      console.log('resize mat', this.loops.mat, this.loops.i, this.loops.j);
-    }
+    // shut down all loops
+    this.removeAll();
+    // resize loop map
+    let numTracks = this.soundworksClient.loader.buffers.length;
+    this.loops = new Matrix(numTracks, this.params.divisions);
   }
 
   setTrackSlot(playerId, trackId, slotId, onOff){
@@ -89,14 +96,10 @@ export default class NuLoop {
     if( onOff ){
       // discard start already started source
       if( this.loops.mat[trackId][slotId] !== undefined ) { return; }
-      // compute event time in loop
-      let time = this.soundworksClient.scheduler.syncTime;
-      let currentTimeInMeasure = time % this.params.period;
-      let measureStartTime = time - currentTimeInMeasure;
-      let slotTime = slotId * ( this.params.period / this.params.divisions );
       
-      this.start(measureStartTime + slotTime, {trackId: trackId, slotId: slotId}, true);
-      console.log('start track', trackId, 'on slot', slotId, ', i.e. at', slotTime, 'in meas. starting', measureStartTime);
+      // start new loop event
+      let slotTime = this.getSlotTime(this.soundworksClient.scheduler.syncTime, slotId);
+      this.start(slotTime, {trackId: trackId, slotId: slotId}, true);
 
       // enable visual feedback (add +1 to its stack)
       this.soundworksClient.renderer.enable();
@@ -109,6 +112,15 @@ export default class NuLoop {
       this.soundworksClient.renderer.disable();
     }
 
+  }
+
+  // compute event time in loop
+  getSlotTime(currentTime, slotId){
+    let currentTimeInMeasure = currentTime % this.params.period;
+    let measureStartTime = currentTime - currentTimeInMeasure;
+    let slotTime = slotId * ( this.params.period / this.params.divisions );
+    // console.log('current time', currentTime, 'measure start time', measureStartTime, 'slot time', measureStartTime + slotTime, 'slot id', slotId, this.params);
+    return measureStartTime + slotTime;
   }
 
   // start new loop
@@ -127,8 +139,19 @@ export default class NuLoop {
     // trigger sound
     const duration = this.synth.trigger(this.soundworksClient.scheduler.audioTime, soundParams);
 
+    // add jitter
+    let jitter = this.params.jitter * // jitter gain in [0:1]
+                 Math.random() *  // random value in [0:1[
+                 ( this.params.period / this.params.divisions); // normalization (jitter never goes beyond other time slots)
+
+    if( !this.params.jitterMemory ){
+      // get absolute time for current loop
+      time = this.getSlotTime(time, loop.soundParams.slotId);
+    }
+    // console.log('time', time, 'perdiod', this.params.period, 'jitter', jitter, 'next time:', time + this.params.period + jitter);
+
     // return next time
-    return time + params.period;
+    return time + this.params.period + jitter;
   }  
 
   // remove loop by index
@@ -150,6 +173,8 @@ export default class NuLoop {
         loop = this.loops.mat[i][j];
         if( loop !== undefined ){ 
           this.soundworksClient.scheduler.remove(loop);
+          // notify renderer
+          this.soundworksClient.renderer.disable();
         }
       }
     }

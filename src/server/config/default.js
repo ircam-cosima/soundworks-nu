@@ -19,7 +19,7 @@ for(let i = 1; i < W; i ++ ){
 export default {
   // name of the application, used in the `.ejs` template and by default in
   // the `platform` service to populate its view
-  appName: 'Woodland',
+  appName: 'Nü',
 
   // name of the environnement ('production' enable cache in express application)
   env: 'development',

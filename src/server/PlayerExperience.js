@@ -155,7 +155,7 @@ export default class PlayerExperience extends soundworks.Experience {
     // (TOFIX: delayed in setTimeout for now because OSC not init at start.)
     setTimeout( () => { 
             // sync. clocks
-      const clockInterval = 1.0; // refresh interval in seconds
+      const clockInterval = 0.1; // refresh interval in seconds
       setInterval(() => { this.osc.send('/nuMain/clock', this.sync.getSyncTime()); }, 1000 * clockInterval);
     }, 1000);
 

@@ -13,22 +13,25 @@ export default class NuLoop {
 
     // to be saved params to send to client when connects:
     this.params = { period: 4.0, 
-                    divisions: 4
+                    divisions: 4, 
+                    jitter: 0.0,
+                    jitterMemory: false,
                   };
 
-    // // general router towards internal functions when msg concerning the server (i.e. not player) is received
-    // this.soundworksServer.osc.receive('/server', (msg) => {
-    //   // shape msg into array of arguments      
-    //   let args = msg.split(' ');
-    //   // check if msg concerns current Nu module
-    //   if (args[0] !== 'nuPath') return;
-    //   else args.shift();
-    //   console.log('nuPath', args);
-    //   // call function associated with first arg in msg
-    //   let name = args.shift();
-    //   if( name == 'startPath' || name == 'setPath' ) this[name](args); // function call
-    //   else this.params[name] = Number(args); // parameter set
-    // });
+    // general router towards internal functions when msg concerning the server (i.e. not player) is received
+    this.soundworksServer.osc.receive('/server', (msg) => {
+      // shape msg into array of arguments      
+      let args = msg.split(' ');
+      // check if msg concerns current Nu module
+      if (args[0] !== 'nuLoop') return;
+      else args.shift();
+      console.log('nuLoop', args);
+      // call function associated with first arg in msg
+      let name = args.shift();
+      // if( name == 'startPath' || name == 'setPath' ) this[name](args); // function call
+      // else this.params[name] = Number(args); // parameter set
+      this.params[name] = Number(args); // parameter set
+    });
 
     // binding
     this.enterPlayer = this.enterPlayer.bind(this);
