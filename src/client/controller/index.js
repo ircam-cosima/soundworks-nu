@@ -1,16 +1,8 @@
 // import client side soundworks and player experience
 import * as soundworks from 'soundworks/client';
-import * as soundworksCordova from 'soundworks-cordova/client';
-import PlayerExperience from './PlayerExperience.js';
+import ControllerExperience from './ControllerExperience.js';
 import viewTemplates from '../shared/viewTemplates';
 import viewContent from '../shared/viewContent';
-
-// list of files to load (passed to the experience)
-const audioFiles = [
-  'sounds/Va-pizz-sec-AD4-ff-2c_c.mp3',
-  'sounds/Va-pizz-sec-CD4-ff-2c_c.mp3',
-  'sounds/Va-pizz-sec-ED4-ff-2c_c.mp3'
-];
 
 // launch application when document is fully loaded
 const init = () => {
@@ -23,8 +15,8 @@ const init = () => {
   soundworks.client.setViewContentDefinitions(viewContent);
   soundworks.client.setViewTemplateDefinitions(viewTemplates);
 
-  // create client side (player) experience
-  const experience = new PlayerExperience(assetsDomain, audioFiles);
+  // create client side (controller) experience
+  const experience = new ControllerExperience(assetsDomain);
 
   // start the client
   soundworks.client.start();

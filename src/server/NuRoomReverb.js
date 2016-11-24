@@ -31,22 +31,13 @@ export default class NuRoomReverb {
       if (args[0] !== 'nuRoomReverb') return;
       else args.shift();
       console.log('roomreverb', args);
-      // call function associated with first arg in msg
+      // call function / set arg associated with first arg in msg
       let name = args.shift();
-      if( name == 'emitAtPos' || name == 'updatePropagation' ) this[name](args); // function call
-      else this.params[name] = Number(args); // parameter set
+      if( this.params[name] !== undefined )
+        this.params[name] = Number(args); // parameter set
+      else
+        this[name](args); // function call
     });
-
-
-    // shared parameters binding
-    this.soundworksServer.params.addParamListener('roomWidth', (value) => {  this.propagation.room.width = value; });
-    this.soundworksServer.params.addParamListener('roomHeight', (value) => { this.propagation.room.height = value; });
-    this.soundworksServer.params.addParamListener('scatterAmpl', (value) => { this.propagation.room.scatterAmpl = value; });
-    this.soundworksServer.params.addParamListener('scatterAngle', (value) => { this.propagation.room.scatterAngle = value * (Math.PI / 180); });
-    this.soundworksServer.params.addParamListener('absorption0', (value) => { this.propagation.room.absorption[0] = value; });
-    this.soundworksServer.params.addParamListener('absorption1', (value) => { this.propagation.room.absorption[1] = value; });
-    this.soundworksServer.params.addParamListener('absorption2', (value) => { this.propagation.room.absorption[2] = value; });
-    this.soundworksServer.params.addParamListener('absorption3', (value) => { this.propagation.room.absorption[3] = value; });
 
     // bind
     this.updatePropagation = this.updatePropagation.bind(this);
@@ -117,18 +108,51 @@ export default class NuRoomReverb {
 
   }
 
+  absorption(args){
+    let wallId = Number(args[0]);
+    let absorptionValue = Number(args[1]);
+    this.propagation.room.absorption[wallId] = absorptionValue;
+    console.log('abs:', this.propagation.room.absorption);
+  }
+
+  scatterAngle(args){
+    let scatterAngle = Number(args);
+    this.propagation.room.scatterAngle = scatterAngle * (Math.PI / 180);
+  }
+
+  scatterAmpl(args){
+    this.propagation.room.scatterAmpl =  Number(args);
+  }  
+
+  roomCoord(args){
+    let id = Number(args[0]); // 0 is top left, 1 is bottom right
+    this.propagation.room.coordsTopLeftBottomRight[id] = [ Number(args[1]), Number(args[2]) ];
+  }  
+
 }
 
 
-
+// room walls numbering convention
+//
+//             1
+//         _________
+//        |         |
+//        |         |
+//      0 |         | 2
+//        |         |
+//        |_________|
+//
+//             3
+// -------------------------------
 
 class SimulatePropagation {
   constructor(parent) {
 
     this.room = {
       origin: [0, 0],
-      width: 1,
-      height: 1,
+      // width: 1,
+      // height: 1,
+      coordsTopLeftBottomRight: [ [0, 0], [1, 1] ],
       absorption: [0, 0, 0, 0], // wall abs clockwise (in 0-1)
       scatterAmpl: 0.0,
       scatterAngle: Math.PI / 13.5
@@ -193,17 +217,17 @@ class SimulatePropagation {
     let pos, dist, ampl, time, sourceImage, vectDir, vectDirScat, wallId;
     for (let i = 0; i < 4; i++) {
       if (i == 0) { // left
-        pos = [0, emitterPos[1]];
-        dist = emitterPos[0];
+        pos = [ this.room.coordsTopLeftBottomRight[0][0], emitterPos[1]];
+        dist = emitterPos[0] - pos[0];
       } else if (i == 1) { // up
-        pos = [emitterPos[0], 0];
-        dist = emitterPos[1];
+        pos = [emitterPos[0], this.room.coordsTopLeftBottomRight[0][1] ];
+        dist = emitterPos[1] - pos[1];
       } else if (i == 2) { // right
-        pos = [this.room.width, emitterPos[1]];
-        dist = this.room.width - emitterPos[0];
+        pos = [ this.room.coordsTopLeftBottomRight[1][0], emitterPos[1]];
+        dist = pos[0] - emitterPos[0];
       } else if (i == 3) { // down
-        pos = [emitterPos[0], this.room.height];
-        dist = this.room.height - emitterPos[1];
+        pos = [emitterPos[0], this.room.coordsTopLeftBottomRight[1][1]];
+        dist = pos[1] - emitterPos[1];
       }
 
       ampl = Math.pow( propagationGain, dist );
@@ -290,19 +314,19 @@ class SimulatePropagation {
       consideredWalls.push(2);
       if (vectDir[1] > 0) {
         consideredWalls.push(3);
-        midCoord = [this.room.width, this.room.height];
+        midCoord = [ this.room.coordsTopLeftBottomRight[1][0], this.room.coordsTopLeftBottomRight[1][1]];
       } else {
         consideredWalls.unshift(1);
-        midCoord = [this.room.width, 0];
+        midCoord = [ this.room.coordsTopLeftBottomRight[1][0], this.room.coordsTopLeftBottomRight[0][1]];
       }
     } else {
       consideredWalls.push(0);
       if (vectDir[1] > 0) {
         consideredWalls.unshift(3);
-        midCoord = [0, this.room.height];
+        midCoord = [this.room.coordsTopLeftBottomRight[0][0], this.room.coordsTopLeftBottomRight[1][1]];
       } else {
         consideredWalls.push(1);
-        midCoord = [0, 0];
+        midCoord = [this.room.coordsTopLeftBottomRight[0][0], this.room.coordsTopLeftBottomRight[0][1]];
       }
     }
 
@@ -317,23 +341,23 @@ class SimulatePropagation {
 
 
     // console.log('hit wall:', hitWallId);
-
+    let c = this.room.coordsTopLeftBottomRight;
     this.wallLines = [
       [
-        [0, 0],
-        [0, this.room.height]
+        [ c[0][0], c[0][1] ],
+        [ c[0][0], c[1][1]]
       ], // left
       [
-        [0, 0],
-        [this.room.width, 0]
+        [ c[0][0], c[0][1] ],
+        [ c[1][0], c[0][1] ]
       ], // up
       [
-        [this.room.width, 0],
-        [this.room.width, this.room.height]
+        [ c[1][0], c[0][1]],
+        [ c[1][0], c[1][1]]
       ], // right
       [
-        [0, this.room.height],
-        [this.room.width, this.room.height]
+        [ c[0][0], c[1][1] ],
+        [ c[1][0], c[1][1] ]
       ], // down
     ];
 

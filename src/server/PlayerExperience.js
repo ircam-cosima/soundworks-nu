@@ -16,7 +16,6 @@ export default class PlayerExperience extends soundworks.Experience {
     // require services
     this.checkin = this.require('checkin');
     this.sharedConfig = this.require('shared-config');
-    this.sharedConfig.share('setup', 'mapper'); // share `setup` entry to ... (crashes else)
     this.sharedConfig.share('setup', 'player'); // share `setup` entry to ... (crashes else)
     this.sharedConfig.share('socketIO', 'player'); // share `setup` entry to ... (crashes else)
     this.params = this.require('shared-params');
@@ -24,12 +23,13 @@ export default class PlayerExperience extends soundworks.Experience {
     this.osc = this.require('osc');
 
     // bind methods
-    this.enterPlayer = this.enterPlayer.bind(this);
     this.initOsc = this.initOsc.bind(this);
+    this.checkinController = this.checkinController.bind(this);
 
     // local attributes
     this.playerMap = new Map();
     this.coordinatesMap = new Map();
+    this.controllerMap = new Map();
   }
 
   start() {
@@ -43,9 +43,8 @@ export default class PlayerExperience extends soundworks.Experience {
     this.nuPath = new NuPath(this);
     this.nuLoop = new NuLoop(this);
 
-    // 
+    // init OSC callbacks
     this.initOsc();
-
   }
 
   enter(client) {
@@ -53,46 +52,44 @@ export default class PlayerExperience extends soundworks.Experience {
 
     switch (client.type) {
       case 'player':
-        this.enterPlayer(client);
+
+        // update local attributes
+        this.playerMap.set( client.index, client );
+        this.params.update('numPlayers', this.playerMap.size);
+
+        // update nu modules
+        this.nuRoomReverb.enterPlayer(client);
+        this.nuGroups.enterPlayer(client);
+        this.nuPath.enterPlayer(client);
+        this.nuLoop.enterPlayer(client);
+
+        // msg callback: receive client coordinates 
+        // (could use local service, this way lets open for pos estimation in client in the future)
+        this.receive(client, 'coordinates', (xy) => {
+          this.coordinatesMap.set( client.index, xy );
+          // update client pos in osc client
+          this.osc.send('/nuMain/playerPos', [client.index, xy[0], xy[1]] );
+        });
+
+        break; 
+
+      case 'controller':
+
+        // add controller to local map (not using checkin for controllers)
+        let clientId = this.checkinController(client);
+        // indicate to OSC that controller 'client.index' is present
+        this.osc.send('/nuController', [clientId, 'enterExit', 1]);
+        // direct forward to OSC
+        this.receive(client, 'osc', (header, args) => {
+          // append controller index to msg
+          let clientId = this.controllerMap.get(client);
+          args.unshift(clientId);
+          // forward to OSC
+          this.osc.send(header, args);
+        });
+
         break;
-
-      // case 'mapper':
-      //   this.coordinatesMap.forEach( (item, key) => {
-      //     this.broadcast('mapper', null, 'mapper:playerCoordinates', {index: key, xy: item} );
-      //   });
-      //   break;        
     }
-  }
-
-  enterPlayer(client){
-
-    // update local attributes
-    this.playerMap.set( client.index, client );
-    this.params.update('numPlayers', this.playerMap.size);
-
-    // update worker
-    // this.propagationWorker.postMessage({ cmd: 'reset' });
-
-    // init nu modules
-    this.nuRoomReverb.enterPlayer(client);
-    this.nuGroups.enterPlayer(client);
-    this.nuPath.enterPlayer(client);
-    this.nuLoop.enterPlayer(client);
-
-    // msg callback: receive client coordinates (could use local service, this way lets open to auto pos estimation from client in the future)
-    this.receive(client, 'coordinates', (xy) => {
-      this.coordinatesMap.set( client.index, xy );
-      // this.broadcast('mapper', null, 'mapper:playerCoordinates', {index: client.index, xy: xy} );
-      
-      // update client pos in osc client
-      this.osc.send('/nuMain/playerPos', [client.index, xy[0], xy[1]] );
-
-    });
-
-    // msg callback: add client beaconMap to worker's
-    this.receive(client, 'beaconMap', (beaconMap) => {
-      // this.propagationWorker.postMessage({ cmd: 'addToBeaconMap', index: client.index, data: beaconMap });
-    });
   }
 
   exit(client) {
@@ -100,25 +97,52 @@ export default class PlayerExperience extends soundworks.Experience {
 
     switch (client.type) {
       case 'player':
+
         // update local attributes
         this.playerMap.delete( client.index );
         this.coordinatesMap.delete( client.index );
         this.params.update('numPlayers', this.playerMap.size);
-
-        // close modules
+        // update modules
         this.nuPath.exitPlayer(client);
-
-        // close socket
+        // close client-associated socket
         this.rawSocketStreamer.close( client.index );
-
-        // update mapper
-        this.broadcast('mapper', null, 'mapper:playerRemoved', client.index );
         // update osc mapper
         this.osc.send('/nuMain/playerRemoved', client.index );
+
+        break;
+
+      case 'controller':
+
+        // update osc
+        let clientId = this.controllerMap.get(client);
+        this.osc.send('/nuController', [clientId, 'enterExit', 0]);
+        // update local attributes
+        this.controllerMap.delete(client);
+
         break;
     }    
   }
 
+  // equivalent of the checkin service (to avoid using checkin on controllers and screwing players numbering)
+  checkinController(client){
+    let clientId = this.controllerMap.get(client);
+    // if already defined, simply return clientId
+    if( clientId !== undefined ){ return clientId; }
+    // get occupied IDs
+    let indexArray = Array.from( this.controllerMap, x => x[1] );
+    clientId = -1; let testId = 0;
+    while( clientId == -1 ){
+      if( indexArray.indexOf(testId) == -1 )
+        clientId = testId;
+      testId += 1;
+    }
+    // store new client index
+    this.controllerMap.set(client, clientId);
+    // send client index to client
+    this.send(client, 'checkinId', clientId);
+    // return Id
+    return clientId
+  }
 
   // ------------------------------------------------------------------------------------------------
   // OSC Methods

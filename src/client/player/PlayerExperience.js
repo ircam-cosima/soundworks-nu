@@ -7,11 +7,9 @@ import NuGroups from './NuGroups';
 import NuPath from './NuPath';
 import NuLoop from './NuLoop';
 
-// import AudioSynthSwoosher from './utils';
 import * as utils from './utils';
 const audioContext = soundworks.audioContext;
 const client = soundworks.client;
-// const ButtonView = soundworks.ButtonView;
 
 const viewTemplate = `
   <canvas id='main-canvas' class="background"></canvas>
@@ -33,23 +31,15 @@ const viewTemplate = `
 `;
 
 
-
 /* Description:
-Reproducing propagation in a forest, where every connected cellphone represents
-a tree. After emission of a first message by a cellphone in the network, the
-message propagates, each node re-emitting a message that all its neighbors will
-catch when it receives one. With the message propagates a (gain, time) tuple,
-respectively decreasing / increasing as the message path lengthen (hence the
-'propagation'). Gathering the various tuples received, the cellphones generate
-an IR at propagation's end, used to play an 'echoic' sound in the final stage
-of the experiment.
+...
 */
 
 export default class PlayerExperience extends soundworks.Experience {
   constructor(assetsDomain, audioFiles, beaconUUID) {
     super();
 
-    // require services
+    // soundworks services
     this.platform = this.require('platform', { features: ['web-audio'] });
     this.params = this.require('shared-params');
     this.sharedConfig = this.require('shared-config');
@@ -65,16 +55,10 @@ export default class PlayerExperience extends soundworks.Experience {
     });
 
     // binding
-    // this.initBeacon = this.initBeacon.bind(this);
-    // this.beaconCallback = this.beaconCallback.bind(this);
-    // this.updateBkgColor = this.updateBkgColor.bind(this);
+    // ...
 
     // local attributes
-    this.status = 0; // counter of number of current sources being played
     this.propagParams = {};
-    // this.audioAnalyser = new AudioAnalyser();
-    // this.audioSynthSwoosher = new AudioSynthSwoosher({ duration: 1.0, gain: 0.4 });
-    // this.beaconMap = new Map();
   }
 
   init() {
@@ -103,16 +87,20 @@ export default class PlayerExperience extends soundworks.Experience {
     this.coordinates = coordinates[client.index];
     this.send('coordinates', this.coordinates);
 
-    // param listeners
-    // this.params.addParamListener('masterGain', (value) => this.propagParams.masterGain = value);
-    this.params.addParamListener('reloadPlayers', () => { window.location.reload(true);
-      console.log('RELOAD') });
-
     // init Nu modules
     this.nuRoomReverb = new NuRoomReverb(this);
     this.nuGroups = new NuGroups(this);
     this.nuPath = new NuPath(this);
     this.nuLoop = new NuLoop(this);
+
+    // init Nu Main
+    this.receive('nuMain', (args) => {
+      console.log('nuMain:', args);
+      let paramName = args.shift();
+
+      if( paramName === 'reload' )
+        window.location.reload(true)
+    });    
 
     // // create touch event, used to send the first message
     // const surface = new soundworks.TouchSurface(this.view.$el);
@@ -138,23 +126,6 @@ export default class PlayerExperience extends soundworks.Experience {
     // }
 
   }
-
-
-  // /*
-  //  * Change GUI background color based on current amplitude of sound being played
-  //  */
-  // updateBkgColor() {
-  //   if (this.status >= 1) {
-  //     console.log('hk');
-  //     // call me once, I'll call myself over and over
-  //     requestAnimationFrame(this.updateBkgColor);
-  //     // change background color based on current amplitude
-  //     let amp = 200 * this.audioAnalyser.getAmplitude();
-  //     let rgb = [amp, 50 + amp, 50 + amp];
-  //     this.renderer.setBkgColor(rgb);
-  //   }
-  // }
-
 
   // -------------------------------------------------------------------------------------------
   // BEACON-RELATED METHODS

@@ -83,42 +83,17 @@ export default class NuRoomReverb {
       irDuration = Math.max(irDuration, irTime[i]);
     }
 
-    // create output object
+    // store IR
     let ir = { times: irTime, gains: irGain, duration: irDuration };
-
-    // console.log( irTime, irGain, minTime, emitterId );
-
-    // // create IR as float array
-    // let ir = new Float32Array(Math.ceil(irDuration * audioContext.sampleRate) + 1);
-    // for(let s = 0; s < irTime.length; ++s) {
-    //     ir[Math.floor(irTime[s] * audioContext.sampleRate)] = irGain[s];
-    //     console.log('set sample', Math.floor(irTime[s] * audioContext.sampleRate), 'to', irGain[s])
-    // }
-
-    // // transform IR float array to web audio buffer
-    // let irBuffer = audioContext.createBuffer(1, Math.max(ir.length, 512), audioContext.sampleRate);
-    // irBuffer.getChannelData(0).set(ir);
-    // // console.log(irBuffer);
-
-    // store ir buffer
-    // this.irBufferMap.set( emitterId, irBuffer );
     this.irMap.set(emitterId, ir);
-
-    // prepare for future use
-
-
-
-    // inform server we're ready to receive new IR
-    // this.send('ackIrReceived');
 
     // feedback user that IR has been loaded 
     this.soundworksClient.renderer.setBkgColor([50, 50, 50]);
   }
 
 
-
   /*
-   * message callback: play sound
+   * message callback: play sound convolved with IR
    */
   emitAtPos(irId, syncStartTime) {
 
