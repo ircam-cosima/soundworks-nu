@@ -5,6 +5,8 @@
 import * as soundworks from 'soundworks/server';
 const server = soundworks.server;
 
+import RawSocketStreamer from './RawSocketStreamer';
+
 export default class NuRoomReverb {
   constructor(soundworksServer) {
 
@@ -40,6 +42,9 @@ export default class NuRoomReverb {
         this[name](args); // function call
     });
 
+    // setup dedicated websocket server (to handle IR msg: avoid to flood main communication socket)
+    this.rawSocketStreamer = new RawSocketStreamer(8080);
+
     // bind
     this.updatePropagation = this.updatePropagation.bind(this);
     this.enterPlayer = this.enterPlayer.bind(this);
@@ -51,6 +56,11 @@ export default class NuRoomReverb {
     this.soundworksServer.send(client, 'nuRoomReverbInternal_initParam', this.params);
   }
 
+  exitPlayer(client){
+    // close socket
+    this.rawSocketStreamer.close( client.index );
+  }
+  
   updatePropagation(){
 
     // get array of clients positions
@@ -74,7 +84,7 @@ export default class NuRoomReverb {
         ir.unshift( emitterId ); // add emitter id
         let msgArray = new Float32Array( ir );
         console.log('send to client', receiverId, clientIdArray[ receiverId ], 'ir', ir);
-        this.soundworksServer.rawSocketStreamer.send( clientIdArray[ receiverId ], msgArray.buffer );
+        this.rawSocketStreamer.send( clientIdArray[ receiverId ], msgArray.buffer );
       });
 
     });

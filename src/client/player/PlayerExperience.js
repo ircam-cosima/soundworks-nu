@@ -6,6 +6,7 @@ import NuRoomReverb from './NuRoomReverb';
 import NuGroups from './NuGroups';
 import NuPath from './NuPath';
 import NuLoop from './NuLoop';
+import NuTemplate from './NuTemplate';
 
 import * as utils from './utils';
 const audioContext = soundworks.audioContext;
@@ -92,6 +93,7 @@ export default class PlayerExperience extends soundworks.Experience {
     this.nuGroups = new NuGroups(this);
     this.nuPath = new NuPath(this);
     this.nuLoop = new NuLoop(this);
+    this.nuTemplate = new NuTemplate(this);
 
     // init Nu Main
     this.receive('nuMain', (args) => {

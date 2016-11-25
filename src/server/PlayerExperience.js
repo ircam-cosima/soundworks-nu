@@ -1,11 +1,11 @@
 import * as soundworks from 'soundworks/server';
+import './utils';
 
-import RawSocketStreamer from './RawSocketStreamer';
 import NuRoomReverb from './NuRoomReverb';
 import NuGroups from './NuGroups';
 import NuPath from './NuPath';
 import NuLoop from './NuLoop';
-import './utils';
+import NuTemplate from './NuTemplate';
 
 const server = soundworks.server;
 
@@ -35,14 +35,12 @@ export default class PlayerExperience extends soundworks.Experience {
 
   start() {
 
-    // setup dedicated websocket server (to handle IR msg: avoid to flood main communication socket)
-    this.rawSocketStreamer = new RawSocketStreamer(8080);
-
     // init Nu modules
     this.nuRoomReverb = new NuRoomReverb(this);
     this.nuGroups = new NuGroups(this);
     this.nuPath = new NuPath(this);
     this.nuLoop = new NuLoop(this);
+    this.nuTemplate = new NuTemplate(this);
 
     // init OSC callbacks
     this.initOsc();
@@ -56,13 +54,13 @@ export default class PlayerExperience extends soundworks.Experience {
 
         // update local attributes
         this.playerMap.set( client.index, client );
-        this.params.update('numPlayers', this.playerMap.size);
 
         // update nu modules
         this.nuRoomReverb.enterPlayer(client);
         this.nuGroups.enterPlayer(client);
         this.nuPath.enterPlayer(client);
         this.nuLoop.enterPlayer(client);
+        this.nuTemplate.enterPlayer(client);
 
         // msg callback: receive client coordinates 
         // (could use local service, this way lets open for pos estimation in client in the future)
@@ -102,11 +100,10 @@ export default class PlayerExperience extends soundworks.Experience {
         // update local attributes
         this.playerMap.delete( client.index );
         this.coordinatesMap.delete( client.index );
-        this.params.update('numPlayers', this.playerMap.size);
         // update modules
         this.nuPath.exitPlayer(client);
-        // close client-associated socket
-        this.rawSocketStreamer.close( client.index );
+        this.nuRoomReverb.exitPlayer(client);
+        this.nuTemplate.exitPlayer(client);
         // update osc mapper
         this.osc.send('/nuMain/playerRemoved', client.index );
 

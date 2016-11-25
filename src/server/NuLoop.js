@@ -35,7 +35,7 @@ export default class NuLoop {
       console.log('nuLoop', args);
       // set local parameter associated with msg
       let name = args.shift();
-      this.params[name] = args;
+      this.params[name] = (args.length == 1) ? args[0] : args; // parameter set
     });
 
   }

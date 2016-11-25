@@ -37,7 +37,7 @@ export default class NuPath {
       // call function associated with first arg in msg
       let name = args.shift();
       if( this.params[name] !== undefined )
-        this.params[name] = args; // parameter set
+        this.params[name] = (args.length == 1) ? args[0] : args; // parameter set
       else
         this[name](args); // function call
     });
