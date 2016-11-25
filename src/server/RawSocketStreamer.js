@@ -11,8 +11,7 @@ export default class RawSocketStreamer {
   	
     // init websocket server
     var WebSocketServer = require('ws').Server;
-    let host = server.config.socketIO.url.split(":")[1].split("/")[2];    
-    this.wss = new WebSocketServer({port: port, host: host});
+    this.wss = new WebSocketServer({port: port, host: null});
     this.port = port;
 
     // local attributes

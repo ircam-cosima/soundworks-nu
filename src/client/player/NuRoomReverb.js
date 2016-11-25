@@ -30,7 +30,7 @@ export default class NuRoomReverb {
       }
       // or argument 
       else {
-        this.params[paramName] = Number(args[0]);
+        this.params[paramName] = (args.length == 1) ? args[0] : args; // parameter set
       }
     });
 
@@ -45,8 +45,9 @@ export default class NuRoomReverb {
 
     // init websocket (used to receive IR)
     let port = 8080;
-    let urlTmp = this.soundworksClient.sharedConfig.get('socketIO.url');
-    let url = "ws:" + urlTmp.split(":")[1] + ":" + port;
+    let urlTmp = client.socket.socket.io.uri;
+    let host = urlTmp.split('/')[2].split(':')[0];
+    let url = "ws://" + host + ":" + port;
     console.log('connecting websocket to', url);
     this.ws = new WebSocket(url);
     this.ws.binaryType = 'arraybuffer';
