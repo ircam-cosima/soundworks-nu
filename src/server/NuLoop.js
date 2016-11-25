@@ -11,8 +11,13 @@ export default class NuLoop {
     // local attributes
     this.soundworksServer = soundworksServer;
 
-    // to be saved params to send to client when connects:
-    this.params = { period: 4.0, 
+    // binding
+    this.enterPlayer = this.enterPlayer.bind(this);
+    this.exitPlayer = this.exitPlayer.bind(this);
+
+    // local attributes
+    // parameters saved and sent to client when connects:
+    this.params = { period: 4.0,
                     divisions: 4, 
                     jitter: 0.0,
                     jitterMemory: false,
@@ -22,23 +27,16 @@ export default class NuLoop {
     this.soundworksServer.osc.receive('/server', (msg) => {
       // shape msg into array of arguments      
       let args = msg.split(' ');
+      args.numberify();
       // check if msg concerns current Nu module
-      if (args[0] !== 'nuLoop') return;
-      else args.shift();
+      if (args[0] !== 'nuLoop'){ return; }
+      // remove nuLoop header
+      args.shift();
       console.log('nuLoop', args);
-      // call function associated with first arg in msg
+      // set local parameter associated with msg
       let name = args.shift();
-      // if( name == 'startPath' || name == 'setPath' ) this[name](args); // function call
-      // else this.params[name] = Number(args); // parameter set
-      this.params[name] = Number(args); // parameter set
+      this.params[name] = args;
     });
-
-    // binding
-    this.enterPlayer = this.enterPlayer.bind(this);
-    this.exitPlayer = this.exitPlayer.bind(this);
-
-    // local attributes
-    // this.groupMap = new Map();
 
   }
 

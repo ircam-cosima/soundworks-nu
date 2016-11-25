@@ -16,7 +16,7 @@ export default class NuGroups {
 
       // shape msg into array of arguments      
       let args = msg.split(' ');
-
+      args.numberify();
       // check if msg concerns current Nu module
       if (args[0] !== 'nuGroups') return;
       else args.shift();

@@ -5,6 +5,7 @@ import NuRoomReverb from './NuRoomReverb';
 import NuGroups from './NuGroups';
 import NuPath from './NuPath';
 import NuLoop from './NuLoop';
+import './utils';
 
 const server = soundworks.server;
 
@@ -158,7 +159,7 @@ export default class PlayerExperience extends soundworks.Experience {
       console.log(msg);
       // shape msg into array of arguments      
       let args = msg.split(' ');
-
+      args.numberify();
       // check if msg concerns current Nu module
       if (args[0] !== 'nuMain') return;
       else args.shift();
@@ -172,6 +173,7 @@ export default class PlayerExperience extends soundworks.Experience {
     this.osc.receive('/player', (msg) => {
       let args = msg.split(' ');
       let moduleName = args.shift();
+      args.numberify();
       this.broadcast('player', null, moduleName, args);
     });
 

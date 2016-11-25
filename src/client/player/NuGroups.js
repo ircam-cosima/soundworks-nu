@@ -32,7 +32,7 @@ export default class NuGroups {
       console.log(args);
 
       let functionName = args.shift();
-      this[functionName]( Number(args[0]), Number(args[1]), Number(args[2]) );
+      this[functionName]( args[0], args[1], args[2] );
     });
 
     // setup receive callbacks

@@ -77,8 +77,6 @@ export default class PlayerExperience extends soundworks.Experience {
       document.getElementById("checkinId").innerHTML = id;
     }); 
 
-    this.send('osc', '/nuController', ['a list', 'of arguments']);
-
     // setup motion input listeners
     if (this.motionInput.isAvailable('accelerationIncludingGravity')) {
       this.motionInput.addListener('accelerationIncludingGravity', (data) => {

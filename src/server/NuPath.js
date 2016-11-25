@@ -28,14 +28,18 @@ export default class NuPath {
     this.soundworksServer.osc.receive('/server', (msg) => {
       // shape msg into array of arguments      
       let args = msg.split(' ');
+      args.numberify();
       // check if msg concerns current Nu module
-      if (args[0] !== 'nuPath') return;
-      else args.shift();
+      if (args[0] !== 'nuPath'){ return; }
+      // remove header
+      args.shift();
       console.log('nuPath', args);
       // call function associated with first arg in msg
       let name = args.shift();
-      if( name == 'startPath' || name == 'setPath' ) this[name](args); // function call
-      else this.params[name] = Number(args); // parameter set
+      if( this.params[name] !== undefined )
+        this.params[name] = args; // parameter set
+      else
+        this[name](args); // function call
     });
 
     // init socket streamer
@@ -60,14 +64,14 @@ export default class NuPath {
 
   setPath(args){
 
-    let pathId = Number( args.shift() );
+    let pathId = args.shift();
     console.log('computing ir of path', pathId);
     
     // shape args (from [x0 y0 t0 ... xN yN tN] to ...)
     let pathArray = [];
     for( let i = 0; i < args.length; i+=3){
-      let time = Number(args[i]);
-      let pos = [ Number(args[i+1]), Number(args[i+2]) ];
+      let time = args[i];
+      let pos = [ args[i+1], args[i+2] ];
       pathArray.push( [time, pos] );
     }
     console.log('path array:', pathArray);
@@ -122,7 +126,7 @@ export default class NuPath {
   }
 
   startPath(args){
-    let pathId = Number(args);
+    let pathId = args;
     console.log('start path', pathId);
     let rdvTime = this.soundworksServer.sync.getSyncTime() + 2.0;
     this.soundworksServer.broadcast('player', null, 'nuPathInternal_startPath', pathId, rdvTime );

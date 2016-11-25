@@ -27,6 +27,7 @@ export default class NuRoomReverb {
 
       // shape msg into array of arguments      
       let args = msg.split(' ');
+      args.numberify();
       // check if msg concerns current Nu module
       if (args[0] !== 'nuRoomReverb') return;
       else args.shift();
@@ -34,7 +35,7 @@ export default class NuRoomReverb {
       // call function / set arg associated with first arg in msg
       let name = args.shift();
       if( this.params[name] !== undefined )
-        this.params[name] = Number(args); // parameter set
+        this.params[name] = args; // parameter set
       else
         this[name](args); // function call
     });
@@ -84,7 +85,7 @@ export default class NuRoomReverb {
   emitAtPos(args) {
 
     // convert arg in
-    let emitPos = [Number(args[0]), Number(args[1])];
+    let emitPos = [args[0], args[1]];
 
     // discrete position for now: 
     // find player closest to emit pos to defined it as new emit pos
@@ -109,24 +110,24 @@ export default class NuRoomReverb {
   }
 
   absorption(args){
-    let wallId = Number(args[0]);
-    let absorptionValue = Number(args[1]);
+    let wallId = args[0];
+    let absorptionValue = args[1];
     this.propagation.room.absorption[wallId] = absorptionValue;
     console.log('abs:', this.propagation.room.absorption);
   }
 
   scatterAngle(args){
-    let scatterAngle = Number(args);
+    let scatterAngle = args;
     this.propagation.room.scatterAngle = scatterAngle * (Math.PI / 180);
   }
 
   scatterAmpl(args){
-    this.propagation.room.scatterAmpl =  Number(args);
+    this.propagation.room.scatterAmpl =  args;
   }  
 
   roomCoord(args){
-    let id = Number(args[0]); // 0 is top left, 1 is bottom right
-    this.propagation.room.coordsTopLeftBottomRight[id] = [ Number(args[1]), Number(args[2]) ];
+    let id = args[0]; // 0 is top left, 1 is bottom right
+    this.propagation.room.coordsTopLeftBottomRight[id] = [ args[1], args[2] ];
   }  
 
 }
