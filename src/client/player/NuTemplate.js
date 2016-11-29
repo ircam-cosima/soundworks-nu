@@ -19,22 +19,13 @@ export default class NuTemplate {
 
     // setup receive callbacks
     this.soundworksClient.receive('nuTemplate', (args) => {
-  		console.log(args);
       let name = args.shift();
+      // reduce args array to singleton if only one element left
+      args = (args.length == 1) ? args[0] : args;
       if( this.params[name] !== undefined )
-        this.params[name] = (args.length == 1) ? args[0] : args; // parameter set
+        this.params[name] = args; // parameter set
       else
         this[name](args); // function call
-    });
-
-    // setup receive callbacks
-    this.soundworksClient.receive('nuTemplateInternal_initParam', (params) => {
-        // set all local parameters based on server's 
-        // (for late arrivals, if OSC client alreay defined some earlier)
-        Object.keys(params).forEach( (key) => {
-          console.log('init local parameter:', key, 'to value:', params[key])
-        	this.params[key] = params[key];
-        });
     });
 
     // setup receive callbacks
@@ -44,10 +35,13 @@ export default class NuTemplate {
 
   aMethodTriggeredFromOsc(args){
     console.log('aMethodTriggeredFromOsc', args);
+    if (args) this.soundworksClient.renderer.setBkgColor([190, 140, 50]);
+    else this.soundworksClient.renderer.setBkgColor([0, 0, 0]);
   }
 
   aMethodTriggeredFromServer(args){
     console.log('aMethodTriggeredFromServer, e.g. play a sound at synchronized time:', args);
+    this.soundworksClient.renderer.blink([0, 160, 200], 0.4);
   }
 
 }

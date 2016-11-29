@@ -12,6 +12,9 @@ export default class PlayerRenderer extends soundworks.Renderer {
     this.bkgChangeColor = false;
     this.numOfElmtInNeedOfMe = 0;
 
+    this.bkgColorArray = [0,0,0];
+    this.blinkStatus = { isBlinking: false, savedBkgColor: [0,0,0] };
+
     // binding
     this.updateBkgColor = this.updateBkgColor.bind(this);
 
@@ -52,6 +55,7 @@ export default class PlayerRenderer extends soundworks.Renderer {
    * @param {Number} colorId - color index in this.bkgColorList
    */
   setBkgColor(rgb) {
+    this.bkgColorArray = rgb;
     this.bkgColor = 'rgb('
       + Math.ceil(rgb[0]) + ','
       + Math.ceil(rgb[1]) + ','
@@ -88,6 +92,21 @@ export default class PlayerRenderer extends soundworks.Renderer {
       let rgb = [amp, amp, amp];
       this.setBkgColor(rgb);
     }
+  }
+
+  // change screen color to 'color' for 'time' duration (in sec)
+  blink(color, time){
+    // discard if already blinking
+    if( this.blinkStatus.isBlinking ){ return; }
+    // save current background color
+    this.blinkStatus.savedBkgColor[0] = this.bkgColorArray[0];
+    this.blinkStatus.savedBkgColor[1] = this.bkgColorArray[1];
+    this.blinkStatus.savedBkgColor[2] = this.bkgColorArray[2];
+    // change bkg color
+    this.setBkgColor(color);
+    setTimeout(() => { 
+      this.setBkgColor(this.blinkStatus.savedBkgColor); 
+    }, time * 1000);
   }
 
 }

@@ -25,7 +25,9 @@
     "soundworks": "collective-soundworks/soundworks#v1.1.1",
     "soundworks-cordova": "collective-soundworks/soundworks-cordova#v1.0.0",
     "source-map-support": "^0.4.0",
+    "typedarray-methods": "^1.0.0",
     "utf-8-validate": "^1.2.1",
+    "waves-lfo": "wavesjs/lfo#v0.2.0",
     "webworker-threads": "^0.7.8",
     "ws": "^1.1.1"
   },

@@ -19,7 +19,7 @@ const audioFiles = [
   'sounds/perc snare.wav',
   'sounds/perc voice.wav',
   'sounds/perc woosh.wav',
-  'sounds/wlong celt melody.mp3',
+  'sounds/pers beatbox.mp3',
   'sounds/wlong drum-loop.wav',
   'sounds/wlong voice.mp3',
 ];

@@ -81,7 +81,7 @@ export default class NuGroups {
   // this would require a sync. mechanism with groups already started when linked to player.
   linkPlayerToGroup(playerId, groupId, value){
     // ignore command if concerns different player
-    if( playerId != client.index ) return;
+    if( playerId !== client.index && playerId !== -1 ) return;
     // get group
     let group = this.getGroup( groupId );
     // apply value
@@ -98,7 +98,7 @@ export default class NuGroups {
 
   localVolume(playerId, value){
     // ignore command if concerns different player
-    if( playerId != client.index ) return;    
+    if( playerId !== client.index && playerId !== -1 ) return;    
     // set local value
     this.localGain.gain.value = value;
   }

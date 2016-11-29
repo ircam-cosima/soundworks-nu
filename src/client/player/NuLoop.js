@@ -80,7 +80,7 @@ export default class NuLoop {
 
   setTrackSlot(playerId, trackId, slotId, onOff){
     // discard packets not concerning current user
-    if( playerId !== client.index ){ return }
+    if( playerId !== client.index && playerId !== -1 ) return;
     // check valid trackId
     if( trackId >= this.soundworksClient.loader.buffers.length || trackId < 0) {
       console.warn('required track id', trackId, 'not in client index, actual content:', this.soundworksClient.loader.options.files);

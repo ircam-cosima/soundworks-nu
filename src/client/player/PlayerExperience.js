@@ -7,6 +7,8 @@ import NuGroups from './NuGroups';
 import NuPath from './NuPath';
 import NuLoop from './NuLoop';
 import NuTemplate from './NuTemplate';
+import NuGrain from './NuGrain';
+import NuSpy from './NuSpy';
 
 import * as utils from './utils';
 const audioContext = soundworks.audioContext;
@@ -52,7 +54,7 @@ export default class PlayerExperience extends soundworks.Experience {
       files: audioFiles,
     });
     this.motionInput = this.require('motion-input', {
-      descriptors: ['accelerationIncludingGravity']
+      descriptors: ['accelerationIncludingGravity', 'deviceorientation', 'energy']
     });
 
     // binding
@@ -94,6 +96,8 @@ export default class PlayerExperience extends soundworks.Experience {
     this.nuPath = new NuPath(this);
     this.nuLoop = new NuLoop(this);
     this.nuTemplate = new NuTemplate(this);
+    this.nuGrain = new NuGrain(this);
+    this.nuSpy = new NuSpy(this);
 
     // init Nu Main
     this.receive('nuMain', (args) => {
@@ -102,7 +106,11 @@ export default class PlayerExperience extends soundworks.Experience {
 
       if( paramName === 'reload' )
         window.location.reload(true)
-    });    
+    });
+
+    // disable text selection, magnifier, and screen move on swipe on ios
+    document.getElementsByTagName("body")[0].addEventListener("touchstart",
+    function(e) { e.returnValue = false });
 
     // // create touch event, used to send the first message
     // const surface = new soundworks.TouchSurface(this.view.$el);
