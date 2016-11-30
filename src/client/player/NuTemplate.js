@@ -35,8 +35,6 @@ export default class NuTemplate {
 
   aMethodTriggeredFromOsc(args){
     console.log('aMethodTriggeredFromOsc', args);
-    if (args) this.soundworksClient.renderer.setBkgColor([190, 140, 50]);
-    else this.soundworksClient.renderer.setBkgColor([0, 0, 0]);
   }
 
   aMethodTriggeredFromServer(args){

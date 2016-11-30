@@ -1,7 +1,8 @@
 import * as soundworks from 'soundworks/client';
 import * as soundworksCordova from 'soundworks-cordova/client';
 
-import PlayerRenderer from './PlayerRenderer';
+// import PlayerRenderer from './PlayerRenderer';
+import NuRenderer from './NuRenderer';
 import NuRoomReverb from './NuRoomReverb';
 import NuGroups from './NuGroups';
 import NuPath from './NuPath';
@@ -19,15 +20,15 @@ const viewTemplate = `
   <div class="foreground">
 
     <div class="section-top flex-middle">
-      <p class="big">ID: <%= clientIndex %> </p>
+      <p id="text1" class="big">  </p>
     </div>
 
     <div class="section-center flex-middle">
-      <p class="small" id="logValues"></p>
+      <p id="text2" class="small"> </p>
     </div>
 
     <div class="section-bottom flex-center">
-      <p class="small soft-blink"><%= subtitle %></p>
+      <p id="text3" class="small soft-blink"> </p>
     </div>
     
   </div>
@@ -67,11 +68,11 @@ export default class PlayerExperience extends soundworks.Experience {
   init() {
     // init view (GUI)
     this.viewTemplate = viewTemplate;
-    this.viewContent = { subtitle: `in the forest, at night`, clientIndex: client.index };
+    this.viewContent = {};
     this.viewCtor = soundworks.CanvasView;
     this.viewOptions = { preservePixelRatio: true };
     this.view = this.createView();
-    this.renderer = new PlayerRenderer();
+    this.renderer = new NuRenderer(this);
     this.view.addRenderer(this.renderer);
   }
 

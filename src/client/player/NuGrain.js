@@ -144,7 +144,7 @@ export default class NuGrain {
     if( this.synth.isRunning ){
       this.synth.stop();
       // disable visual feedback
-      this.soundworksClient.renderer.disable();      
+      // this.soundworksClient.renderer.disable();      
       wasRunning = true;
     }
     // get new engine with new parameters

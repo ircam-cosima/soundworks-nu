@@ -88,8 +88,9 @@ export default class NuRoomReverb {
     let ir = { times: irTime, gains: irGain, duration: irDuration };
     this.irMap.set(emitterId, ir);
 
-    // feedback user that IR has been loaded 
-    this.soundworksClient.renderer.setBkgColor([50, 50, 50]);
+    // feedback user that IR has been loaded
+
+    this.soundworksClient.renderer.blink([0, 100, 0]);
   }
 
 
@@ -106,7 +107,7 @@ export default class NuRoomReverb {
 
     // check if IR not available yet: slightly flash red otherwise
     if (!this.irMap.has(irId)) {
-      this.soundworksClient.renderer.blink([160, 0, 0], 0.4);
+      this.soundworksClient.renderer.blink([160, 0, 0]);
       console.warn('IR', irId, 'not yet defined in client, need to update propagation');
       return;
     }
@@ -181,7 +182,7 @@ export default class NuRoomReverb {
       console.log('play scheduled in:', Math.round((syncStartTime - now) * 1000) / 1000, 'sec', 'at:', syncStartTime);
     } else {
       console.warn('no sound played, I received the instruction to play to late');
-      this.soundworksClient.renderer.blink([250, 0, 0], 0.4);
+      this.soundworksClient.renderer.blink([250, 0, 0]);
     }
 
     // setup screen color = f(amplitude) callback
