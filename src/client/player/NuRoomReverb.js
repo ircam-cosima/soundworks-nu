@@ -12,6 +12,7 @@ export default class NuRoomReverb {
     // local attributes
     this.soundworksClient = soundworksClient;
     this.irMap = new Map();
+    this.srcSet = new Set();
     this.params = {};
 
     // binding
@@ -23,11 +24,14 @@ export default class NuRoomReverb {
     	console.log(args);
       let paramName = args.shift();
       // function
-      if (paramName == 'emitAtPos') {
+      if( paramName == 'emitAtPos' ) {
         let irId = args.shift();
         let syncStartTime = args.shift();
         this.emitAtPos(irId, syncStartTime);
       }
+      else if( paramName == 'reset' ) {
+        this.reset();
+      }      
       // or argument 
       else {
         this.params[paramName] = (args.length == 1) ? args[0] : args; // parameter set
@@ -191,9 +195,24 @@ export default class NuRoomReverb {
 
     // timeout callback, runs when we finished playing
     setTimeout(() => {
+      // disable visual feeback
       this.soundworksClient.renderer.disable();
+      // remove source from set
+      this.srcSet.delete(src);
     }, (syncStartTime - now + src.buffer.duration) * 1000);
 
+    // save source for eventual global reset
+    this.srcSet.add(src);
+
+  }
+
+  reset(){
+    this.srcSet.forEach( (src) => {
+      // stop source
+      src.stop(); 
+      // remove associated visual feedback
+      this.soundworksClient.renderer.disable();
+    });
   }
 
 }

@@ -68,6 +68,9 @@ export default class NuLoop {
     this.params.jitterMemory = value;
   }
 
+  masterGain(value){
+    this.synth.output.gain.value = value;
+  }
 
   // update loop maps size
   updateNumDivisions(){

@@ -2,11 +2,11 @@ import path from 'path';
 const cwd = process.cwd();
 
 // build coordinates grid
-const W = 8;
-const H = 3;
+const W = 4;
+const H = 4;
 const coordinates = [];
-for(let i = 1; i < W; i ++ ){
-  for(let j = 1; j < H; j ++ ){
+for(let j = 1; j <= H; j ++ ){
+  for(let i = 1; i <= W; i ++ ){
     coordinates.push([i,j]);
   }
 }
@@ -45,8 +45,8 @@ export default {
   // if one of these service is required, this entry shouldn't be removed.
   setup: {
     area: {
-      width: W,
-      height: H,
+      width: W+1,
+      height: H+1,
       // path to an image to be used in the area representation
       background: null,
     },

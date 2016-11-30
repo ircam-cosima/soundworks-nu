@@ -21,6 +21,7 @@ export default class NuLoop {
                     divisions: 4, 
                     jitter: 0.0,
                     jitterMemory: false,
+                    masterGain: 1.0
                   };
 
     // general router towards internal functions when msg concerning the server (i.e. not player) is received
