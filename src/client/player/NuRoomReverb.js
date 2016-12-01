@@ -193,6 +193,9 @@ export default class NuRoomReverb {
     gain.connect(this.soundworksClient.renderer.audioAnalyser.in);
     this.soundworksClient.renderer.enable();
 
+    // save source for eventual global reset
+    this.srcSet.add(src);
+
     // timeout callback, runs when we finished playing
     setTimeout(() => {
       // disable visual feeback
@@ -200,9 +203,6 @@ export default class NuRoomReverb {
       // remove source from set
       this.srcSet.delete(src);
     }, (syncStartTime - now + src.buffer.duration) * 1000);
-
-    // save source for eventual global reset
-    this.srcSet.add(src);
 
   }
 

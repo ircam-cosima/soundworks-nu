@@ -32,7 +32,6 @@ export default class RawSocketStreamer {
   send(sockId, buffer){
     if( this.wsMap.has( sockId ) ){
       let ws = this.wsMap.get( sockId );
-      console.log('senbding');
       ws.send( buffer, { binary: true, mask: false } );
     }
   }

@@ -9,6 +9,7 @@ import NuTemplate from './NuTemplate';
 import NuGrain from './NuGrain';
 import NuSpy from './NuSpy';
 import NuRenderer from './NuRenderer';
+import NuStream from './NuStream';
 
 const server = soundworks.server;
 
@@ -47,6 +48,7 @@ export default class PlayerExperience extends soundworks.Experience {
     this.nuGrain = new NuGrain(this);
     this.nuSpy = new NuSpy(this);
     this.nuRenderer = new NuRenderer(this);
+    this.nuStream = new NuStream(this);
 
     // init OSC callbacks
     this.initOsc();
@@ -70,6 +72,7 @@ export default class PlayerExperience extends soundworks.Experience {
         this.nuGrain.enterPlayer(client);
         this.nuSpy.enterPlayer(client);
         this.nuRenderer.enterPlayer(client);
+        this.nuStream.enterPlayer(client);
 
         // msg callback: receive client coordinates 
         // (could use local service, this way lets open for pos estimation in client in the future)
@@ -121,6 +124,8 @@ export default class PlayerExperience extends soundworks.Experience {
         this.nuPath.exitPlayer(client);
         this.nuRoomReverb.exitPlayer(client);
         this.nuTemplate.exitPlayer(client);
+        this.nuStream.exitPlayer(client);
+
         // update osc mapper
         this.osc.send('/nuMain/playerRemoved', client.index );
 

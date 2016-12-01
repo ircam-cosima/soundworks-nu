@@ -12,12 +12,14 @@ export default class NuPath {
     // local attributes
     this.soundworksClient = soundworksClient;
     this.irMap = new Map();
+    this.srcSet = new Set();
     this.params = {};
 
     // binding
     this.onWebSocketOpen = this.onWebSocketOpen.bind(this);
     this.onWebSocketEvent = this.onWebSocketEvent.bind(this);
     this.startPath = this.startPath.bind(this);
+    this.reset = this.reset.bind(this);
 
     // setup receive callbacks
     this.soundworksClient.receive('nuPath', (args) => {
@@ -37,7 +39,8 @@ export default class NuPath {
     });    
 
     // setup receive callbacks
-    this.soundworksClient.receive('nuPathInternal_startPath', this.startPath);   
+    this.soundworksClient.receive('nuPathInternal_startPath', this.startPath);
+    this.soundworksClient.receive('nuPathInternal_reset', this.reset);
 
     // init websocket (used to receive IR)
     let port = 8081;
@@ -183,11 +186,25 @@ export default class NuPath {
     gain.connect(this.soundworksClient.renderer.audioAnalyser.in);
     this.soundworksClient.renderer.enable();
 
+    // save source for eventual global reset
+    this.srcSet.add(src);
+
     // timeout callback, runs when we finished playing
     setTimeout(() => {
       this.soundworksClient.renderer.disable();
+      // remove source from set
+      this.srcSet.delete(src);
     }, (syncStartTime - now + src.buffer.duration) * 1000);
 
   }
+
+  reset(){
+    this.srcSet.forEach( (src) => {
+      // stop source
+      src.stop(); 
+      // remove associated visual feedback
+      this.soundworksClient.renderer.disable();
+    });
+  }  
 
 }

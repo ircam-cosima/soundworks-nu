@@ -62,7 +62,7 @@ export default class NuGroups {
     if( value ){
       // disable eventual stop timeout
       clearTimeout( group.timeOut );
-      // start source at group time
+      // start source at group time TODO: time should be sync. between devices
       group.src.start(0);
       // notify parent +1 source here to enable visual feedback on sound amplitude
       this.soundworksClient.renderer.enable();

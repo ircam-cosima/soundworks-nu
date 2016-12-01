@@ -72,7 +72,7 @@ export default class NuRoomReverb {
     });
 
     this.soundworksServer.coordinatesMap.forEach(( emitterPos, emitterId) => {
-      console.log(this.soundworksServer.coordinatesMap);
+      // console.log(this.soundworksServer.coordinatesMap);
       // consider each client as potential emitter
       this.propagation.computeSrcImg( emitterPos );
       // get IR associated for each potential receiver (each client)
@@ -83,7 +83,7 @@ export default class NuRoomReverb {
         ir.unshift( data.timeMin ); // add time min
         ir.unshift( emitterId ); // add emitter id
         let msgArray = new Float32Array( ir );
-        console.log('send to client', receiverId, clientIdArray[ receiverId ], 'ir', ir);
+        // console.log('send to client', receiverId, clientIdArray[ receiverId ], 'ir', ir);
         this.rawSocketStreamer.send( clientIdArray[ receiverId ], msgArray.buffer );
       });
 
@@ -103,13 +103,13 @@ export default class NuRoomReverb {
     let emitterId = -1;
     this.soundworksServer.coordinatesMap.forEach((item, key) => {
       let distTmp = Math.sqrt(Math.pow(item[0] - emitPos[0], 2) + Math.pow(item[1] - emitPos[1], 2));
-      console.log(emitPos, item, distTmp, dist);
+      // console.log(emitPos, item, distTmp, dist);
       if (distTmp < dist) {
         emitterId = key;
         dist = distTmp;
       }
     });
-    console.log('emitterId:', emitterId, 'dist', dist);
+    // console.log('emitterId:', emitterId, 'dist', dist);
 
     // if found discrete emitter pos (i.e. player), broadcast msg to players to trigger propagation
     if (emitterId > -1) {
@@ -123,7 +123,7 @@ export default class NuRoomReverb {
     let wallId = args[0];
     let absorptionValue = args[1];
     this.propagation.room.absorption[wallId] = absorptionValue;
-    console.log('abs:', this.propagation.room.absorption);
+    // console.log('abs:', this.propagation.room.absorption);
   }
 
   scatterAngle(args){

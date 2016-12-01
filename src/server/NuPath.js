@@ -36,8 +36,9 @@ export default class NuPath {
       console.log('nuPath', args);
       // call function associated with first arg in msg
       let name = args.shift();
+      args = (args.length == 1) ? args[0] : args;
       if( this.params[name] !== undefined )
-        this.params[name] = (args.length == 1) ? args[0] : args; // parameter set
+        this.params[name] = args; // parameter set
       else
         this[name](args); // function call
     });
@@ -65,7 +66,7 @@ export default class NuPath {
   setPath(args){
 
     let pathId = args.shift();
-    console.log('computing ir of path', pathId);
+    // console.log('computing ir of path', pathId);
     
     // shape args (from [x0 y0 t0 ... xN yN tN] to ...)
     let pathArray = [];
@@ -74,7 +75,7 @@ export default class NuPath {
       let pos = [ args[i+1], args[i+2] ];
       pathArray.push( [time, pos] );
     }
-    console.log('path array:', pathArray);
+    // console.log('path array:', pathArray);
     
     // avoid zero propagation speed
     let propagationSpeed = this.params.propagationSpeed;
@@ -105,7 +106,7 @@ export default class NuPath {
           irsArray[clientId].push(time, gain);
           // prepare handle neg speed
           if (time < timeMin) timeMin = time;
-          console.log(index,pathTime,pathPos,dist,time,gain, this.params.propagationGain, this.params.propagationRxMinGain)
+          // console.log(index,pathTime,pathPos,dist,time,gain, this.params.propagationGain, this.params.propagationRxMinGain)
         }
       });
     });
@@ -119,7 +120,7 @@ export default class NuPath {
       ir.unshift( pathId ); // add path id
       // shape for sending
       let msgArray = new Float32Array( ir );
-      console.log('send to client', clientId, 'ir', ir);
+      // console.log('send to client', clientId, 'ir', ir);
       // send
       this.rawSocketStreamer.send( clientId, msgArray.buffer );   
     });
@@ -127,9 +128,13 @@ export default class NuPath {
 
   startPath(args){
     let pathId = args;
-    console.log('start path', pathId);
+    // console.log('start path', pathId);
     let rdvTime = this.soundworksServer.sync.getSyncTime() + 2.0;
     this.soundworksServer.broadcast('player', null, 'nuPathInternal_startPath', pathId, rdvTime );
+  }
+
+  reset(){
+    this.soundworksServer.broadcast('player', null, 'nuPathInternal_reset' );    
   }
 
 }
