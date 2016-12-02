@@ -1,16 +1,19 @@
 /**
- * NuRoomReverb: Nu module that simulates room reverb
+ * NuRoomReverb: Nu module in charge of room reverb where players 
+ * emit bursts when the acoustical wave passes them by
  **/
 
+import NuBaseModule from './NuBaseModule'
 import * as soundworks from 'soundworks/client';
+
 const client = soundworks.client;
 const audioContext = soundworks.audioContext;
 
-export default class NuRoomReverb {
+export default class NuRoomReverb extends NuBaseModule {
   constructor(soundworksClient) {
+    super(soundworksClient, 'nuRoomReverb');
 
     // local attributes
-    this.soundworksClient = soundworksClient;
     this.irMap = new Map();
     this.srcSet = new Set();
     this.params = {};
@@ -18,34 +21,8 @@ export default class NuRoomReverb {
     // binding
     this.onWebSocketOpen = this.onWebSocketOpen.bind(this);
     this.onWebSocketEvent = this.onWebSocketEvent.bind(this);
-
-    // setup receive callbacks
-    this.soundworksClient.receive('nuRoomReverb', (args) => {
-    	console.log(args);
-      let paramName = args.shift();
-      // function
-      if( paramName == 'emitAtPos' ) {
-        let irId = args.shift();
-        let syncStartTime = args.shift();
-        this.emitAtPos(irId, syncStartTime);
-      }
-      else if( paramName == 'reset' ) {
-        this.reset();
-      }      
-      // or argument 
-      else {
-        this.params[paramName] = (args.length == 1) ? args[0] : args; // parameter set
-      }
-    });
-
-    // setup receive callbacks
-    this.soundworksClient.receive('nuRoomReverbInternal_initParam', (params) => {
-        // set all local parameters based on server's 
-        // (for late arrivals, if OSC client alreay defined some earlier)
-        Object.keys(params).forEach( (key) => { 
-        	this.params[key] = params[key];
-        });
-    });    
+    this.emitAtPos = this.emitAtPos.bind(this);
+    this.reset = this.reset.bind(this);
 
     // init websocket (used to receive IR)
     let port = 8080;
@@ -101,7 +78,9 @@ export default class NuRoomReverb {
   /*
    * message callback: play sound convolved with IR
    */
-  emitAtPos(irId, syncStartTime) {
+  emitAtPos(args) {
+    let irId = args.shift();
+    let syncStartTime = args.shift();
 
     // check if designated audioFile exists in loader
     if (this.soundworksClient.loader.buffers[this.params.audioFileId] == undefined) {
@@ -206,6 +185,7 @@ export default class NuRoomReverb {
 
   }
 
+  // stop all audio sources
   reset(){
     this.srcSet.forEach( (src) => {
       // stop source

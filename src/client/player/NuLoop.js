@@ -1,52 +1,32 @@
 /**
- * NuLoop: Nu module for drum machine
+ * NuLoop: Nu module sequencer-like (drum machine)
  **/
 
+import NuBaseModule from './NuBaseModule'
 import * as soundworks from 'soundworks/client';
+
 const client = soundworks.client;
 const audioContext = soundworks.audioContext;
 
-export default class NuLoop {
+export default class NuLoop extends NuBaseModule {
   constructor(soundworksClient) {
+    super(soundworksClient, 'nuLoop');
 
     // local attributes
-    this.soundworksClient = soundworksClient;
     this.params = {};
     let audioBuffers = this.soundworksClient.loader.buffers;
     this.synth = new SampleSynth(audioBuffers, this.soundworksClient.renderer.audioAnalyser);
-    // this.looper = new Looper(this.soundworksClient.scheduler, this.synth, this.params, audioBuffers.length);
     this.loops = new Matrix(audioBuffers.length, this.params.divisions);
 
     // binding
     this.updateNumDivisions = this.updateNumDivisions.bind(this);
     this.setTrackSlot = this.setTrackSlot.bind(this);
     this.start = this.start.bind(this);
-    // this.advanceLoop = this.advanceLoop.bind(this);
     this.remove = this.remove.bind(this);
     this.removeAll = this.removeAll.bind(this);
     this.updateNumDivisions = this.updateNumDivisions.bind(this);
     this.getSlotTime = this.getSlotTime.bind(this);
     this.divisions = this.divisions.bind(this);
-
-    // setup receive callbacks
-    this.soundworksClient.receive('nuLoop', (args) => {
-      console.log(args);
-
-      let functionName = args.shift();
-      this[functionName]( Number(args[0]), Number(args[1]), Number(args[2]), Number(args[3]) );
-    });    
-
-    // setup receive callbacks
-    this.soundworksClient.receive('nuLoopInternal_initParam', (params) => {
-        // set all local parameters based on server's 
-        // (for late arrivals, if OSC client alreay defined some earlier)
-        Object.keys(params).forEach( (key) => { 
-          this.params[key] = params[key];
-        });
-        // update loops  
-        this.updateNumDivisions();
-    });
-
   }
 
   divisions(value){
@@ -56,16 +36,6 @@ export default class NuLoop {
 
   period(value){
     this.params.period = Math.round(value * 10) / 10;
-    // shut down all loops
-    // this.removeAll();
-  }
-
-  jitter(value){
-    this.params.jitter = value;
-  }
-
-  jitterMemory(value){
-    this.params.jitterMemory = value;
   }
 
   masterGain(value){
@@ -81,7 +51,14 @@ export default class NuLoop {
     this.loops = new Matrix(numTracks, this.params.divisions);
   }
 
-  setTrackSlot(playerId, trackId, slotId, onOff){
+  setTrackSlot(args){
+    
+    // extract parameters from args array
+    let playerId = args.shift();
+    let trackId = args.shift();
+    let slotId = args.shift();
+    let onOff = args.shift();
+
     // discard packets not concerning current user
     if( playerId !== client.index && playerId !== -1 ) return;
     // check valid trackId

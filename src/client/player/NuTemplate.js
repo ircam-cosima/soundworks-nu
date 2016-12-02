@@ -2,15 +2,17 @@
  * NuTemplate: example of how to create a Nu module
  **/
 
+import NuBaseModule from './NuBaseModule'
 import * as soundworks from 'soundworks/client';
+
 const client = soundworks.client;
 const audioContext = soundworks.audioContext;
 
-export default class NuTemplate {
+export default class NuTemplate extends NuBaseModule {
   constructor(soundworksClient) {
+    super(soundworksClient, 'nuTemplate');
 
     // local attributes
-    this.soundworksClient = soundworksClient;
     this.params = {'gain': 1.0, 'fileId': 0};
 
     // binding
@@ -18,20 +20,8 @@ export default class NuTemplate {
     this.aMethodTriggeredFromServer = this.aMethodTriggeredFromServer.bind(this);
 
     // setup receive callbacks
-    this.soundworksClient.receive('nuTemplate', (args) => {
-      let name = args.shift();
-      // reduce args array to singleton if only one element left
-      args = (args.length == 1) ? args[0] : args;
-      if( this.params[name] !== undefined )
-        this.params[name] = args; // parameter set
-      else
-        this[name](args); // function call
-    });
-
-    // setup receive callbacks
     this.soundworksClient.receive('nuTemplateInternal_aMethodTriggeredFromServer', this.aMethodTriggeredFromServer);
   }
-
 
   aMethodTriggeredFromOsc(args){
     console.log('aMethodTriggeredFromOsc', args);

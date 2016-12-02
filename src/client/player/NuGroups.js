@@ -1,5 +1,5 @@
 /**
- * Nu module, in charge of room reverb
+ * NuGroup: Nu module to assign audio tracks to groups of players
  **/
 
 import * as soundworks from 'soundworks/client';

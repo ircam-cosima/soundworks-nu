@@ -1,17 +1,16 @@
 /**
- * Nu module, in charge of room reverb
+ * NuPath: Nu module to move a sound through players topology, based on 
+ * emission points. A path is composed of emission points coupled with 
+ * emission time. Each point is used as a source image to produce a tap 
+ * in player's IR.
  **/
 
+import NuBaseModule from './NuBaseModule'
 import RawSocketStreamer from './RawSocketStreamer';
 
-import * as soundworks from 'soundworks/server';
-const server = soundworks.server;
-
-export default class NuPath {
+export default class NuPath extends NuBaseModule {
   constructor(soundworksServer) {
-
-    // local attributes
-    this.soundworksServer = soundworksServer;
+    super(soundworksServer, 'nuPath');
 
     // to be saved params to send to client when connects:
     this.params = { masterGain: 1.0, 
@@ -24,38 +23,14 @@ export default class NuPath {
                     accSlope: 0, 
                     timeBound: 0 };
 
-    // general router towards internal functions when msg concerning the server (i.e. not player) is received
-    this.soundworksServer.osc.receive('/server', (msg) => {
-      // shape msg into array of arguments      
-      let args = msg.split(' ');
-      args.numberify();
-      // check if msg concerns current Nu module
-      if (args[0] !== 'nuPath'){ return; }
-      // remove header
-      args.shift();
-      console.log('nuPath', args);
-      // call function associated with first arg in msg
-      let name = args.shift();
-      args = (args.length == 1) ? args[0] : args;
-      if( this.params[name] !== undefined )
-        this.params[name] = args; // parameter set
-      else
-        this[name](args); // function call
-    });
-
     // init socket streamer
     this.rawSocketStreamer = new RawSocketStreamer(8081);
 
     // binding
     this.setPath = this.setPath.bind(this);
     this.startPath = this.startPath.bind(this);
-    this.enterPlayer = this.enterPlayer.bind(this);
+    // this.enterPlayer = this.enterPlayer.bind(this);
     this.exitPlayer = this.exitPlayer.bind(this);
-  }
-
-  enterPlayer(client){
-    // send to new client information regarding current groups parameters
-    this.soundworksServer.send(client, 'nuPathInternal_initParam', this.params);
   }
 
   exitPlayer(client){
@@ -130,11 +105,7 @@ export default class NuPath {
     let pathId = args;
     // console.log('start path', pathId);
     let rdvTime = this.soundworksServer.sync.getSyncTime() + 2.0;
-    this.soundworksServer.broadcast('player', null, 'nuPathInternal_startPath', pathId, rdvTime );
-  }
-
-  reset(){
-    this.soundworksServer.broadcast('player', null, 'nuPathInternal_reset' );    
+    this.soundworksServer.broadcast('player', null, 'nuPath', ['startPath', pathId, rdvTime] );
   }
 
 }

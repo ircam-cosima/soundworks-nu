@@ -1,16 +1,21 @@
 /**
- * NuPath: Nu module that simulates "lightning" (kind of..) 
+ * NuPath: Nu module to move a sound through players topology, based on 
+ * emission points. A path is composed of emission points coupled with 
+ * emission time. Each point is used as a source image to produce a tap 
+ * in player's IR.
  **/
 
+import NuBaseModule from './NuBaseModule'
 import * as soundworks from 'soundworks/client';
+
 const client = soundworks.client;
 const audioContext = soundworks.audioContext;
 
-export default class NuPath {
+export default class NuPath extends NuBaseModule {
   constructor(soundworksClient) {
+    super(soundworksClient, 'nuPath');
 
     // local attributes
-    this.soundworksClient = soundworksClient;
     this.irMap = new Map();
     this.srcSet = new Set();
     this.params = {};
@@ -20,27 +25,6 @@ export default class NuPath {
     this.onWebSocketEvent = this.onWebSocketEvent.bind(this);
     this.startPath = this.startPath.bind(this);
     this.reset = this.reset.bind(this);
-
-    // setup receive callbacks
-    this.soundworksClient.receive('nuPath', (args) => {
-  		console.log(args);
-  		let paramName = args.shift();
-  		// update param
-  		this.params[paramName] = args.length == 1 ? args[0] : args;
-    });
-
-    // setup receive callbacks
-    this.soundworksClient.receive('nuPathInternal_initParam', (params) => {
-        // set all local parameters based on server's 
-        // (for late arrivals, if OSC client alreay defined some earlier)
-        Object.keys(params).forEach( (key) => { 
-        	this.params[key] = params[key];
-        });
-    });    
-
-    // setup receive callbacks
-    this.soundworksClient.receive('nuPathInternal_startPath', this.startPath);
-    this.soundworksClient.receive('nuPathInternal_reset', this.reset);
 
     // init websocket (used to receive IR)
     let port = 8081;
@@ -94,7 +78,10 @@ export default class NuPath {
   /*
    * message callback: play sound
    */
-  startPath(irId, syncStartTime) {
+  startPath( args ) {
+    // get parameters
+    let irId = args.shift();
+    let syncStartTime = args.shift();
 
     // check if designated audioFile exists in loader
     if (this.soundworksClient.loader.buffers[this.params.audioFileId] == undefined) {

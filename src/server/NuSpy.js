@@ -2,57 +2,40 @@
  * NuSpy: get motion etc. info from given client in OSC
  **/
 
-import * as soundworks from 'soundworks/server';
-const server = soundworks.server;
+import NuBaseModule from './NuBaseModule'
 
-export default class NuTemplate {
+export default class NuSpy extends NuBaseModule {
   constructor(soundworksServer) {
-
-    // local attributes
-    this.soundworksServer = soundworksServer;
+    super(soundworksServer, 'nuSpy');
 
     // to be saved params to send to client when connects:
-    // this.params = { gain: 1.0, fileId: 0 };
-
-    // general router towards internal functions when msg concerning the server (i.e. not player) is received
-    this.soundworksServer.osc.receive('/server', (msg) => {
-      // shape msg into array of arguments      
-      let args = msg.split(' ');
-      args.numberify();
-      // check if msg concerns current Nu module
-      if (args[0] !== 'nuSpy'){ return; }
-      // remove header
-      args.shift();
-      // call function associated with first arg in msg
-      let name = args.shift();
-      if( this.params[name] !== undefined )
-        this.params[name] = (args.length == 1) ? args[0] : args; // parameter set
-      else
-        this[name](args); // function call
-    });
+    this.params = { 
+      touch: false, 
+      orientation: false, 
+      acceleration: false, 
+      energy: false 
+    };
 
     // binding
-    this.enterPlayer = this.enterPlayer.bind(this);
-    // this.exitPlayer = this.exitPlayer.bind(this);
-    // this.giveGlobalInstruction = this.giveGlobalInstruction.bind(this);
+    this.paramCallback = this.paramCallback.bind(this);
+    this.enterPlayer = this.enterPlayer.bind(this); 
+  }
+
+  paramCallback(name, args){
+    // only save global state (not player specific instructions)      
+    let playerId = args.shift();
+    if( playerId !== -1 ){ return; }
+    // save value
+    this.params[name] = args.shift();
   }
 
   enterPlayer(client){
-    // // send to new client information regarding current groups parameters
-    // Object.keys(this.params).forEach( (key) => {
-    //   this.soundworksServer.send(client, 'nuSpy', [key, this.params[key]]);
-    // });    
+    // send to new client information regarding current groups parameters
+    Object.keys(this.params).forEach( (key) => {
+      // -1 header here is to indicate msg is global (i.e. not player specific)
+      this.soundworksServer.send(client, 'nuSpy', [key, -1, this.params[key]]);
+    });    
   }
-
-  // exitPlayer(client){
-  //   console.log('exit player');
-  // }
-
-  // giveGlobalInstruction(args){
-  //   let delay = args;
-  //   let rdvTime = this.soundworksServer.sync.getSyncTime() + delay;
-  //   this.soundworksServer.broadcast('player', null, 'nuTemplateInternal_aMethodTriggeredFromServer', rdvTime );
-  // }
 
 }
 

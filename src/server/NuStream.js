@@ -1,5 +1,6 @@
 /**
  * NuStream: live audio stream from OSC client to players
+ * NOT FUNCTIONAL YET
  **/
 
 import * as soundworks from 'soundworks/server';
@@ -56,7 +57,6 @@ export default class NuStream {
   }
 
   exitPlayer(client){
-    console.log('exit player');
   }
 
   // giveGlobalInstruction(args){

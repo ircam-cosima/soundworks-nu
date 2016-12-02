@@ -29,7 +29,7 @@ export default class NuGroups {
       let group = this.getGroup( groupId );
       group[attrName] = value;
       
-      console.log('rcv (nugroup):', attrName, value);
+      // console.log('rcv (nugroup):', attrName, value);
 
       // let functionName = args.shift();
       // this[functionName](args);

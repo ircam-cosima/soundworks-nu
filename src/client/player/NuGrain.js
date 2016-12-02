@@ -1,5 +1,8 @@
 /**
- * NuGrain: Granular synthesis
+ * NuGrain: Granular synthesis (based on soudworks-shaker). An audio track is segmented
+ * and segments are sorted by loudness. Segments are afterwards playing in a sequencer, 
+ * the current active segment being selected based on shaking energy or OSC client sent 
+ * energy.
  **/
 
 // had to add to package.json for this specific module:
@@ -11,39 +14,30 @@
 require('typedarray');
 require('typedarray-methods');
 
+import NuBaseModule from './NuBaseModule'
 import * as soundworks from 'soundworks/client';
+
 const client = soundworks.client;
 const audioContext = soundworks.audioContext;
 
-export default class NuGrain {
+export default class NuGrain extends NuBaseModule {
   constructor(soundworksClient) {
+    super(soundworksClient, 'nuGrain');
 
     // local attributes
-    this.soundworksClient = soundworksClient;
     this.params = {'energy': 0, 'override': 1.0};
     this.audioBuffer = undefined;
     this.segments = undefined;
     this.localEnergy = 0;
     this.setIntervalListener = undefined;
     this.motionInputCallbackAdded = false;
+    this.wasAskedToStartWhileBufferNotYetLoaded = false;
 
     // binding
     this.onPlayState = this.onPlayState.bind(this);
     this.motionInputEnergyCallback = this.motionInputEnergyCallback.bind(this);
     this.setEnergyCallback = this.setEnergyCallback.bind(this);
-
-    // setup receive callbacks
-    this.soundworksClient.receive('nuGrain', (args) => {
-      // console.log(args);
-      let name = args.shift();
-      // convert singleton array if need be
-      args = (args.length == 1) ? args[0] : args
-      if( this.params[name] !== undefined )
-        this.params[name] = args; // parameter set
-      else
-        this[name](args); // function call
-    });
-
+    this.enable = this.enable.bind(this);
 
     // create audio analyser
     this.analyzer = new Analyzer({
@@ -57,10 +51,6 @@ export default class NuGrain {
     this.synth.setBeatCallback((delay, index, energy = 1) => {
       const intensity = Math.min(1, 10 * energy);
     });
-
-    // somehow adding / removing it on the fly doesn't launch it.. to check? (symptom: removing it before adding it doesn't add it)
-    this.soundworksClient.motionInput.addListener('energy', this.motionInputEnergyCallback);
-
   }
 
   motionInputEnergyCallback(energy){
@@ -69,42 +59,47 @@ export default class NuGrain {
 
   // had to use a a setInterval callback rather than only the motion input to be able to use the module on non-smartphone devices)
   setEnergyCallback(){
-  // allow to control the amount of local / vs global energy
-      let summedEnergy = this.params.override * this.params.energy + 
-                  ( 1 - this.params.override) * this.localEnergy;
-      this.synth.setShakeEnergy(summedEnergy);    
+    // allow to control the amount of local / vs global energy
+    let summedEnergy = this.params.override * this.params.energy + 
+                ( 1 - this.params.override) * this.localEnergy;
+    this.synth.setShakeEnergy(summedEnergy);
   }
 
   enable(value){
-
-    window.clearInterval(this.setIntervalListener);
-
     // notify no sound loaded
-    if( value && this.audioBuffer === undefined ){
-      console.warn('no sound loaded, can t start the synth');
-    }
+    if( value && this.audioBuffer === undefined )
+      this.wasAskedToStartWhileBufferNotYetLoaded = true;
     // enable module
     if( value && this.audioBuffer !== undefined ){
-      // add motion input listener (avoid adding it twice)
+      // (avoid enabling twice)
       if( this.motionInputCallbackAdded ){ return; }
-      // this.soundworksClient.motionInput.addListener('energy', this.motionInputEnergyCallback);
+      // add motion input listener 
+      this.soundworksClient.motionInput.addListener('energy', this.motionInputEnergyCallback);
       this.setIntervalListener = window.setInterval( this.setEnergyCallback, 100);
+      // start synth
       this.synth.start();
       // enable visual feedback
-      // this.soundworksClient.renderer.enable();
+      this.soundworksClient.renderer.enable();
+      // flag state
       this.motionInputCallbackAdded = true;
     }
     // disable module
     else{
+      // (avoid disabling twice)
+      if( !this.motionInputCallbackAdded ){ return; }      
       // remove motion input listener
-      // this.soundworksClient.motionInput.removeListener('energy', this.motionInputEnergyCallback);      
+      this.soundworksClient.motionInput.removeListener('energy', this.motionInputEnergyCallback);
+      window.clearInterval(this.setIntervalListener); 
+      // stop synth
       this.synth.stop();
+      // disable visual feedback
+      this.soundworksClient.renderer.disable();
+      // flag state
       this.motionInputCallbackAdded = false;
     }
   }
 
   audioFileId(fileId){
-
     // reset locals
     this.audioBuffer = undefined;
     this.segments = undefined;
@@ -116,17 +111,15 @@ export default class NuGrain {
       this.audioBuffer = audioBuffer;
       this.segments = segments;
       this.onPlayState(audioBuffer, segments);
+      // start synth if asked while buffers not loaded yet
+      if( this.wasAskedToStartWhileBufferNotYetLoaded ){
+        this.enable(true);
+        this.wasAskedToStartWhileBufferNotYetLoaded = false;
+      }
     });  
   }
 
   onPlayState(audioBuffer, segments) {
-    // if (segments.length === 1){
-    //   console.warn('NuGrain does not accept 1-sized segments, new audio buffer discarded');
-    //   // visual feedback of error on players
-    //   this.soundworksClient.renderer.blink([160, 0, 0], 0.4);
-    //   // return this.changeState('record');
-    //   return
-    // }
     this.synth.setBuffers(audioBuffer, segments);
   }
 
@@ -142,22 +135,18 @@ export default class NuGrain {
     // stop synth
     let wasRunning = false
     if( this.synth.isRunning ){
+      // stop engine, flag state
       this.synth.stop();
-      // disable visual feedback
-      // this.soundworksClient.renderer.disable();      
       wasRunning = true;
     }
     // get new engine with new parameters
     this.synth.getNewEngine();
     // init new engine
-    if( this.audioBuffer !== undefined ) // warning: will not work if this.segment.length <= 1: need a proper way to check in synth itself?
+    if( this.audioBuffer !== undefined )
       this.synth.setBuffers(this.audioBuffer, this.segments);
     // restart engine if required
-    if( wasRunning ){
+    if( wasRunning )
       this.synth.start();
-      // enable visual feedback
-      // this.soundworksClient.renderer.enable();      
-    }
   }
 
   engineParams(args){

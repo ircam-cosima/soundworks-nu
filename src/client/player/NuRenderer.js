@@ -35,12 +35,11 @@ export default class NuRenderer extends soundworks.Renderer {
 
     // setup receive callbacks
     this.soundworksClient.receive('nuRenderer', (args) => {
-      // discard if msg does not concern current player
-      console.log(args)
-      let playerId = args.shift();
-      if( playerId !== client.index && playerId !== -1 ) return;
       // get header
       let name = args.shift();
+      // discard if msg does not concern current player
+      let playerId = args.shift();
+      if( playerId !== client.index && playerId !== -1 ) return;
       // reduce args array to singleton if only one element left
       args = (args.length == 1) ? args[0] : args;
       if( this.params[name] !== undefined )
@@ -48,6 +47,18 @@ export default class NuRenderer extends soundworks.Renderer {
       else
         this[name](args); // function call
     });
+
+    // ATTEMPT AT CROSSMODULE POSTING: FUNCTIONAL BUT ORIGINAL USE NO LONGER CONSIDERED: TODELETE WHEN CONFIRMED
+    // setup internal callback
+    // console.log('setup event listener')
+    // window.addEventListener("message", (event) => {
+    //   console.log('received msg', event);
+    //   if( event.origin !== location.origin || event.data[0] !== 'nuRenderer' )
+    //     return;
+    //   console.log(event.data[4]);
+    //   this.restColor([255*event.data[4], 0, 0]);
+    // }, false);
+    // ----------
     
   }
 
@@ -202,34 +213,29 @@ export default class NuRenderer extends soundworks.Renderer {
 
 }
 
-
-
 /**
  * Audio analyser for visual feedback of sound amplitude on screen
  */
 
 class AudioAnalyser {
   constructor() {
-
+    // input node
     this.in = audioContext.createAnalyser();
     this.in.smoothingTimeConstant = 0.1;
     this.in.fftSize = 32;
-
+    // freqs ampl. array
     this.freqs = new Uint8Array(this.in.frequencyBinCount);
-
   }
 
-
+  // return current analyser amplitude (no freq. specific)
   getAmplitude() {
-
+    // extract data from analyser
     this.in.getByteFrequencyData(this.freqs);
-
+    // get average ampl. value
     let amplitude = 0.0;
-
     for (let i = 0; i < this.in.frequencyBinCount; i++) {
       amplitude += this.freqs[i];
     }
-
     let norm = this.in.frequencyBinCount * 100; // arbitrary value, to be cleaned
     return amplitude / norm;
   }

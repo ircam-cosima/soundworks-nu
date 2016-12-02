@@ -1,7 +1,6 @@
 import * as soundworks from 'soundworks/client';
 import * as soundworksCordova from 'soundworks-cordova/client';
 
-// import PlayerRenderer from './PlayerRenderer';
 import NuRenderer from './NuRenderer';
 import NuRoomReverb from './NuRoomReverb';
 import NuGroups from './NuGroups';

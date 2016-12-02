@@ -2,15 +2,17 @@
  * NuSpy: get motion etc. info from given client in OSC
  **/
 
+import NuBaseModule from './NuBaseModule'
 import * as soundworks from 'soundworks/client';
+
 const client = soundworks.client;
 const audioContext = soundworks.audioContext;
 
-export default class NuTemplate {
+export default class NuSpy extends NuBaseModule {
   constructor(soundworksClient) {
+    super(soundworksClient, 'nuSpy');
 
     // local attributes
-    this.soundworksClient = soundworksClient;
     this.params = {};
     this.throttle = {
       'acc': [Infinity, Infinity, Infinity],
@@ -27,6 +29,7 @@ export default class NuTemplate {
       energy: false,
       touch: false
     };
+    this.surface = new soundworks.TouchSurface(this.soundworksClient.view.$el);
 
     // binding
     this.orientationCallback = this.orientationCallback.bind(this);
@@ -35,25 +38,10 @@ export default class NuTemplate {
     this.touchStartCallback = this.touchStartCallback.bind(this);
     this.touchMoveCallback = this.touchMoveCallback.bind(this);
     this.touchEndCallback = this.touchEndCallback.bind(this);
-
-    // setup receive callbacks
-    this.soundworksClient.receive('nuSpy', (args) => {
-      console.log(args);
-      let playerId = args.shift();
-      // discard if msg doesn't concern current player
-      if( playerId !== client.index && playerId !== -1 ) return;
-      let name = args.shift();
-      // reduce args array to singleton if only one element left
-      args = (args.length == 1) ? args[0] : args;
-      if( this.params[name] !== undefined )
-        this.params[name] = args; // parameter set
-      else
-        this[name](args); // function call
-    });
-    
-    this.surface = new soundworks.TouchSurface(this.soundworksClient.view.$el);
-
   }
+
+  // Note: all callbacks in aftewards section are enabled / disabled with the methods 
+  // at scripts' end (via OSC msg)
 
   orientationCallback(data){
     // for computers, otherwise they'll send [null,null,null] at startup
@@ -115,11 +103,22 @@ export default class NuTemplate {
   }  
 
   touchCommonCallback(id, normX, normY){
+    // ATTEMPT AT CROSSMODULE POSTING: FUNCTIONAL BUT ORIGINAL USE NO LONGER CONSIDERED: TODELETE WHEN CONFIRMED
+    // window.postMessage(['nuRenderer', 'touch', id, normX, normY], location.origin);
+    // ----------
     // send touch pos
     this.soundworksClient.send('osc', '/nuSpy', ['touchPos', id, normX, normY]);
   }
 
-  touch(onOff){
+  // Note: hereafter are the OSC triggered functions used to enable / disable 
+  // hereabove callbacks
+
+  touch(args){
+    // get arguments
+    let playerId = args.shift();
+    let onOff = args.shift();
+    // discard if msg doesn't concern current player
+    if( playerId !== client.index && playerId !== -1 ){ return; }
     // enable if not already enabled
     if( onOff && !this.callBackStatus.touch ){
       this.surface.addListener('touchstart', this.touchStartCallback);
@@ -136,7 +135,12 @@ export default class NuTemplate {
     }
   }
 
-  orientation(onOff){
+  orientation(args){
+    // get arguments
+    let playerId = args.shift();
+    let onOff = args.shift();
+    // discard if msg doesn't concern current player
+    if( playerId !== client.index && playerId !== -1 ){ return; }    
     // discard instruction if motionInput not available
     if (!this.soundworksClient.motionInput.isAvailable('deviceorientation')){ return; }
     // enable if not already enabled
@@ -151,7 +155,12 @@ export default class NuTemplate {
     }
   }
 
-  acceleration(onOff){
+  acceleration(args){
+    // get arguments
+    let playerId = args.shift();
+    let onOff = args.shift();
+    // discard if msg doesn't concern current player
+    if( playerId !== client.index && playerId !== -1 ){ return; }    
     // discard instruction if motionInput not available
     if (!this.soundworksClient.motionInput.isAvailable('accelerationIncludingGravity')){ return; }
     // enable if not already enabled
@@ -166,7 +175,12 @@ export default class NuTemplate {
     }
   }
 
-  energy(onOff){
+  energy(args){
+    // get arguments
+    let playerId = args.shift();
+    let onOff = args.shift();
+    // discard if msg doesn't concern current player
+    if( playerId !== client.index && playerId !== -1 ){ return; }    
     // discard instruction if motionInput not available
     if (!this.soundworksClient.motionInput.isAvailable('energy')){ return; }
     // enable if not already enabled

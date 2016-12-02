@@ -1,17 +1,16 @@
 /**
- * Nu module, in charge of room reverb
+ * NuRoomReverb: Nu module in charge of room reverb where players 
+ * emit bursts when the acoustical wave passes them by
  **/
 
-import * as soundworks from 'soundworks/server';
-const server = soundworks.server;
-
+import NuBaseModule from './NuBaseModule'
 import RawSocketStreamer from './RawSocketStreamer';
 
-export default class NuRoomReverb {
+export default class NuRoomReverb extends NuBaseModule {
   constructor(soundworksServer) {
+    super(soundworksServer, 'nuRoomReverb');
 
     // local attributes
-    this.soundworksServer = soundworksServer;
     this.propagation = new SimulatePropagation(this);
     // to be saved params to send to client when connects:
     this.params = { masterGain: 1.0, 
@@ -24,36 +23,12 @@ export default class NuRoomReverb {
                     accSlope: 0, 
                     timeBound: 0 };
 
-    // general router towards internal functions when msg concerning the server (i.e. not player) is received
-    this.soundworksServer.osc.receive('/server', (msg) => {
-
-      // shape msg into array of arguments      
-      let args = msg.split(' ');
-      args.numberify();
-      // check if msg concerns current Nu module
-      if (args[0] !== 'nuRoomReverb') return;
-      else args.shift();
-      console.log('roomreverb', args);
-      // call function / set arg associated with first arg in msg
-      let name = args.shift();
-      if( this.params[name] !== undefined )
-        this.params[name] = args; // parameter set
-      else
-        this[name](args); // function call
-    });
-
     // setup dedicated websocket server (to handle IR msg: avoid to flood main communication socket)
     this.rawSocketStreamer = new RawSocketStreamer(8080);
 
     // bind
     this.updatePropagation = this.updatePropagation.bind(this);
-    this.enterPlayer = this.enterPlayer.bind(this);
-
-  }
-
-  enterPlayer(client){
-    // send to new client information regarding current groups parameters
-    this.soundworksServer.send(client, 'nuRoomReverbInternal_initParam', this.params);
+    this.exitPlayer = this.exitPlayer.bind(this);
   }
 
   exitPlayer(client){
