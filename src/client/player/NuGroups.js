@@ -2,17 +2,18 @@
  * NuGroup: Nu module to assign audio tracks to groups of players
  **/
 
+import NuBaseModule from './NuBaseModule'
 import * as soundworks from 'soundworks/client';
+
 const client = soundworks.client;
 const audioContext = soundworks.audioContext;
 
-export default class NuGroups {
+export default class NuGroups extends NuBaseModule {
   constructor(soundworksClient) {
+    super(soundworksClient, 'nuGroups');
 
     // local attributes
-    this.soundworksClient = soundworksClient;
     this.groupMap = new Map();
-
     this.localGain = audioContext.createGain();
     this.localGain.gain.value = 1.0;
     this.localGain.connect(audioContext.destination);
@@ -25,32 +26,19 @@ export default class NuGroups {
     this.linkPlayerToGroup = this.linkPlayerToGroup.bind(this);
     this.loop = this.loop.bind(this);
     this.getGroup = this.getGroup.bind(this);
-    // this.fadeGainTo = this.fadeGainTo.bind(this);
+  }
 
-    // setup receive callbacks
-    this.soundworksClient.receive('nuGroups', (args) => {
-      console.log(args);
-
-      let functionName = args.shift();
-      this[functionName]( args[0], args[1], args[2] );
-    });
-
-    // setup receive callbacks
-    this.soundworksClient.receive('nuGroupsInternal_groupMap', (groupArrayFromMap) => {
-      // init local groups based on server's
-      groupArrayFromMap.forEach((arrayFromMap) => {
-        // extract data from array
-        let groupId = Number(arrayFromMap[0]);
-        let groupObj = arrayFromMap[1];
-        // set group attributes
-        Object.keys(groupObj).forEach( (key) => {
-          // execute local function that matches the current key (e.g. volume, etc.)
-          // console.log('running', key, groupId, groupObj[key]);
-          this[key]( groupId, Number(groupObj[key]) );
-        });
-      });
-    });
-
+  paramCallback(name, args){
+    let playerId = args.shift();
+    // discard if msg doesn't concern current player
+    if( playerId !== client.index && playerId !== -1 ){ return; }
+    // either route to internal function
+    if( this[name] !== undefined )
+      if( args.length == 2 ) this[name](args[0], args[1]);
+      else this[name](args[0]);
+    // or to this.params value
+    else
+      this.params[name] = args;
   }
 
   onOff(groupId, value) {
@@ -79,14 +67,11 @@ export default class NuGroups {
   // TODO: a player not in a group shouldn't play its sound as happends now with above on/off
   // function. Rather, only when both on/off and linked are ok should player start to play.
   // this would require a sync. mechanism with groups already started when linked to player.
-  linkPlayerToGroup(playerId, groupId, value){
-    // ignore command if concerns different player
-    if( playerId !== client.index && playerId !== -1 ) return;
+  linkPlayerToGroup(groupId, value){
     // get group
     let group = this.getGroup( groupId );
     // apply value
     group.linkGain.gain.value = value;
-    console.log('apply value', value)
   }
 
   volume(groupId, value){
@@ -96,9 +81,7 @@ export default class NuGroups {
     group.gain.gain.value = value;
   }
 
-  localVolume(playerId, value){
-    // ignore command if concerns different player
-    if( playerId !== client.index && playerId !== -1 ) return;    
+  localVolume(value){
     // set local value
     this.localGain.gain.value = value;
   }
@@ -107,7 +90,7 @@ export default class NuGroups {
     console.log('time function not implemented yet (in NuGroup.js)');
   }
 
-  loop( groupId, value ){
+  loop(groupId, value){
     // get group
     let group = this.getGroup( groupId );
     // set group value
@@ -122,8 +105,8 @@ export default class NuGroups {
     // check if audio buffer associated to group exists
     let buffer = this.soundworksClient.loader.buffers[groupId];
     if (buffer === undefined) {
-      console.warn('required audio file id', this.params.audioFileId, 'not in client index, actual content:', this.soundworksClient.loader.options.files);
-      return;
+      console.warn('required audio file id', groupId, 'not in client index, actual content:', this.soundworksClient.loader.options.files, '-> initializing empty audio source..');
+      buffer = audioContext.createBuffer(1, 22050, 44100);
     }
 
     // create new group

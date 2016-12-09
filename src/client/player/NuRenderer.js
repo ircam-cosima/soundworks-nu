@@ -8,7 +8,7 @@ const audioContext = soundworks.audioContext;
 
 export default class NuRenderer extends soundworks.Renderer {
   constructor(soundworksClient) {
-    super(0); // update rate = 0: synchronize updates to frame rate
+    super(1/24); // update rate = 0: synchronize updates to frame rate
 
     // local attributes
     this.soundworksClient = soundworksClient;
@@ -101,13 +101,15 @@ export default class NuRenderer extends soundworks.Renderer {
         + Math.round(this.colors.current[0]) + ','
         + Math.round(this.colors.current[1]) + ','
         + Math.round(this.colors.current[2]) + ')';
-      ctx.rect(0, 0, ctx.canvas.width, ctx.canvas.height);
-      ctx.fill();
-      // ctx.restore();
+      ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
       this.overrideForceRender = false;
       this.bkgChangeColor = false
     }
   }
+
+
+
+  // requestAnimationFrame(draw);    /// use rAF here
 
 
   enable(){
@@ -211,6 +213,35 @@ export default class NuRenderer extends soundworks.Renderer {
     return str;
   }
 
+  minDb(value){
+    if( value > -100 && value < 0 && value < this.audioAnalyser.in.maxDecibels )
+      this.audioAnalyser.in.minDecibels = value;
+  }
+
+  maxDb(value){
+    if( value > -100 && value < 0 && value < this.audioAnalyser.in.minDecibels )
+      this.audioAnalyser.in.maxDecibels = value;
+  }
+
+  smoothingTimeConstant(value){
+    if( value >= 0 && value <= 1 )
+      this.audioAnalyser.in.smoothingTimeConstant = value;
+  }
+
+  minFreq(value){
+    if( value > 0 && value < this.audioAnalyser.maxFreq ){
+      this.audioAnalyser.minFreq = value;
+      this.audioAnalyser.updateBinNorm();
+    }
+  }
+
+  maxFreq(value){
+    if( value < 20000 && value > this.audioAnalyser.minFreq ){
+      this.audioAnalyser.maxFreq = value;
+      this.audioAnalyser.updateBinNorm();
+    }
+  }
+
 }
 
 /**
@@ -221,23 +252,39 @@ class AudioAnalyser {
   constructor() {
     // input node
     this.in = audioContext.createAnalyser();
-    this.in.smoothingTimeConstant = 0.1;
+    this.in.smoothingTimeConstant = 0.2;
     this.in.fftSize = 32;
-    // freqs ampl. array
-    this.freqs = new Uint8Array(this.in.frequencyBinCount);
+    // compression
+    this.in.minDecibels = -100;
+    this.in.maxDecibels = -50;
+    // limit analyser spectrum
+    this.minFreq = 200; // in Hz
+    this.maxFreq = 8000; // in Hz
+    this.updateBinNorm();
+    // pre-allocation of freqs ampl. array
+    this.magnitudes = new Uint8Array(this.in.frequencyBinCount);
   }
 
-  // return current analyser amplitude (no freq. specific)
+  updateBinNorm(){
+    let norm = this.in.fftSize / audioContext.sampleRate;
+    this.minBin = Math.round(this.minFreq * norm);
+    this.maxBin = Math.round(this.maxFreq * norm);
+    this.binsNormalisation = 1 / (this.maxBin - this.minBin + 1);
+  }
+
+  // return current analyser amplitude (no freq. specific) between 0 and 1
   getAmplitude() {
     // extract data from analyser
-    this.in.getByteFrequencyData(this.freqs);
+    this.in.getByteFrequencyData(this.magnitudes);
     // get average ampl. value
     let amplitude = 0.0;
-    for (let i = 0; i < this.in.frequencyBinCount; i++) {
-      amplitude += this.freqs[i];
+    for( let i = this.minBin; i <= this.maxBin; ++i ) {
+      amplitude += this.magnitudes[i];
     }
-    let norm = this.in.frequencyBinCount * 100; // arbitrary value, to be cleaned
-    return amplitude / norm;
+    amplitude *= this.binsNormalisation / 250;
+    // let norm = this.in.frequencyBinCount * 100; // arbitrary value, to be cleaned
+    // console.log(amplitude);
+    return amplitude;
   }
 
 }

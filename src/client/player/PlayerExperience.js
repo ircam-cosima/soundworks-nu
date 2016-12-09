@@ -69,7 +69,7 @@ export default class PlayerExperience extends soundworks.Experience {
     this.viewTemplate = viewTemplate;
     this.viewContent = {};
     this.viewCtor = soundworks.CanvasView;
-    this.viewOptions = { preservePixelRatio: true };
+    this.viewOptions = { preservePixelRatio: false };
     this.view = this.createView();
     this.renderer = new NuRenderer(this);
     this.view.addRenderer(this.renderer);
