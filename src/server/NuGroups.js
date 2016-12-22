@@ -37,7 +37,7 @@ export default class NuGroups extends NuBaseModule {
     if (this.groupMap.has(groupId))
       return this.groupMap.get(groupId);
     // create new group
-    let group = { time: 0, onOff: 0, volume: 1, loop: 1 };
+    let group = { time: 0, startTime: 0, onOff: 0, volume: 1, loop: 1 };
     // store new group in local map
     this.groupMap.set(groupId, group);
     // return created group

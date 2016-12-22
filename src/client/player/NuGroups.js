@@ -46,22 +46,31 @@ export default class NuGroups extends NuBaseModule {
     // get group
     let group = this.getGroup( groupId );
 
-    // start group (src)
-    if( value ){
-      // disable eventual stop timeout
-      clearTimeout( group.timeOut );
-      // start source at group time TODO: time should be sync. between devices
-      group.src.start(0);
-      // notify parent +1 source here to enable visual feedback on sound amplitude
-      this.soundworksClient.renderer.enable();
-    }
     // stop group (src)
-    else{
+    if( value === 0 ){
         // stop source 
         group.src.stop(0);
         // notify renderer we don't need it anymore
         this.soundworksClient.renderer.disable();
       }
+    // start group (src)
+    else{
+      // get time delay since order to start has been given
+      let timeOffset = this.soundworksClient.scheduler.syncTime - value;
+      // modulo buffer length for slow / late connected players 
+      timeOffset %= group.src.buffer.duration;
+      // start source at group time
+      group.src.start(audioContext.currentTime, timeOffset);
+      // remember start time
+      group.startTime = value;
+      // schedule loop
+      // if( group.src.loop )
+      //   group.src.src.onended = () => { 
+      //     group.src.start();
+      //   };
+      // notify parent +1 source here to enable visual feedback on sound amplitude
+      this.soundworksClient.renderer.enable();
+    }      
   }
 
   // TODO: a player not in a group shouldn't play its sound as happends now with above on/off
@@ -110,7 +119,7 @@ export default class NuGroups extends NuBaseModule {
     }
 
     // create new group
-    let group = { time: 0 };
+    let group = { time: 0, startTime: 0 };
 
     // create new audio source 
     group.src = new AudioSourceNode(buffer);
@@ -164,13 +173,13 @@ class AudioSourceNode {
 
   }
 
-  start(time = 0){
+  start(time = 0, offset = 0){
     // stop eventual old source
     this.stop(0);
     // create new source
     this.src = this.getNewSource();
     // start source
-    this.src.start(time);
+    this.src.start(time, offset);
   }
 
   stop(time = 0){
@@ -185,6 +194,10 @@ class AudioSourceNode {
   set loop(value){
     this._loop = value;
     this.src.loop = value;
+  }
+
+  get loop(){
+    return this._loop;
   }
 
   getNewSource(){

@@ -19,7 +19,7 @@ const viewTemplate = `
   <div class="foreground">
 
     <div class="section-top flex-middle">
-      <p id="text1" class="big">  </p>
+      <p id="text1" class="huge">  </p>
     </div>
 
     <div class="section-center flex-middle">

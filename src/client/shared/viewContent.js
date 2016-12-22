@@ -54,8 +54,8 @@ export default {
   'service:platform': {
     isCompatible: null,
     errorMessage: 'Sorry,<br />Your device is not compatible with the application.',
-    intro: 'Welcome to',
-    instructions: 'Touch the screen to join !',
+    intro: 'Introducing',
+    instructions: 'Touch the screen to join the experience...',
   },
 
   // content of the `sync` service
