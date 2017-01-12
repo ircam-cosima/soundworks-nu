@@ -9,6 +9,7 @@ import NuLoop from './NuLoop';
 import NuTemplate from './NuTemplate';
 import NuGrain from './NuGrain';
 import NuSpy from './NuSpy';
+import NuSynth from './NuSynth';
 
 import * as utils from './utils';
 const audioContext = soundworks.audioContext;
@@ -98,6 +99,7 @@ export default class PlayerExperience extends soundworks.Experience {
     this.nuTemplate = new NuTemplate(this);
     this.nuGrain = new NuGrain(this);
     this.nuSpy = new NuSpy(this);
+    this.nuSynth = new NuSynth(this);
 
     // init Nu Main
     this.receive('nuMain', (args) => {
