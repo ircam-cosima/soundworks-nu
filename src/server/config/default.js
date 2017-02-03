@@ -103,7 +103,7 @@ export default {
   // configuration of the `raw-socket` service
   rawSocket: {
     // port used for socket connection
-    port: 8080
+    port: 8085
   },
 
   // define if the server should use gzip compression for static files

@@ -23,10 +23,12 @@
     "bufferutil": "^1.2.1",
     "debug": "^2.1.2",
     "soundworks": "github:collective-soundworks/soundworks.git#develop",
+    "fs": "0.0.1-security",
     "source-map-support": "^0.4.0",
     "typedarray-methods": "^1.0.0",
     "utf-8-validate": "^1.2.1",
     "waves-lfo": "wavesjs/lfo#v0.2.0",
+    "web-audio-api": "^0.2.2",
     "webworker-threads": "^0.7.8",
     "ws": "^1.1.1"
   },

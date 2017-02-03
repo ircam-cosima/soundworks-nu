@@ -9,6 +9,7 @@ import NuTemplate from './NuTemplate';
 import NuGrain from './NuGrain';
 import NuSpy from './NuSpy';
 import NuSynth from './NuSynth';
+import NuStream from './NuStream';
 
 import * as utils from './utils';
 const audioContext = soundworks.audioContext;
@@ -49,6 +50,7 @@ export default class PlayerExperience extends soundworks.Experience {
     this.sync = this.require('sync');
     this.checkin = this.require('checkin', { showDialog: false });
     this.scheduler = this.require('scheduler', { lookahead: 0.050 });
+    this.rawSocket = this.require('raw-socket');
     this.loader = this.require('audio-buffer-manager', {
       assetsDomain: assetsDomain,
       files: audioFiles,
@@ -98,6 +100,7 @@ export default class PlayerExperience extends soundworks.Experience {
     this.nuGrain = new NuGrain(this);
     this.nuSpy = new NuSpy(this);
     this.nuSynth = new NuSynth(this);
+    this.nuStream = new NuStream(this);
 
     // init Nu Main
     this.receive('nuMain', (args) => {

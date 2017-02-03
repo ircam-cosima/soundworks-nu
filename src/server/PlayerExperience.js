@@ -27,6 +27,8 @@ export default class PlayerExperience extends soundworks.Experience {
     this.params = this.require('shared-params');
     this.sync = this.require('sync');
     this.osc = this.require('osc');
+    var protocol = [ { channel: 'nuStream', type: 'Float32' } ];
+    this.rawSocket = this.require('raw-socket', { protocol: protocol });
 
     // bind methods
     this.initOsc = this.initOsc.bind(this);
