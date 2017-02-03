@@ -14,7 +14,7 @@ export default class NuLoop extends NuBaseModule {
 
     // local attributes
     this.params = {};
-    let audioBuffers = this.soundworksClient.loader.buffers;
+    let audioBuffers = this.soundworksClient.loader.audioBuffers.default;
     this.synth = new SampleSynth(audioBuffers, this.soundworksClient.renderer.audioAnalyser);
     this.loops = new Matrix(audioBuffers.length, this.params.divisions);
 
@@ -47,7 +47,7 @@ export default class NuLoop extends NuBaseModule {
     // shut down all loops
     this.removeAll();
     // resize loop map
-    let numTracks = this.soundworksClient.loader.buffers.length;
+    let numTracks = this.soundworksClient.loader.audioBuffers.default.length;
     this.loops = new Matrix(numTracks, this.params.divisions);
   }
 
@@ -62,7 +62,7 @@ export default class NuLoop extends NuBaseModule {
     // discard packets not concerning current user
     if( playerId !== client.index && playerId !== -1 ) return;
     // check valid trackId
-    if( trackId >= this.soundworksClient.loader.buffers.length || trackId < 0) {
+    if( trackId >= this.soundworksClient.loader.audioBuffers.default.length || trackId < 0) {
       console.warn('required track id', trackId, 'not in client index, actual content:', this.soundworksClient.loader.options.files);
       return;
     }

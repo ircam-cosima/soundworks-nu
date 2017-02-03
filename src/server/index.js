@@ -17,40 +17,18 @@ process.env.NODE_ENV = config.env;
 // initialize application with configuration options
 soundworks.server.init(config);
 
-// define parameters shared by different clients
-const sharedParams = soundworks.server.require('shared-params');
-
 // define the configuration object to be passed to the `.ejs` template
 soundworks.server.setClientConfigDefinition((clientType, config, httpRequest) => {
 
-  let includeCordovaTags = false;
-  
-  if (httpRequest.query.cordova) {
-    includeCordovaTags = true;
-    config.assetsDomain = '';
-  }
-
-  const data = {
-    standalone: config.standalone,
+  return {
     clientType: clientType,
     env: config.env,
     appName: config.appName,
-    socketIO: config.socketIO,
+    websockets: config.websockets,
     version: config.version,
     defaultType: config.defaultClient,
     assetsDomain: config.assetsDomain,
-
-    // cordova / environment
-    beaconUUID: config.beaconUUID,
-    includeCordovaTags: includeCordovaTags,
-    env: config.env,
-    gaId: config.gaId,
   };
-
-  if (!config.standalone)
-    data.socketIO = config.socketIO;
-
-  return data;  
 });
 
 // create the experience

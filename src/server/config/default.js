@@ -62,7 +62,7 @@ export default {
   },
 
   // socket.io configuration
-  socketIO: {
+  websockets: {
     url: '',
     transports: ['websocket'],
     // @note: EngineIO defaults
@@ -100,6 +100,12 @@ export default {
     sendPort: 57120,
   },
 
+  // configuration of the `raw-socket` service
+  rawSocket: {
+    // port used for socket connection
+    port: 8080
+  },
+
   // define if the server should use gzip compression for static files
   enableGZipCompression: true,
 
@@ -125,9 +131,4 @@ export default {
   // directory where error reported from the clients are written
   errorReporterDirectory: path.join(cwd, 'logs', 'clients'),
 
-  // iBeacon UUID
-  beaconUUID: '74278BDA-B644-4520-8F0C-720EAF059935',
-
-  // standalone mode (server-less Cordova application)
-  standalone: false,  
 }

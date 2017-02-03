@@ -1,5 +1,4 @@
 import * as soundworks from 'soundworks/client';
-import * as soundworksCordova from 'soundworks-cordova/client';
 
 import NuRenderer from './NuRenderer';
 import NuRoomReverb from './NuRoomReverb';
@@ -40,7 +39,7 @@ const viewTemplate = `
 */
 
 export default class PlayerExperience extends soundworks.Experience {
-  constructor(assetsDomain, audioFiles, beaconUUID) {
+  constructor(assetsDomain, audioFiles) {
     super();
 
     // soundworks services
@@ -50,10 +49,10 @@ export default class PlayerExperience extends soundworks.Experience {
     this.sync = this.require('sync');
     this.checkin = this.require('checkin', { showDialog: false });
     this.scheduler = this.require('scheduler', { lookahead: 0.050 });
-    this.loader = this.require('loader', {
+    this.loader = this.require('audio-buffer-manager', {
       assetsDomain: assetsDomain,
       files: audioFiles,
-    });
+    });    
     this.motionInput = this.require('motion-input', {
       descriptors: ['accelerationIncludingGravity', 'deviceorientation', 'energy']
     });
@@ -81,7 +80,6 @@ export default class PlayerExperience extends soundworks.Experience {
 
     if (!this.hasStarted) {
       this.init();
-      // this.initBeacon();
     }
 
     this.show();
@@ -114,95 +112,6 @@ export default class PlayerExperience extends soundworks.Experience {
     document.getElementsByTagName("body")[0].addEventListener("touchstart",
     function(e) { e.returnValue = false });
 
-    // // create touch event, used to send the first message
-    // const surface = new soundworks.TouchSurface(this.view.$el);
-    // surface.addListener('touchstart', (id, normX, normY) => {
-    //   // only if propagation has not already started
-    //   if (this.status == 0) {
-    //     // special status state for the emitter, to avoid potential 'double sending' scenarii when shaking the device too lively
-    //     this.status = -1;        
-    //     this.triggerSound();
-    //   }
-    // });
-
-    // // setup motion input listeners
-    // if (this.motionInput.isAvailable('accelerationIncludingGravity')) {
-    //   this.motionInput.addListener('accelerationIncludingGravity', (data) => {
-    //     const mag = Math.sqrt(data[0] * data[0] + data[1] * data[1] + data[2] * data[2]);
-    //     if( (mag > 50) && (this.status == 0) ){
-    //       // special status state for the emitter, to avoid potential 'double sending' scenarii when shaking the device too lively
-    //       this.status = -1;          
-    //       this.triggerSound();
-    //     }
-    //   });
-    // }
-
   }
-
-  // -------------------------------------------------------------------------------------------
-  // BEACON-RELATED METHODS
-  // -------------------------------------------------------------------------------------------
-
-  // /*
-  //  * Init beacon service
-  //  */
-  // initBeacon() {
-
-  //   // initialize ibeacon service
-  //   if (this.beacon) {
-  //     this.beacon.addListener(this.beaconCallback);
-  //     this.beacon.txPower = -55; // fake calibration (in dB)
-  //     this.beacon.major = 0;
-  //     this.beacon.minor = client.index;
-  //     this.beacon.restartAdvertising();
-  //   }
-
-  //   // INIT FAKE BEACON (for computer based debug)
-  //   else {
-  //     this.beacon = { major: 0, minor: client.index };
-  //     this.beacon.rssiToDist = function() {
-  //       return 0.01 + 0.1 * Math.random() };
-  //     this.beacon.restartAdvertising = function() {};
-  //     window.setInterval(() => {
-  //       var pluginResult = { beacons: [] };
-  //       for (let i = 0; i < 5; i++) {
-  //         if (i != client.index) {
-  //           var beacon = { major: 0, minor: i, rssi: -45 - i * 5, proximity: 'fake, nearby', };
-  //           pluginResult.beacons.push(beacon);
-  //         }
-  //       }
-  //       this.beaconCallback(pluginResult);
-  //     }, 1000);
-  //   }
-  // }
-
-  // /*
-  //  * callback that runs every time a beacon scan occurs:
-  //  * store a list of neighboring beacons
-  //  */
-  // beaconCallback(pluginResult) {
-  //     // loop over beacons to fill simplified beacon Map
-  //     let beaconMap = new Map();
-  //     pluginResult.beacons.forEach((beacon) => {
-  //       let id = beacon.minor;
-  //       let dist = this.beacon.rssiToDist(beacon.rssi)
-  //       beaconMap.set(id, dist);
-  //     });
-  //     this.beaconMap = beaconMap;
-
-  //     // upload beacon to server
-  //     // this.send('beaconMap', beaconMap);
-
-  //     // log beacons on screen
-  //     var log = 'Closeby Beacons: </br></br>';
-  //     pluginResult.beacons.forEach((beacon) => {
-  //       log += beacon.major + '.' + beacon.minor + ' dist: ' + Math.round(this.beacon.rssiToDist(beacon.rssi) * 100, 2) / 100 + 'm' + '</br>' +
-  //         '(' + beacon.proximity + ')' + '</br></br>';
-  //     });
-  //     // diplay beacon list on screen
-  //     document.getElementById('logValues').innerHTML = log;
-
-  //   }
-  //   // -------------------------------------------------------------------------------------------  
 
 }
