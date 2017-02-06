@@ -1,6 +1,5 @@
 /**
  * NuStream: live audio stream from OSC client to players
- * NOT FUNCTIONAL YET
  **/
 
 import NuBaseModule from './NuBaseModule'
@@ -25,11 +24,20 @@ export default class NuStream extends NuBaseModule {
     // output gain
     this.out = audioContext.createGain();
     this.out.connect( audioContext.destination );
+
+    // connect to analyser for visual feedback
+    this.out.connect( this.soundworksClient.renderer.audioAnalyser.in );
   }
 
   // set audio gain out
   gain(val){
     this.out.gain.value = val;
+    console.log(this.params)
+  }
+
+  onOff(value){
+    if( value ){ this.soundworksClient.renderer.enable(); }
+    else{ this.soundworksClient.renderer.disable(); }
   }
 
   /*
