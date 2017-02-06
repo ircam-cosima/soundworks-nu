@@ -14,40 +14,57 @@ export default class NuStream extends NuBaseModule {
     super(soundworksClient, 'nuStream');
 
     // local attributes
-    this.params = {'gain': 1.0};
+    this.params = {};
 
     // binding
-    this.onWebSocketEvent = this.onWebSocketEvent.bind(this);
+    this.rawSocketCallback = this.rawSocketCallback.bind(this);
 
     // setup socket reveive callbacks (receiving raw audio data)
-    this.soundworksClient.rawSocket.receive('nuStream', this.onWebSocketEvent );
+    this.soundworksClient.rawSocket.receive('nuStream', this.rawSocketCallback );
 
+    // output gain
+    this.out = audioContext.createGain();
+    this.out.connect( audioContext.destination );
   }
 
-  // send client index (at websocket opening) to associate socket / index in server
-  onWebSocketOpen() {
-    this.ws.send(client.index, { binary: false, mask: true }, (error) => { console.log('websocket error:', error); });
+  // set audio gain out
+  gain(val){
+    this.out.gain.value = val;
   }
 
   /*
-   * callback when websocket event (msg containing new IR sent by server) is received
+   * callback executed when rawsocket data received from server (streamed audio data)
    */
-  onWebSocketEvent(data) {
+  rawSocketCallback(data) {
+    
     // decode 
-    console.log('received data size:', data.length);
-    let audioArray = new Float32Array(data);
+    let packetId = Math.round( data.slice(0, 1) * 100 ) / 100; // other digit are not relevant
+    let audioArray = new Float32Array(data.slice(1, data.length));
+    // console.log('received audio data: id:',packetId, 'size:', audioArray.length);
+
+    // get start time
+    const now = this.soundworksClient.sync.getSyncTime();
+    let sysTime = this.params.startTime + ( packetId ) * this.params.packetTime + this.params.delayTime;
+    let relOffset = sysTime - now;
+
+    // discard data if start time passed (packet deprecated)
+    // console.log('start source at', sysTime, 'in', relOffset, 'sec');
+    if( relOffset < 0 ){ 
+      this.soundworksClient.renderer.blink([100, 0, 0]); 
+      return;
+    }
 
     // create audio buffer
-    let audioBuffer = audioContext.createBuffer(1, data.length, 44100);
-    audioBuffer.getChannelData(0).set(data);
+    let audioBuffer = audioContext.createBuffer(1, audioArray.length, 44100);
+    audioBuffer.getChannelData(0).set(audioArray);
 
     // create audio source
     let src = audioContext.createBufferSource();
     src.buffer = audioBuffer;
-    src.connect( audioContext.destination );
+    src.connect( this.out );
 
     // start source
-    src.start();
+    src.start(audioContext.currentTime + relOffset);
 
   }  
 
