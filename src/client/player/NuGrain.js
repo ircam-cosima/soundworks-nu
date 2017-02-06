@@ -222,7 +222,7 @@ export class Analyzer extends EventEmitter {
 //////////////////////////////////////////////////////////////////////////////////////////
 
 // import * as soundworks from 'soundworks/client';
-import { powerToDecibel, linearToDecibel, decibelTolinear } from 'soundworks/utils/math';
+import { powerToDecibel, linearToDecibel, decibelToLinear } from 'soundworks/utils/math';
 
 // const audioContext = soundworks.audioContext;
 const audio = soundworks.audio;
@@ -306,7 +306,7 @@ class ShakerEngine extends audio.SegmentEngine {
 
     const shakeSegmentIndex = getIndexByLogPower(this.segmentIndicesSortedByLogPower, logPower, this.randomVar);
     const logSegmentPower = this.segmentIndicesSortedByLogPower[shakeSegmentIndex].logPower;
-    const gain = decibelTolinear(logPower - logSegmentPower);
+    const gain = decibelToLinear(logPower - logSegmentPower);
 
     if (this.beatCallback) {
       this.beatCallback(localTime - now, shakeSegmentIndex + 1, shakeEnergy);
