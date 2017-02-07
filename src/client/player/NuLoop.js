@@ -15,7 +15,7 @@ export default class NuLoop extends NuBaseModule {
     // local attributes
     this.params = {};
     let audioBuffers = this.soundworksClient.loader.audioBuffers.default;
-    this.synth = new SampleSynth(audioBuffers, this.soundworksClient.renderer.audioAnalyser);
+    this.synth = new SampleSynth(audioBuffers, this.soundworksClient.nuOutput.in);
     this.loops = new Matrix(audioBuffers.length, this.params.divisions);
 
     // binding
@@ -202,11 +202,10 @@ class Matrix{
 }
 
 class SampleSynth {
-  constructor(audioBuffers, audioAnalyser) {
+  constructor(audioBuffers, output) {
     this.audioBuffers = audioBuffers;
     this.output = audioContext.createGain();
-    this.output.connect(audioContext.destination);
-    this.output.connect(audioAnalyser.in);
+    this.output.connect( output );
     this.output.gain.value = 1;
   }
 

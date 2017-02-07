@@ -16,8 +16,7 @@ export default class NuGroups extends NuBaseModule {
     this.groupMap = new Map();
     this.localGain = audioContext.createGain();
     this.localGain.gain.value = 1.0;
-    this.localGain.connect(audioContext.destination);
-    this.localGain.connect(this.soundworksClient.renderer.audioAnalyser.in)
+    this.localGain.connect( this.soundworksClient.nuOutput.in );
 
     // binding
     this.onOff = this.onOff.bind(this);

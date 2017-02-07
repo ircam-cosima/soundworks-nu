@@ -46,7 +46,7 @@ export default class NuGrain extends NuBaseModule {
     });
 
     // create and configure synthetizer
-    this.synth = new Synthesizer(this.soundworksClient.scheduler, this.soundworksClient.renderer.audioAnalyser);
+    this.synth = new Synthesizer(this.soundworksClient.scheduler, this.soundworksClient.nuOutput.in);
 
     this.synth.setBeatCallback((delay, index, energy = 1) => {
       const intensity = Math.min(1, 10 * energy);
@@ -319,16 +319,15 @@ class ShakerEngine extends audio.SegmentEngine {
 }
 
 export class Synthesizer {
-  constructor(scheduler, audioAnalyser) {
+  constructor(scheduler, output) {
     this.soundworksScheduler = scheduler; 
     this.scheduler =  audio.getScheduler(audioContext);
 
     this.master = audioContext.createGain();
-    this.master.connect(audioContext.destination);
     this.master.gain.value = 1;
 
     // connect to visual feeback analyser
-    this.master.connect(audioAnalyser.in);
+    this.master.connect(output);
 
     this.engineOptions = {
       periodAbs: 0.150,

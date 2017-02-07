@@ -156,7 +156,7 @@ export default class NuPath extends NuBaseModule {
 
     // connect graph
     src.connect(gain);
-    gain.connect(audioContext.destination);
+    gain.connect( this.soundworksClient.nuOutput.in );
 
     // play sound if rendez-vous time is in the future (else report bug)
     let now = this.soundworksClient.sync.getSyncTime()
@@ -170,7 +170,6 @@ export default class NuPath extends NuBaseModule {
     }
 
     // setup screen color = f(amplitude) callback
-    gain.connect(this.soundworksClient.renderer.audioAnalyser.in);
     this.soundworksClient.renderer.enable();
 
     // save source for eventual global reset

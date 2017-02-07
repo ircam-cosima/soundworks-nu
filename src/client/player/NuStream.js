@@ -23,10 +23,7 @@ export default class NuStream extends NuBaseModule {
 
     // output gain
     this.out = audioContext.createGain();
-    this.out.connect( audioContext.destination );
-
-    // connect to analyser for visual feedback
-    this.out.connect( this.soundworksClient.renderer.audioAnalyser.in );
+    this.out.connect( this.soundworksClient.nuOutput.in );
   }
 
   // set audio gain out
