@@ -14,6 +14,7 @@ export default class NuOutput extends NuBaseModule {
     this.params = { 
       gain: 1.0, 
       enableSpat: false,
+      ambiOrder: 3,
       enableRoom: false,
       userPos: [0, 0, 0], 
     };

@@ -5,11 +5,11 @@
 			"major" : 7,
 			"minor" : 0,
 			"revision" : 5,
-			"architecture" : "x86",
+			"architecture" : "x64",
 			"modernui" : 1
 		}
 ,
-		"rect" : [ 1316.0, 276.0, 597.0, 758.0 ],
+		"rect" : [ 1483.0, 300.0, 597.0, 758.0 ],
 		"bgcolor" : [ 0.862745, 0.870588, 0.878431, 1.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
@@ -50,7 +50,7 @@
 							"major" : 7,
 							"minor" : 0,
 							"revision" : 5,
-							"architecture" : "x86",
+							"architecture" : "x64",
 							"modernui" : 1
 						}
 ,
@@ -1251,7 +1251,7 @@
 											"major" : 7,
 											"minor" : 0,
 											"revision" : 5,
-											"architecture" : "x86",
+											"architecture" : "x64",
 											"modernui" : 1
 										}
 ,
@@ -3807,7 +3807,7 @@
  ]
 					}
 ,
-					"patching_rect" : [ 415.0, 311.700012, 67.0, 22.0 ],
+					"patching_rect" : [ 442.0, 262.399994, 67.0, 22.0 ],
 					"saved_object_attributes" : 					{
 						"description" : "",
 						"digest" : "",
@@ -3846,11 +3846,11 @@
 							"major" : 7,
 							"minor" : 0,
 							"revision" : 5,
-							"architecture" : "x86",
+							"architecture" : "x64",
 							"modernui" : 1
 						}
 ,
-						"rect" : [ 0.0, 26.0, 597.0, 732.0 ],
+						"rect" : [ 1483.0, 326.0, 597.0, 732.0 ],
 						"bgcolor" : [ 0.862745, 0.870588, 0.878431, 1.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 1,
@@ -4014,7 +4014,7 @@
 											"major" : 7,
 											"minor" : 0,
 											"revision" : 5,
-											"architecture" : "x86",
+											"architecture" : "x64",
 											"modernui" : 1
 										}
 ,
@@ -5369,7 +5369,7 @@
 									"presentation" : 1,
 									"presentation_rect" : [ 202.75, 124.666748, 71.5, 22.0 ],
 									"style" : "",
-									"text" : "1.",
+									"text" : "0.85",
 									"textcolor" : [ 0.0, 0.0, 0.0, 1.0 ]
 								}
 
@@ -5810,7 +5810,7 @@
  ]
 					}
 ,
-					"patching_rect" : [ 415.0, 344.700012, 75.0, 22.0 ],
+					"patching_rect" : [ 442.0, 293.399994, 75.0, 22.0 ],
 					"saved_object_attributes" : 					{
 						"description" : "",
 						"digest" : "",
@@ -5836,7 +5836,7 @@
 							"major" : 7,
 							"minor" : 0,
 							"revision" : 5,
-							"architecture" : "x86",
+							"architecture" : "x64",
 							"modernui" : 1
 						}
 ,
@@ -8416,7 +8416,7 @@
  ]
 					}
 ,
-					"patching_rect" : [ 415.0, 278.700012, 75.0, 22.0 ],
+					"patching_rect" : [ 442.0, 231.399994, 75.0, 22.0 ],
 					"saved_object_attributes" : 					{
 						"description" : "",
 						"digest" : "",
@@ -8442,7 +8442,7 @@
 							"major" : 7,
 							"minor" : 0,
 							"revision" : 5,
-							"architecture" : "x86",
+							"architecture" : "x64",
 							"modernui" : 1
 						}
 ,
@@ -10117,7 +10117,7 @@
  ]
 					}
 ,
-					"patching_rect" : [ 415.0, 245.699997, 57.0, 22.0 ],
+					"patching_rect" : [ 442.0, 200.399994, 57.0, 22.0 ],
 					"saved_object_attributes" : 					{
 						"description" : "",
 						"digest" : "",
@@ -10143,7 +10143,7 @@
 							"major" : 7,
 							"minor" : 0,
 							"revision" : 5,
-							"architecture" : "x86",
+							"architecture" : "x64",
 							"modernui" : 1
 						}
 ,
@@ -10601,7 +10601,7 @@
 									"presentation" : 1,
 									"presentation_rect" : [ 31.875, 468.0, 71.5, 22.0 ],
 									"style" : "",
-									"text" : "0.79",
+									"text" : "0.02",
 									"textcolor" : [ 0.0, 0.0, 0.0, 1.0 ]
 								}
 
@@ -10673,7 +10673,7 @@
 									"presentation" : 1,
 									"presentation_rect" : [ 31.875, 393.0, 71.5, 22.0 ],
 									"style" : "",
-									"text" : "0.95",
+									"text" : "0.",
 									"textcolor" : [ 0.0, 0.0, 0.0, 1.0 ]
 								}
 
@@ -11723,7 +11723,7 @@
  ]
 					}
 ,
-					"patching_rect" : [ 415.0, 179.699997, 65.0, 22.0 ],
+					"patching_rect" : [ 442.0, 169.399994, 65.0, 22.0 ],
 					"saved_object_attributes" : 					{
 						"description" : "",
 						"digest" : "",
@@ -11749,7 +11749,7 @@
 							"major" : 7,
 							"minor" : 0,
 							"revision" : 5,
-							"architecture" : "x86",
+							"architecture" : "x64",
 							"modernui" : 1
 						}
 ,
@@ -12484,7 +12484,7 @@
  ]
 					}
 ,
-					"patching_rect" : [ 415.0, 212.699997, 85.0, 22.0 ],
+					"patching_rect" : [ 442.0, 324.399994, 85.0, 22.0 ],
 					"saved_object_attributes" : 					{
 						"description" : "",
 						"digest" : "",
@@ -12505,7 +12505,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 4,
 					"outlettype" : [ "", "", "", "" ],
-					"patching_rect" : [ 254.5, 221.0, 121.0, 22.0 ],
+					"patching_rect" : [ 239.0, 273.0, 121.0, 22.0 ],
 					"saved_object_attributes" : 					{
 						"embed" : 0
 					}
@@ -12527,7 +12527,7 @@
 							"major" : 7,
 							"minor" : 0,
 							"revision" : 5,
-							"architecture" : "x86",
+							"architecture" : "x64",
 							"modernui" : 1
 						}
 ,
@@ -12587,7 +12587,7 @@
 											"major" : 7,
 											"minor" : 0,
 											"revision" : 5,
-											"architecture" : "x86",
+											"architecture" : "x64",
 											"modernui" : 1
 										}
 ,
@@ -12850,7 +12850,7 @@
 															"major" : 7,
 															"minor" : 0,
 															"revision" : 5,
-															"architecture" : "x86",
+															"architecture" : "x64",
 															"modernui" : 1
 														}
 ,
@@ -14802,7 +14802,7 @@
 											"major" : 7,
 											"minor" : 0,
 											"revision" : 5,
-											"architecture" : "x86",
+											"architecture" : "x64",
 											"modernui" : 1
 										}
 ,
@@ -15578,7 +15578,7 @@
 											"major" : 7,
 											"minor" : 0,
 											"revision" : 5,
-											"architecture" : "x86",
+											"architecture" : "x64",
 											"modernui" : 1
 										}
 ,
@@ -15790,7 +15790,7 @@
 															"major" : 7,
 															"minor" : 0,
 															"revision" : 5,
-															"architecture" : "x86",
+															"architecture" : "x64",
 															"modernui" : 1
 														}
 ,
@@ -15834,7 +15834,7 @@
 																			"major" : 7,
 																			"minor" : 0,
 																			"revision" : 5,
-																			"architecture" : "x86",
+																			"architecture" : "x64",
 																			"modernui" : 1
 																		}
 ,
@@ -16143,7 +16143,7 @@
 																			"major" : 7,
 																			"minor" : 0,
 																			"revision" : 5,
-																			"architecture" : "x86",
+																			"architecture" : "x64",
 																			"modernui" : 1
 																		}
 ,
@@ -16452,7 +16452,7 @@
 																			"major" : 7,
 																			"minor" : 0,
 																			"revision" : 5,
-																			"architecture" : "x86",
+																			"architecture" : "x64",
 																			"modernui" : 1
 																		}
 ,
@@ -16761,7 +16761,7 @@
 																			"major" : 7,
 																			"minor" : 0,
 																			"revision" : 5,
-																			"architecture" : "x86",
+																			"architecture" : "x64",
 																			"modernui" : 1
 																		}
 ,
@@ -17070,7 +17070,7 @@
 																			"major" : 7,
 																			"minor" : 0,
 																			"revision" : 5,
-																			"architecture" : "x86",
+																			"architecture" : "x64",
 																			"modernui" : 1
 																		}
 ,
@@ -17379,7 +17379,7 @@
 																			"major" : 7,
 																			"minor" : 0,
 																			"revision" : 5,
-																			"architecture" : "x86",
+																			"architecture" : "x64",
 																			"modernui" : 1
 																		}
 ,
@@ -17688,7 +17688,7 @@
 																			"major" : 7,
 																			"minor" : 0,
 																			"revision" : 5,
-																			"architecture" : "x86",
+																			"architecture" : "x64",
 																			"modernui" : 1
 																		}
 ,
@@ -17997,7 +17997,7 @@
 																			"major" : 7,
 																			"minor" : 0,
 																			"revision" : 5,
-																			"architecture" : "x86",
+																			"architecture" : "x64",
 																			"modernui" : 1
 																		}
 ,
@@ -18306,7 +18306,7 @@
 																			"major" : 7,
 																			"minor" : 0,
 																			"revision" : 5,
-																			"architecture" : "x86",
+																			"architecture" : "x64",
 																			"modernui" : 1
 																		}
 ,
@@ -18639,7 +18639,7 @@
 																			"major" : 7,
 																			"minor" : 0,
 																			"revision" : 5,
-																			"architecture" : "x86",
+																			"architecture" : "x64",
 																			"modernui" : 1
 																		}
 ,
@@ -19526,7 +19526,7 @@
 															"major" : 7,
 															"minor" : 0,
 															"revision" : 5,
-															"architecture" : "x86",
+															"architecture" : "x64",
 															"modernui" : 1
 														}
 ,
@@ -19596,7 +19596,7 @@
 																			"major" : 7,
 																			"minor" : 0,
 																			"revision" : 5,
-																			"architecture" : "x86",
+																			"architecture" : "x64",
 																			"modernui" : 1
 																		}
 ,
@@ -19931,7 +19931,7 @@
 																			"major" : 7,
 																			"minor" : 0,
 																			"revision" : 5,
-																			"architecture" : "x86",
+																			"architecture" : "x64",
 																			"modernui" : 1
 																		}
 ,
@@ -20278,7 +20278,7 @@
 																			"major" : 7,
 																			"minor" : 0,
 																			"revision" : 5,
-																			"architecture" : "x86",
+																			"architecture" : "x64",
 																			"modernui" : 1
 																		}
 ,
@@ -20614,7 +20614,7 @@
 																			"major" : 7,
 																			"minor" : 0,
 																			"revision" : 5,
-																			"architecture" : "x86",
+																			"architecture" : "x64",
 																			"modernui" : 1
 																		}
 ,
@@ -20950,7 +20950,7 @@
 																			"major" : 7,
 																			"minor" : 0,
 																			"revision" : 5,
-																			"architecture" : "x86",
+																			"architecture" : "x64",
 																			"modernui" : 1
 																		}
 ,
@@ -21285,7 +21285,7 @@
 																			"major" : 7,
 																			"minor" : 0,
 																			"revision" : 5,
-																			"architecture" : "x86",
+																			"architecture" : "x64",
 																			"modernui" : 1
 																		}
 ,
@@ -21620,7 +21620,7 @@
 																			"major" : 7,
 																			"minor" : 0,
 																			"revision" : 5,
-																			"architecture" : "x86",
+																			"architecture" : "x64",
 																			"modernui" : 1
 																		}
 ,
@@ -21955,7 +21955,7 @@
 																			"major" : 7,
 																			"minor" : 0,
 																			"revision" : 5,
-																			"architecture" : "x86",
+																			"architecture" : "x64",
 																			"modernui" : 1
 																		}
 ,
@@ -22316,7 +22316,7 @@
 																			"major" : 7,
 																			"minor" : 0,
 																			"revision" : 5,
-																			"architecture" : "x86",
+																			"architecture" : "x64",
 																			"modernui" : 1
 																		}
 ,
@@ -23483,7 +23483,7 @@
 															"major" : 7,
 															"minor" : 0,
 															"revision" : 5,
-															"architecture" : "x86",
+															"architecture" : "x64",
 															"modernui" : 1
 														}
 ,
@@ -23553,7 +23553,7 @@
 																			"major" : 7,
 																			"minor" : 0,
 																			"revision" : 5,
-																			"architecture" : "x86",
+																			"architecture" : "x64",
 																			"modernui" : 1
 																		}
 ,
@@ -23913,7 +23913,7 @@
 																			"major" : 7,
 																			"minor" : 0,
 																			"revision" : 5,
-																			"architecture" : "x86",
+																			"architecture" : "x64",
 																			"modernui" : 1
 																		}
 ,
@@ -24324,7 +24324,7 @@
 																			"major" : 7,
 																			"minor" : 0,
 																			"revision" : 5,
-																			"architecture" : "x86",
+																			"architecture" : "x64",
 																			"modernui" : 1
 																		}
 ,
@@ -25004,7 +25004,7 @@
 															"major" : 7,
 															"minor" : 0,
 															"revision" : 5,
-															"architecture" : "x86",
+															"architecture" : "x64",
 															"modernui" : 1
 														}
 ,
@@ -25048,7 +25048,7 @@
 																			"major" : 7,
 																			"minor" : 0,
 																			"revision" : 5,
-																			"architecture" : "x86",
+																			"architecture" : "x64",
 																			"modernui" : 1
 																		}
 ,
@@ -25395,7 +25395,7 @@
 																			"major" : 7,
 																			"minor" : 0,
 																			"revision" : 5,
-																			"architecture" : "x86",
+																			"architecture" : "x64",
 																			"modernui" : 1
 																		}
 ,
@@ -25754,7 +25754,7 @@
 																			"major" : 7,
 																			"minor" : 0,
 																			"revision" : 5,
-																			"architecture" : "x86",
+																			"architecture" : "x64",
 																			"modernui" : 1
 																		}
 ,
@@ -26341,7 +26341,7 @@
 															"major" : 7,
 															"minor" : 0,
 															"revision" : 5,
-															"architecture" : "x86",
+															"architecture" : "x64",
 															"modernui" : 1
 														}
 ,
@@ -26643,7 +26643,7 @@
 															"major" : 7,
 															"minor" : 0,
 															"revision" : 5,
-															"architecture" : "x86",
+															"architecture" : "x64",
 															"modernui" : 1
 														}
 ,
@@ -26945,7 +26945,7 @@
 															"major" : 7,
 															"minor" : 0,
 															"revision" : 5,
-															"architecture" : "x86",
+															"architecture" : "x64",
 															"modernui" : 1
 														}
 ,
@@ -27247,7 +27247,7 @@
 															"major" : 7,
 															"minor" : 0,
 															"revision" : 5,
-															"architecture" : "x86",
+															"architecture" : "x64",
 															"modernui" : 1
 														}
 ,
@@ -28410,7 +28410,7 @@
 											"major" : 7,
 											"minor" : 0,
 											"revision" : 5,
-											"architecture" : "x86",
+											"architecture" : "x64",
 											"modernui" : 1
 										}
 ,
@@ -29136,7 +29136,7 @@
 											"major" : 7,
 											"minor" : 0,
 											"revision" : 5,
-											"architecture" : "x86",
+											"architecture" : "x64",
 											"modernui" : 1
 										}
 ,
@@ -29717,7 +29717,7 @@
 											"major" : 7,
 											"minor" : 0,
 											"revision" : 5,
-											"architecture" : "x86",
+											"architecture" : "x64",
 											"modernui" : 1
 										}
 ,
@@ -32504,7 +32504,7 @@
  ]
 					}
 ,
-					"patching_rect" : [ 415.0, 146.699997, 88.0, 22.0 ],
+					"patching_rect" : [ 442.0, 138.399994, 88.0, 22.0 ],
 					"saved_object_attributes" : 					{
 						"description" : "",
 						"digest" : "",
@@ -32532,7 +32532,7 @@
 					"numinlets" : 0,
 					"numoutlets" : 0,
 					"offset" : [ 0.0, 0.0 ],
-					"patching_rect" : [ 189.0, 10.5, 188.0, 140.0 ],
+					"patching_rect" : [ 239.0, 19.833336, 187.5, 195.0 ],
 					"viewvisibility" : 1
 				}
 
@@ -32562,7 +32562,7 @@
 							"major" : 7,
 							"minor" : 0,
 							"revision" : 5,
-							"architecture" : "x86",
+							"architecture" : "x64",
 							"modernui" : 1
 						}
 ,
@@ -33199,7 +33199,7 @@
 											"major" : 7,
 											"minor" : 0,
 											"revision" : 5,
-											"architecture" : "x86",
+											"architecture" : "x64",
 											"modernui" : 1
 										}
 ,
@@ -35127,7 +35127,7 @@
  ]
 					}
 ,
-					"patching_rect" : [ 415.0, 113.699997, 63.0, 22.0 ],
+					"patching_rect" : [ 442.0, 107.400002, 63.0, 22.0 ],
 					"saved_object_attributes" : 					{
 						"description" : "",
 						"digest" : "",
@@ -35153,7 +35153,7 @@
 							"major" : 7,
 							"minor" : 0,
 							"revision" : 5,
-							"architecture" : "x86",
+							"architecture" : "x64",
 							"modernui" : 1
 						}
 ,
@@ -35694,7 +35694,7 @@
 											"major" : 7,
 											"minor" : 0,
 											"revision" : 5,
-											"architecture" : "x86",
+											"architecture" : "x64",
 											"modernui" : 1
 										}
 ,
@@ -35826,7 +35826,7 @@
 															"major" : 7,
 															"minor" : 0,
 															"revision" : 5,
-															"architecture" : "x86",
+															"architecture" : "x64",
 															"modernui" : 1
 														}
 ,
@@ -37355,7 +37355,7 @@
 											"major" : 7,
 											"minor" : 0,
 											"revision" : 5,
-											"architecture" : "x86",
+											"architecture" : "x64",
 											"modernui" : 1
 										}
 ,
@@ -38796,7 +38796,7 @@
 													"destination" : [ "obj-120", 0 ],
 													"disabled" : 0,
 													"hidden" : 0,
-													"midpoints" : [ 399.071442, 235.0, 395.5, 235.0 ],
+													"midpoints" : [ 399.071429, 235.0, 395.5, 235.0 ],
 													"source" : [ "obj-127", 6 ]
 												}
 
@@ -38806,7 +38806,7 @@
 													"destination" : [ "obj-121", 0 ],
 													"disabled" : 0,
 													"hidden" : 0,
-													"midpoints" : [ 340.642853, 235.0, 338.5, 235.0 ],
+													"midpoints" : [ 340.642857, 235.0, 338.5, 235.0 ],
 													"source" : [ "obj-127", 5 ]
 												}
 
@@ -38816,7 +38816,7 @@
 													"destination" : [ "obj-122", 0 ],
 													"disabled" : 0,
 													"hidden" : 0,
-													"midpoints" : [ 282.214294, 235.0, 279.5, 235.0 ],
+													"midpoints" : [ 282.214286, 235.0, 279.5, 235.0 ],
 													"source" : [ "obj-127", 4 ]
 												}
 
@@ -38826,7 +38826,7 @@
 													"destination" : [ "obj-123", 0 ],
 													"disabled" : 0,
 													"hidden" : 0,
-													"midpoints" : [ 223.785721, 235.0, 222.5, 235.0 ],
+													"midpoints" : [ 223.785714, 235.0, 222.5, 235.0 ],
 													"source" : [ "obj-127", 3 ]
 												}
 
@@ -38836,7 +38836,7 @@
 													"destination" : [ "obj-124", 0 ],
 													"disabled" : 0,
 													"hidden" : 0,
-													"midpoints" : [ 165.357147, 237.0, 164.5, 237.0 ],
+													"midpoints" : [ 165.357143, 237.0, 164.5, 237.0 ],
 													"source" : [ "obj-127", 2 ]
 												}
 
@@ -41134,7 +41134,7 @@
  ]
 					}
 ,
-					"patching_rect" : [ 415.0, 80.699997, 61.0, 22.0 ],
+					"patching_rect" : [ 442.0, 76.400002, 61.0, 22.0 ],
 					"saved_object_attributes" : 					{
 						"description" : "",
 						"digest" : "",
@@ -41160,7 +41160,7 @@
 							"major" : 7,
 							"minor" : 0,
 							"revision" : 5,
-							"architecture" : "x86",
+							"architecture" : "x64",
 							"modernui" : 1
 						}
 ,
@@ -41694,7 +41694,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 604.75, 301.666687, 50.0, 22.0 ],
 									"style" : "",
-									"text" : "15"
+									"text" : "1"
 								}
 
 							}
@@ -42056,7 +42056,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 162.0, 42.0, 44.0, 35.0 ],
 									"style" : "",
-									"text" : "store 1"
+									"text" : "store 16"
 								}
 
 							}
@@ -42312,7 +42312,7 @@
 									"presentation" : 1,
 									"presentation_rect" : [ 27.0, 290.666748, 71.5, 22.0 ],
 									"style" : "",
-									"text" : "0.95",
+									"text" : "0.",
 									"textcolor" : [ 0.0, 0.0, 0.0, 1.0 ]
 								}
 
@@ -42467,7 +42467,7 @@
 											"major" : 7,
 											"minor" : 0,
 											"revision" : 5,
-											"architecture" : "x86",
+											"architecture" : "x64",
 											"modernui" : 1
 										}
 ,
@@ -43320,7 +43320,7 @@
 											"major" : 7,
 											"minor" : 0,
 											"revision" : 5,
-											"architecture" : "x86",
+											"architecture" : "x64",
 											"modernui" : 1
 										}
 ,
@@ -45029,7 +45029,7 @@
 											"major" : 7,
 											"minor" : 0,
 											"revision" : 5,
-											"architecture" : "x86",
+											"architecture" : "x64",
 											"modernui" : 1
 										}
 ,
@@ -45403,7 +45403,7 @@
 									"patching_rect" : [ 21.75, 197.25, 169.0, 22.0 ],
 									"presentation" : 1,
 									"presentation_rect" : [ 15.75, 227.333435, 169.0, 22.0 ],
-									"size" : 3478.0,
+									"size" : 3406.0,
 									"style" : ""
 								}
 
@@ -46962,7 +46962,7 @@
  ]
 					}
 ,
-					"patching_rect" : [ 415.0, 47.700001, 75.0, 22.0 ],
+					"patching_rect" : [ 442.0, 45.400002, 75.0, 22.0 ],
 					"saved_object_attributes" : 					{
 						"description" : "",
 						"digest" : "",
@@ -46988,11 +46988,11 @@
 							"major" : 7,
 							"minor" : 0,
 							"revision" : 5,
-							"architecture" : "x86",
+							"architecture" : "x64",
 							"modernui" : 1
 						}
 ,
-						"rect" : [ 1316.0, 302.0, 597.0, 732.0 ],
+						"rect" : [ 0.0, 26.0, 597.0, 732.0 ],
 						"bgcolor" : [ 0.862745, 0.870588, 0.878431, 1.0 ],
 						"bglocked" : 1,
 						"openinpresentation" : 1,
@@ -47185,7 +47185,7 @@
 									"presentation" : 1,
 									"presentation_rect" : [ 539.0, 542.916809, 45.5, 22.0 ],
 									"style" : "",
-									"text" : "0.",
+									"text" : "1.",
 									"textcolor" : [ 0.0, 0.0, 0.0, 1.0 ]
 								}
 
@@ -47241,7 +47241,7 @@
 									"presentation" : 1,
 									"presentation_rect" : [ 395.0, 539.833496, 45.5, 22.0 ],
 									"style" : "",
-									"text" : "0.",
+									"text" : "1.",
 									"textcolor" : [ 0.0, 0.0, 0.0, 1.0 ]
 								}
 
@@ -47611,7 +47611,7 @@
 									"presentation" : 1,
 									"presentation_rect" : [ 31.75, 384.0, 71.5, 22.0 ],
 									"style" : "",
-									"text" : "0.03",
+									"text" : "0.35",
 									"textcolor" : [ 0.0, 0.0, 0.0, 1.0 ]
 								}
 
@@ -47665,7 +47665,7 @@
 									"presentation" : 1,
 									"presentation_rect" : [ 208.0, 321.833313, 71.5, 22.0 ],
 									"style" : "",
-									"text" : "7.",
+									"text" : "-46.",
 									"textcolor" : [ 0.0, 0.0, 0.0, 1.0 ]
 								}
 
@@ -47746,7 +47746,7 @@
 									"presentation" : 1,
 									"presentation_rect" : [ 208.0, 202.583313, 71.5, 22.0 ],
 									"style" : "",
-									"text" : "0.32",
+									"text" : "0.",
 									"textcolor" : [ 0.0, 0.0, 0.0, 1.0 ]
 								}
 
@@ -47786,7 +47786,7 @@
 									"presentation" : 1,
 									"presentation_rect" : [ 28.0, 202.583313, 71.5, 22.0 ],
 									"style" : "",
-									"text" : "0.8",
+									"text" : "1.",
 									"textcolor" : [ 0.0, 0.0, 0.0, 1.0 ]
 								}
 
@@ -48248,7 +48248,7 @@
 											"major" : 7,
 											"minor" : 0,
 											"revision" : 5,
-											"architecture" : "x86",
+											"architecture" : "x64",
 											"modernui" : 1
 										}
 ,
@@ -48809,7 +48809,7 @@
 													"outlettype" : [ "" ],
 													"patching_rect" : [ 405.0, 6.0, 272.0, 22.0 ],
 													"style" : "",
-													"text" : "mouseidleout -0.54902 0.568627 0 0 0 1 0 0"
+													"text" : "mouseidleout 3.45098 -0.490196 0 0 0 0 0 0"
 												}
 
 											}
@@ -51209,7 +51209,7 @@
  ]
 					}
 ,
-					"patching_rect" : [ 415.0, 14.0, 107.0, 22.0 ],
+					"patching_rect" : [ 442.0, 14.0, 107.0, 22.0 ],
 					"saved_object_attributes" : 					{
 						"description" : "",
 						"digest" : "",
@@ -51259,7 +51259,7 @@
 							"major" : 7,
 							"minor" : 0,
 							"revision" : 5,
-							"architecture" : "x86",
+							"architecture" : "x64",
 							"modernui" : 1
 						}
 ,
@@ -51559,7 +51559,7 @@
 							"major" : 7,
 							"minor" : 0,
 							"revision" : 5,
-							"architecture" : "x86",
+							"architecture" : "x64",
 							"modernui" : 1
 						}
 ,
@@ -52461,7 +52461,7 @@
 							"major" : 7,
 							"minor" : 0,
 							"revision" : 5,
-							"architecture" : "x86",
+							"architecture" : "x64",
 							"modernui" : 1
 						}
 ,
@@ -53317,7 +53317,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 4,
 					"outlettype" : [ "", "", "", "" ],
-					"patching_rect" : [ 254.5, 187.5, 91.0, 22.0 ],
+					"patching_rect" : [ 239.0, 239.5, 91.0, 22.0 ],
 					"saved_object_attributes" : 					{
 						"embed" : 0
 					}
@@ -53339,7 +53339,7 @@
 							"major" : 7,
 							"minor" : 0,
 							"revision" : 5,
-							"architecture" : "x86",
+							"architecture" : "x64",
 							"modernui" : 1
 						}
 ,
@@ -53600,13 +53600,14 @@
 , 							{
 								"box" : 								{
 									"id" : "obj-66",
+									"linecount" : 3,
 									"maxclass" : "message",
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 134.0, 386.5, 365.0, 22.0 ],
 									"style" : "",
-									"text" : "/server \"nuStream onOff 0\""
+									"text" : "/server \"nuSynth periodicWave -1 -1.0000 -1.0000 0.7822 -0.2079 -1.0000 -0.2079 -1.0000 -0.2079 -1.0000 -0.2079 -1.0000 -0.2079 -1.0000 -0.2079 -1.0000 -0.2079 -1.0000 -0.2079 -0.8812 -0.2079\""
 								}
 
 							}
@@ -53683,7 +53684,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 134.0, 414.0, 365.0, 22.0 ],
 									"style" : "",
-									"text" : "/player \"nuGroups linkPlayerToGroup 0 14 0.9999\""
+									"text" : "/player \"nuSynth noteOnOff -1 2 0\""
 								}
 
 							}
@@ -54102,11 +54103,11 @@
 			}
  ],
 		"parameters" : 		{
-			"obj-12::obj-10::obj-21::obj-6" : [ "live.tab[3]", "live.tab[1]", 0 ],
 			"obj-12::obj-10::obj-35" : [ "[5]", "Level", 0 ],
-			"obj-4::obj-42::obj-345::obj-22" : [ "live.toggle[2]", "live.toggle", 0 ],
 			"obj-10::obj-101" : [ "rslider[1]", "rslider", 0 ],
-			"obj-10::obj-77" : [ "rslider", "rslider", 0 ]
+			"obj-10::obj-77" : [ "rslider", "rslider", 0 ],
+			"obj-4::obj-42::obj-345::obj-22" : [ "live.toggle[2]", "live.toggle", 0 ],
+			"obj-12::obj-10::obj-21::obj-6" : [ "live.tab[3]", "live.tab[1]", 0 ]
 		}
 ,
 		"dependency_cache" : [ 			{

@@ -35,9 +35,11 @@ export default class NuOutput extends NuBaseModule {
     this.in.connect( this.soundworksClient.renderer.audioAnalyser.in );
 
     // create ambisonic encoder / decoder
-    this.ambiOrder = 3;
-    this.encoder = new ambisonics.monoEncoder(audioContext, this.ambiOrder);
-    this.decoder = new ambisonics.binDecoder(audioContext, this.ambiOrder);
+    this.maxOrder = 3;
+    this.ambiOrderValue = 3;
+    this.encoder = new ambisonics.monoEncoder(audioContext, this.ambiOrderValue);
+    this.limiter = new ambisonics.orderLimiter(audioContext, this.maxOrder, this.maxOrder);
+    this.decoder = new ambisonics.binDecoder(audioContext, this.ambiOrderValue);
 
     // create additional gain to compensate for badly norm. room IR
     this.ambiGain = audioContext.createGain();
@@ -49,10 +51,8 @@ export default class NuOutput extends NuBaseModule {
 
     // connect graph
     this.ambiGain.connect( this.encoder.in )
-    this.encoder.out.connect( this.decoder.in );
-
-    this.enableSpat(this.params.enableSpat);
-    
+    this.encoder.out.connect( this.limiter.in );
+    this.limiter.out.connect( this.decoder.in );
   }
 
   // set audio gain out
@@ -77,6 +77,13 @@ export default class NuOutput extends NuBaseModule {
     }
   }
 
+  ambiOrder(val){
+    // filter order in
+    if( val > 3 || val < 1 ){ return; }
+    this.limiter.updateOrder( val );
+    this.limiter.out.connect( this.decoder.in );
+  }
+
   enableRoom(val){
     let irUrl = '';
     if( val ){
@@ -89,7 +96,7 @@ export default class NuOutput extends NuBaseModule {
       this.ambiGain.gain.value = 1.0;
     }
     // load HOA to bianural filters in decoder
-    var loader_filters = new ambisonics.HOAloader(audioContext, this.ambiOrder, irUrl, (buffer) => { this.decoder.updateFilters(buffer); } );
+    var loader_filters = new ambisonics.HOAloader(audioContext, this.maxOrder, irUrl, (buffer) => { this.decoder.updateFilters(buffer); } );
     loader_filters.load();
   }
 
