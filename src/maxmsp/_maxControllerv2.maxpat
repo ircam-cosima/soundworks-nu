@@ -9,7 +9,7 @@
 			"modernui" : 1
 		}
 ,
-		"rect" : [ 1483.0, 300.0, 597.0, 758.0 ],
+		"rect" : [ 373.0, 90.0, 597.0, 758.0 ],
 		"bgcolor" : [ 0.862745, 0.870588, 0.878431, 1.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
@@ -3850,7 +3850,7 @@
 							"modernui" : 1
 						}
 ,
-						"rect" : [ 1483.0, 326.0, 597.0, 732.0 ],
+						"rect" : [ 0.0, 26.0, 597.0, 732.0 ],
 						"bgcolor" : [ 0.862745, 0.870588, 0.878431, 1.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 1,
@@ -6028,7 +6028,7 @@
 									"presentation" : 1,
 									"presentation_rect" : [ 334.700012, 235.583313, 71.5, 22.0 ],
 									"style" : "",
-									"text" : "8030",
+									"text" : "80",
 									"textcolor" : [ 0.0, 0.0, 0.0, 1.0 ],
 									"textjustification" : 2
 								}
@@ -6069,7 +6069,7 @@
 									"presentation" : 1,
 									"presentation_rect" : [ 234.0, 235.583313, 71.5, 22.0 ],
 									"style" : "",
-									"text" : "152",
+									"text" : "60",
 									"textcolor" : [ 0.0, 0.0, 0.0, 1.0 ]
 								}
 
@@ -6166,7 +6166,7 @@
 									"presentation" : 1,
 									"presentation_rect" : [ 126.700012, 235.583313, 71.5, 22.0 ],
 									"style" : "",
-									"text" : "-50",
+									"text" : "-20",
 									"textcolor" : [ 0.0, 0.0, 0.0, 1.0 ],
 									"textjustification" : 2
 								}
@@ -6207,7 +6207,7 @@
 									"presentation" : 1,
 									"presentation_rect" : [ 26.0, 235.583313, 71.5, 22.0 ],
 									"style" : "",
-									"text" : "-100",
+									"text" : "-40",
 									"textcolor" : [ 0.0, 0.0, 0.0, 1.0 ]
 								}
 
@@ -33486,7 +33486,7 @@
 													"outlettype" : [ "" ],
 													"patching_rect" : [ 558.0, 280.0, 50.0, 22.0 ],
 													"style" : "",
-													"text" : "768"
+													"text" : "45"
 												}
 
 											}
@@ -34155,7 +34155,7 @@
 									"patching_rect" : [ 44.5, 323.458344, 202.5, 317.041656 ],
 									"presentation" : 1,
 									"presentation_rect" : [ 10.0, 175.145935, 372.25, 349.041626 ],
-									"rows" : 16,
+									"rows" : 15,
 									"style" : ""
 								}
 
@@ -41473,7 +41473,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 539.75, 432.0, 29.5, 22.0 ],
 									"style" : "",
-									"text" : "16"
+									"text" : "15"
 								}
 
 							}
@@ -41774,7 +41774,7 @@
 									"patching_rect" : [ 488.5, 366.5, 69.0, 20.0 ],
 									"preset_data" : [ 										{
 											"number" : 1,
-											"data" : [ 5, "obj-104", "slider", "float", 100.0, 5, "obj-108", "slider", "float", 100.0 ]
+											"data" : [ 5, "obj-104", "slider", "float", 0.0, 5, "obj-108", "slider", "float", 0.0 ]
 										}
 , 										{
 											"number" : 2,
@@ -42056,7 +42056,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 162.0, 42.0, 44.0, 35.0 ],
 									"style" : "",
-									"text" : "store 16"
+									"text" : "store 0"
 								}
 
 							}
@@ -42285,7 +42285,7 @@
 									"presentation" : 1,
 									"presentation_rect" : [ 216.5, 290.666748, 71.5, 22.0 ],
 									"style" : "",
-									"text" : "1.",
+									"text" : "0.",
 									"textcolor" : [ 0.0, 0.0, 0.0, 1.0 ]
 								}
 
@@ -42392,7 +42392,7 @@
 									"presentation" : 1,
 									"presentation_rect" : [ 216.5, 226.916748, 71.5, 22.0 ],
 									"style" : "",
-									"text" : "1.",
+									"text" : "0.",
 									"textcolor" : [ 0.0, 0.0, 0.0, 1.0 ]
 								}
 
@@ -46992,7 +46992,7 @@
 							"modernui" : 1
 						}
 ,
-						"rect" : [ 0.0, 26.0, 597.0, 732.0 ],
+						"rect" : [ 373.0, 116.0, 597.0, 732.0 ],
 						"bgcolor" : [ 0.862745, 0.870588, 0.878431, 1.0 ],
 						"bglocked" : 1,
 						"openinpresentation" : 1,
@@ -53600,14 +53600,13 @@
 , 							{
 								"box" : 								{
 									"id" : "obj-66",
-									"linecount" : 3,
 									"maxclass" : "message",
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 134.0, 386.5, 365.0, 22.0 ],
 									"style" : "",
-									"text" : "/server \"nuSynth periodicWave -1 -1.0000 -1.0000 0.7822 -0.2079 -1.0000 -0.2079 -1.0000 -0.2079 -1.0000 -0.2079 -1.0000 -0.2079 -1.0000 -0.2079 -1.0000 -0.2079 -1.0000 -0.2079 -0.8812 -0.2079\""
+									"text" : "/server \"nuRoomReverb audioFileId 0\""
 								}
 
 							}
@@ -53684,7 +53683,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 134.0, 414.0, 365.0, 22.0 ],
 									"style" : "",
-									"text" : "/player \"nuSynth noteOnOff -1 2 0\""
+									"text" : "/player \"nuRoomReverb audioFileId 0\""
 								}
 
 							}
