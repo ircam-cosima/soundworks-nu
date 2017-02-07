@@ -52,7 +52,7 @@ export default class NuRoomReverb extends NuBaseModule {
     // extract header
     let emitterId = interleavedIrArray[0];
     let minTime = interleavedIrArray[1];
-    console.log(interleavedIrArray);
+    // console.log(interleavedIrArray);
     interleavedIrArray = interleavedIrArray.slice(2, interleavedIrArray.length);
 
     // de-interleave + get max delay for IR buffer size
@@ -144,7 +144,7 @@ export default class NuRoomReverb extends NuBaseModule {
       maxOutputValue = Math.max(Math.abs(outputData[i]), maxOutputValue);
     }
     let normFactor = Math.max.apply(null, ir.gains) / Math.max(maxOutputValue, 1.0);
-    console.log('max:', maxOutputValue, 'norm:', normFactor);
+    // console.log('max:', maxOutputValue, 'norm:', normFactor);
 
     // replace audio source buffer with created output buffer
     src.buffer = outputBuffer;
@@ -162,7 +162,7 @@ export default class NuRoomReverb extends NuBaseModule {
     if (syncStartTime > now) {
       let audioContextStartTime = audioContext.currentTime + syncStartTime - now;
       src.start(audioContextStartTime);
-      console.log('play scheduled in:', Math.round((syncStartTime - now) * 1000) / 1000, 'sec', 'at:', syncStartTime);
+      // console.log('play scheduled in:', Math.round((syncStartTime - now) * 1000) / 1000, 'sec', 'at:', syncStartTime);
     } else {
       console.warn('no sound played, I received the instruction to play to late');
       this.soundworksClient.renderer.blink([250, 0, 0]);

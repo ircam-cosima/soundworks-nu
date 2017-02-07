@@ -94,7 +94,6 @@ export default class NuOutput extends NuBaseModule {
   }
 
   userPos(args){
-    console.log('userPos', args)
     this.params.userPos[0] = args[0];
     this.params.userPos[1] = args[1];
     this.setPos();
@@ -107,10 +106,10 @@ export default class NuOutput extends NuBaseModule {
       relXYZ.push( this.params.userPos[i] - this.coordXYZ[i] ); 
     }
     let coordSph = cart2sph( relXYZ );
-    console.log('user', this.params.userPos);
-    console.log('me', this.coordXYZ);
-    console.log('rel', relXYZ);
-    console.log('rel sph', coordSph);
+    // console.log('user', this.params.userPos);
+    // console.log('me', this.coordXYZ);
+    // console.log('rel', relXYZ);
+    // console.log('rel sph', coordSph);
     // update encoder parameters
     this.encoder.azim = coordSph[0];
     this.encoder.elev = coordSph[0];

@@ -106,7 +106,7 @@ export default class PlayerExperience extends soundworks.Experience {
 
     // init Nu Main
     this.receive('nuMain', (args) => {
-      console.log('nuMain:', args);
+      // console.log('nuMain:', args);
       let paramName = args.shift();
 
       if( paramName === 'reload' )

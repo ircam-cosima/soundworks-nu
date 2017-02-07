@@ -38,7 +38,6 @@ export default class NuRenderer extends NuBaseModule {
     // send to new client information regarding current groups parameters
     Object.keys(this.params).forEach( (key) => {
       // -1 header here is to indicate msg is global (i.e. not player specific)
-      console.log('nuRenderer', [key, -1, this.params[key]] )
       this.soundworksServer.send(client, 'nuRenderer', [key, -1, this.params[key]]);
     });    
   }
