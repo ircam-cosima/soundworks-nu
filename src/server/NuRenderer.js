@@ -28,6 +28,8 @@ export default class NuRenderer extends NuBaseModule {
     // only save global state (not player specific instructions)      
     let playerId = args.shift();
     if( playerId !== -1 ){ return; }
+    // reduce args array to singleton if only one element left
+    args = (args.length == 1) ? args[0] : args;    
     // save value
     this.params[name] = args;
   }
@@ -36,6 +38,7 @@ export default class NuRenderer extends NuBaseModule {
     // send to new client information regarding current groups parameters
     Object.keys(this.params).forEach( (key) => {
       // -1 header here is to indicate msg is global (i.e. not player specific)
+      console.log('nuRenderer', [key, -1, this.params[key]] )
       this.soundworksServer.send(client, 'nuRenderer', [key, -1, this.params[key]]);
     });    
   }
