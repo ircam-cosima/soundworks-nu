@@ -32,7 +32,6 @@ export default class NuStream extends NuBaseModule {
   // set audio gain out
   gain(val){
     this.out.gain.value = val;
-    console.log(this.params)
   }
 
   onOff(value){

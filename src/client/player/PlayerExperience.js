@@ -10,6 +10,7 @@ import NuGrain from './NuGrain';
 import NuSpy from './NuSpy';
 import NuSynth from './NuSynth';
 import NuStream from './NuStream';
+import NuOutput from './NuOutput';
 
 import * as utils from './utils';
 const audioContext = soundworks.audioContext;
@@ -92,6 +93,7 @@ export default class PlayerExperience extends soundworks.Experience {
     this.send('coordinates', this.coordinates);
 
     // init Nu modules
+    this.nuOutput = new NuOutput(this);
     this.nuRoomReverb = new NuRoomReverb(this);
     this.nuGroups = new NuGroups(this);
     this.nuPath = new NuPath(this);

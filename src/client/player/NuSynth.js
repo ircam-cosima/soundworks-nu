@@ -17,8 +17,7 @@ export default class NuSynth extends NuBaseModule {
     this.localGain = audioContext.createGain();
     // connect graph
     this.audioSynth.out.connect(this.localGain);
-    this.localGain.connect(this.soundworksClient.renderer.audioAnalyser.in);
-    this.localGain.connect(audioContext.destination);
+    this.localGain.connect(this.soundworksClient.nuOutput.in);
     // binding
     this.noteOnOff = this.noteOnOff.bind(this);
     this.volume = this.volume.bind(this);

@@ -19,11 +19,12 @@
     "url": "https://github.com/ircam-cosima/soundworks-nu"
   },
   "dependencies": {
+    "ambisonics": "^0.2.2",
     "babel-runtime": "^6.6.1",
     "bufferutil": "^1.2.1",
     "debug": "^2.1.2",
-    "soundworks": "github:collective-soundworks/soundworks.git#develop",
     "fs": "0.0.1-security",
+    "soundworks": "github:collective-soundworks/soundworks.git#develop",
     "source-map-support": "^0.4.0",
     "typedarray-methods": "^1.0.0",
     "utf-8-validate": "^1.2.1",
