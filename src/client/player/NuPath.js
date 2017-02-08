@@ -21,39 +21,23 @@ export default class NuPath extends NuBaseModule {
     this.params = {};
 
     // binding
-    this.onWebSocketOpen = this.onWebSocketOpen.bind(this);
-    this.onWebSocketEvent = this.onWebSocketEvent.bind(this);
+    this.rawSocketCallback = this.rawSocketCallback.bind(this);
     this.startPath = this.startPath.bind(this);
     this.reset = this.reset.bind(this);
 
-    // init websocket (used to receive IR)
-    let port = 8081;
-    let urlTmp = client.socket.socket.io.uri;
-    let host = urlTmp.split('/')[2].split(':')[0];
-    let url = "ws://" + host + ":" + port;
-    console.log('connecting websocket to', url);
-    this.ws = new WebSocket(url);
-    this.ws.binaryType = 'arraybuffer';
-    this.ws.onopen = this.onWebSocketOpen;
-    this.ws.onmessage = this.onWebSocketEvent;
-
-  }
-
-  // send client index (at websocket opening) to associate socket / index in server
-  onWebSocketOpen() {
-    this.ws.send(client.index, { binary: false, mask: true }, (error) => { console.log('websocket error:', error); });
+    // setup socket reveive callbacks (receiving raw audio data)
+    this.soundworksClient.rawSocket.receive('nuPath', this.rawSocketCallback );    
   }
 
   /*
    * callback when websocket event (msg containing new IR sent by server) is received
    */
-  onWebSocketEvent(event) {
-    // decode 
-    let interleavedIrArray = new Float32Array(event.data);
+  rawSocketCallback(interleavedIrArray) {
 
     // extract header
     let pathId = interleavedIrArray[0];
     let minTime = interleavedIrArray[1];
+    // exctract data
     interleavedIrArray = interleavedIrArray.slice(2, interleavedIrArray.length);
     // console.log('pathId', pathId, 'minTime', minTime, 'ir', interleavedIrArray);
 

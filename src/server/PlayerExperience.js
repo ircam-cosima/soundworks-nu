@@ -28,7 +28,11 @@ export default class PlayerExperience extends soundworks.Experience {
     this.params = this.require('shared-params');
     this.sync = this.require('sync');
     this.osc = this.require('osc');
-    var protocol = [ { channel: 'nuStream', type: 'Float32' } ];
+    var protocol = [ 
+      { channel: 'nuStream', type: 'Float32' },
+      { channel: 'nuRoomReverb', type: 'Float32' },
+      { channel: 'nuPath', type: 'Float32' },
+      ];
     this.rawSocket = this.require('raw-socket', { protocol: protocol });
 
     // bind methods
@@ -129,10 +133,7 @@ export default class PlayerExperience extends soundworks.Experience {
         this.playerMap.delete( client.index );
         this.coordinatesMap.delete( client.index );
         // update modules
-        this.nuPath.exitPlayer(client);
-        this.nuRoomReverb.exitPlayer(client);
         this.nuTemplate.exitPlayer(client);
-        this.nuStream.exitPlayer(client);
 
         // update osc mapper
         this.osc.send('/nuMain/playerRemoved', client.index );

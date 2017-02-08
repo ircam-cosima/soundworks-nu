@@ -6,7 +6,6 @@
  **/
 
 import NuBaseModule from './NuBaseModule'
-import RawSocketStreamer from './RawSocketStreamer';
 
 export default class NuPath extends NuBaseModule {
   constructor(soundworksServer) {
@@ -23,19 +22,9 @@ export default class NuPath extends NuBaseModule {
                     accSlope: 0, 
                     timeBound: 0 };
 
-    // init socket streamer
-    this.rawSocketStreamer = new RawSocketStreamer(8081);
-
     // binding
     this.setPath = this.setPath.bind(this);
     this.startPath = this.startPath.bind(this);
-    // this.enterPlayer = this.enterPlayer.bind(this);
-    this.exitPlayer = this.exitPlayer.bind(this);
-  }
-
-  exitPlayer(client){
-    // close socket
-    this.rawSocketStreamer.close( client.index );
   }
 
   setPath(args){
@@ -87,9 +76,13 @@ export default class NuPath extends NuBaseModule {
     });
 
     // send IRs (had to split in two (see above) because of timeMin)
-    this.soundworksServer.coordinatesMap.forEach((clientPos, clientId) => {
+    // using loop over clients rather than coordinatesMap to get access
+    // to client for rawSocket send. exact same loop than above though.
+    this.soundworksServer.clients.forEach( (client) => {
+      // discard if client is anything else than default player
+      if( client.type !== 'player' ){ return; }
       // get IR
-      let ir = irsArray[clientId];
+      let ir = irsArray[client.index];
       // add init time offset (useful for negative speed)
       ir.unshift( timeMin ); // add time min
       ir.unshift( pathId ); // add path id
@@ -97,7 +90,7 @@ export default class NuPath extends NuBaseModule {
       let msgArray = new Float32Array( ir );
       // console.log('send to client', clientId, 'ir', ir);
       // send
-      this.rawSocketStreamer.send( clientId, msgArray.buffer );   
+      this.soundworksServer.rawSocket.send( client, 'nuPath', msgArray );
     });
   }
 

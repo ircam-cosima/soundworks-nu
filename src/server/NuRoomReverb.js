@@ -4,7 +4,6 @@
  **/
 
 import NuBaseModule from './NuBaseModule'
-import RawSocketStreamer from './RawSocketStreamer';
 
 export default class NuRoomReverb extends NuBaseModule {
   constructor(soundworksServer) {
@@ -23,30 +22,28 @@ export default class NuRoomReverb extends NuBaseModule {
                     accSlope: 0, 
                     timeBound: 0 };
 
-    // setup dedicated websocket server (to handle IR msg: avoid to flood main communication socket)
-    this.rawSocketStreamer = new RawSocketStreamer(8080);
-
     // bind
     this.updatePropagation = this.updatePropagation.bind(this);
     this.exitPlayer = this.exitPlayer.bind(this);
   }
 
-  exitPlayer(client){
-    // close socket
-    this.rawSocketStreamer.close( client.index );
-  }
-  
   updatePropagation(){
 
     // get array of clients positions
     let posArray = [];
     let clientIdArray = [];
-    this.soundworksServer.coordinatesMap.forEach(( pos, key) => {
+    this.soundworksServer.coordinatesMap.forEach( (pos, key) => {
       posArray.push( pos );
       clientIdArray.push( key );
     });
 
-    this.soundworksServer.coordinatesMap.forEach(( emitterPos, emitterId) => {
+    // using loop over clients rather than coordinatesMap to get access
+    // to client for rawSocket send. exact same loop than above though.    
+    this.soundworksServer.clients.forEach( (emitterClient) => {
+      // discard if client is anything else than default player
+      if( emitterClient.type !== 'player' ){ return; }
+      // get client position
+      let emitterPos = this.soundworksServer.coordinatesMap.get( emitterClient.index );
       // console.log(this.soundworksServer.coordinatesMap);
       // consider each client as potential emitter
       this.propagation.computeSrcImg( emitterPos );
@@ -56,10 +53,10 @@ export default class NuRoomReverb extends NuBaseModule {
       // format and send IR via dedicated websocket
       data.irsArray.forEach(( ir, receiverId) => {
         ir.unshift( data.timeMin ); // add time min
-        ir.unshift( emitterId ); // add emitter id
+        ir.unshift( emitterClient.index ); // add emitter id
         let msgArray = new Float32Array( ir );
         // console.log('send to client', receiverId, clientIdArray[ receiverId ], 'ir', ir);
-        this.rawSocketStreamer.send( clientIdArray[ receiverId ], msgArray.buffer );
+        this.soundworksServer.rawSocket.send( emitterClient, 'nuRoomReverb', msgArray );
       });
 
     });

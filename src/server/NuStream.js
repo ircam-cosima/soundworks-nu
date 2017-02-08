@@ -6,7 +6,6 @@
  **/
 
 import NuBaseModule from './NuBaseModule'
-import RawSocketStreamer from './RawSocketStreamer';
 
 // req audio read depts
 const fs = require('fs');
