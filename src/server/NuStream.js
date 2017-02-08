@@ -108,7 +108,9 @@ export default class NuStream extends NuBaseModule {
 
           // send data to every clients
           this.soundworksServer.clients.forEach( (client) => {
-            this.soundworksServer.rawSocket.send( client, 'nuStream', dataArray );
+            if( client.type === 'player' ){
+              this.soundworksServer.rawSocket.send( client, 'nuStream', dataArray );
+            }
           });
 
           // delete file
