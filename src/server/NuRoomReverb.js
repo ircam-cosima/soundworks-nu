@@ -37,14 +37,7 @@ export default class NuRoomReverb extends NuBaseModule {
       clientIdArray.push( key );
     });
 
-    // using loop over clients rather than coordinatesMap to get access
-    // to client for rawSocket send. exact same loop than above though.    
-    this.soundworksServer.clients.forEach( (emitterClient) => {
-      // discard if client is anything else than default player
-      if( emitterClient.type !== 'player' ){ return; }
-      // get client position
-      let emitterPos = this.soundworksServer.coordinatesMap.get( emitterClient.index );
-      // console.log(this.soundworksServer.coordinatesMap);
+    this.soundworksServer.coordinatesMap.forEach( ( emitterPos, emitterId ) => {
       // consider each client as potential emitter
       this.propagation.computeSrcImg( emitterPos );
       // get IR associated for each potential receiver (each client)
@@ -53,10 +46,11 @@ export default class NuRoomReverb extends NuBaseModule {
       // format and send IR via dedicated websocket
       data.irsArray.forEach(( ir, receiverId) => {
         ir.unshift( data.timeMin ); // add time min
-        ir.unshift( emitterClient.index ); // add emitter id
+        ir.unshift( emitterId ); // add emitter id
         let msgArray = new Float32Array( ir );
         // console.log('send to client', receiverId, clientIdArray[ receiverId ], 'ir', ir);
-        this.soundworksServer.rawSocket.send( emitterClient, 'nuRoomReverb', msgArray );
+        let receiverClient = this.soundworksServer.playerMap.get( receiverId );
+        this.soundworksServer.rawSocket.send( receiverClient, 'nuRoomReverb', msgArray );
       });
 
     });
