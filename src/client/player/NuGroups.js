@@ -28,13 +28,11 @@ export default class NuGroups extends NuBaseModule {
   }
 
   paramCallback(name, args){
-    let playerId = args.shift();
-    // discard if msg doesn't concern current player
-    if( playerId !== client.index && playerId !== -1 ){ return; }
+    console.log(this.moduleName , name, args)
     // either route to internal function
     if( this[name] !== undefined )
       if( args.length == 2 ) this[name](args[0], args[1]);
-      else this[name](args[0]);
+      else this[name](args);
     // or to this.params value
     else
       this.params[name] = args;

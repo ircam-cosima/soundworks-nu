@@ -86,7 +86,7 @@ export default class NuPath extends NuBaseModule {
       let msgArray = new Float32Array( ir );
       // send
       let client = this.soundworksServer.playerMap.get( clientId );
-      this.soundworksServer.rawSocket.send( client, 'nuPath', msgArray );
+      this.soundworksServer.rawSocket.send( client, this.moduleName, msgArray );
     });
   }
 
@@ -94,7 +94,12 @@ export default class NuPath extends NuBaseModule {
     let pathId = args;
     // console.log('start path', pathId);
     let rdvTime = this.soundworksServer.sync.getSyncTime() + 2.0;
-    this.soundworksServer.broadcast('player', null, 'nuPath', ['startPath', pathId, rdvTime] );
+    this.soundworksServer.broadcast('player', null, this.moduleName, ['startPath', pathId, rdvTime] );
+  }
+
+  reset(){
+    // re-route to clients
+    this.soundworksServer.broadcast( 'player', null, this.moduleName, ['reset'] );
   }
 
 }

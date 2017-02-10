@@ -23,7 +23,7 @@ export default class NuLoop extends NuBaseModule {
     this.setTrackSlot = this.setTrackSlot.bind(this);
     this.start = this.start.bind(this);
     this.remove = this.remove.bind(this);
-    this.removeAll = this.removeAll.bind(this);
+    this.reset = this.reset.bind(this);
     this.updateNumDivisions = this.updateNumDivisions.bind(this);
     this.getSlotTime = this.getSlotTime.bind(this);
     this.divisions = this.divisions.bind(this);
@@ -45,7 +45,7 @@ export default class NuLoop extends NuBaseModule {
   // update loop maps size
   updateNumDivisions(){
     // shut down all loops
-    this.removeAll();
+    this.reset();
     // resize loop map
     let numTracks = this.soundworksClient.loader.audioBuffers.default.length;
     this.loops = new Matrix(numTracks, this.params.divisions);
@@ -54,13 +54,10 @@ export default class NuLoop extends NuBaseModule {
   setTrackSlot(args){
     
     // extract parameters from args array
-    let playerId = args.shift();
     let trackId = args.shift();
     let slotId = args.shift();
     let onOff = args.shift();
 
-    // discard packets not concerning current user
-    if( playerId !== client.index && playerId !== -1 ) return;
     // check valid trackId
     if( trackId >= this.soundworksClient.loader.audioBuffers.default.length || trackId < 0) {
       console.warn('required track id', trackId, 'not in client index, actual content:', this.soundworksClient.loader.options.files);
@@ -145,7 +142,7 @@ export default class NuLoop extends NuBaseModule {
   }
 
   // remove all loops (for clear in conductor)
-  removeAll() {
+  reset() {
     // remove all loops from scheduler
     let loop;
     for( let i = 0; i < this.loops.i; i++ ){

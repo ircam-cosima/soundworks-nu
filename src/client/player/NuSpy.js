@@ -113,12 +113,7 @@ export default class NuSpy extends NuBaseModule {
   // Note: hereafter are the OSC triggered functions used to enable / disable 
   // hereabove callbacks
 
-  touch(args){
-    // get arguments
-    let playerId = args.shift();
-    let onOff = args.shift();
-    // discard if msg doesn't concern current player
-    if( playerId !== client.index && playerId !== -1 ){ return; }
+  touch(onOff){
     // enable if not already enabled
     if( onOff && !this.callBackStatus.touch ){
       this.surface.addListener('touchstart', this.touchStartCallback);
@@ -135,12 +130,7 @@ export default class NuSpy extends NuBaseModule {
     }
   }
 
-  orientation(args){
-    // get arguments
-    let playerId = args.shift();
-    let onOff = args.shift();
-    // discard if msg doesn't concern current player
-    if( playerId !== client.index && playerId !== -1 ){ return; }    
+  orientation(onOff){
     // discard instruction if motionInput not available
     if (!this.soundworksClient.motionInput.isAvailable('deviceorientation')){ return; }
     // enable if not already enabled
@@ -155,12 +145,7 @@ export default class NuSpy extends NuBaseModule {
     }
   }
 
-  acceleration(args){
-    // get arguments
-    let playerId = args.shift();
-    let onOff = args.shift();
-    // discard if msg doesn't concern current player
-    if( playerId !== client.index && playerId !== -1 ){ return; }    
+  acceleration(onOff){ 
     // discard instruction if motionInput not available
     if (!this.soundworksClient.motionInput.isAvailable('accelerationIncludingGravity')){ return; }
     // enable if not already enabled
@@ -175,12 +160,7 @@ export default class NuSpy extends NuBaseModule {
     }
   }
 
-  energy(args){
-    // get arguments
-    let playerId = args.shift();
-    let onOff = args.shift();
-    // discard if msg doesn't concern current player
-    if( playerId !== client.index && playerId !== -1 ){ return; }    
+  energy(onOff){ 
     // discard instruction if motionInput not available
     if (!this.soundworksClient.motionInput.isAvailable('energy')){ return; }
     // enable if not already enabled

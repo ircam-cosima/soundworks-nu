@@ -26,7 +26,7 @@ export default class NuPath extends NuBaseModule {
     this.reset = this.reset.bind(this);
 
     // setup socket reveive callbacks (receiving raw audio data)
-    this.soundworksClient.rawSocket.receive('nuPath', this.rawSocketCallback );    
+    this.soundworksClient.rawSocket.receive(this.moduleName, this.rawSocketCallback );    
   }
 
   /*
@@ -39,7 +39,7 @@ export default class NuPath extends NuBaseModule {
     let minTime = interleavedIrArray[1];
     // exctract data
     interleavedIrArray = interleavedIrArray.slice(2, interleavedIrArray.length);
-    // console.log('pathId', pathId, 'minTime', minTime, 'ir', interleavedIrArray);
+    console.log('pathId', pathId, 'minTime', minTime, 'ir', interleavedIrArray);
 
     // de-interleave + get max delay for IR buffer size
     let irTime = [0.0], // init at zero to handle scenarii where IR array is empty

@@ -50,7 +50,7 @@ export default class NuRoomReverb extends NuBaseModule {
         let msgArray = new Float32Array( ir );
         // console.log('send to client', receiverId, clientIdArray[ receiverId ], 'ir', ir);
         let receiverClient = this.soundworksServer.playerMap.get( receiverId );
-        this.soundworksServer.rawSocket.send( receiverClient, 'nuRoomReverb', msgArray );
+        this.soundworksServer.rawSocket.send( receiverClient, this.moduleName, msgArray );
       });
 
     });
@@ -80,7 +80,7 @@ export default class NuRoomReverb extends NuBaseModule {
     // if found discrete emitter pos (i.e. player), broadcast msg to players to trigger propagation
     if (emitterId > -1) {
       let rdvTime = this.soundworksServer.sync.getSyncTime() + 2.0;
-      this.soundworksServer.broadcast('player', null, 'nuRoomReverb', ['emitAtPos', emitterId, rdvTime] );
+      this.soundworksServer.broadcast('player', null, this.moduleName, ['emitAtPos', emitterId, rdvTime] );
     }
 
   }
@@ -104,7 +104,12 @@ export default class NuRoomReverb extends NuBaseModule {
   roomCoord(args){
     let id = args[0]; // 0 is top left, 1 is bottom right
     this.propagation.room.coordsTopLeftBottomRight[id] = [ args[1], args[2] ];
-  }  
+  }
+
+  reset(){
+    // re-route to clients
+    this.soundworksServer.broadcast( 'player', null, this.moduleName, ['reset'] );
+  }
 
 }
 

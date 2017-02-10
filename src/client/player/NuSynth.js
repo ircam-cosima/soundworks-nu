@@ -23,16 +23,6 @@ export default class NuSynth extends NuBaseModule {
     this.volume = this.volume.bind(this);
   }
 
-  paramCallback(name, args){
-    // discard if msg doesn't concern current player
-    let playerId = args.shift();
-    if( playerId !== client.index && playerId !== -1 ){ return; }
-    // convert eventual remaining array to singleton
-    args = (args.length == 1) ? args[0] : args;    
-    // route to internal function
-    this[name](args);
-  }
-
   noteOnOff(args){
     let noteId = args.shift();
     let status = args.shift();
@@ -214,6 +204,8 @@ class AudioSynth {
     }
     // note OFF
     else{
+      // discard if note never set to on
+      if(note.osc === undefined){ return; }
       // handle enveloppe
       let now = audioContext.currentTime;
       note.envelopeGain.gain.cancelScheduledValues(now);

@@ -133,7 +133,7 @@ export default class PlayerExperience extends soundworks.Experience {
         this.playerMap.delete( client.index );
         this.coordinatesMap.delete( client.index );
         // update modules
-        this.nuTemplate.exitPlayer(client);
+        // this.nuTemplate.exitPlayer(client);
 
         // update osc mapper
         this.osc.send('/nuMain/playerRemoved', client.index );
@@ -183,27 +183,16 @@ export default class PlayerExperience extends soundworks.Experience {
     this.updateRequest = this.updateRequest.bind(this);
 
     // general router towards internal functions when msg concerning the server (i.e. not player) is received
-    this.osc.receive('/server', (msg) => {
-      console.log(msg);
+    this.osc.receive('/nuMain', (msg) => {
       // shape msg into array of arguments      
       let args = msg.split(' ');
       args.numberify();
-      // check if msg concerns current Nu module
-      if (args[0] !== 'nuMain') return;
-      else args.shift();
+      console.log(args);
 
       // call function associated with first arg in msg
       let functionName = args.shift();
       this[functionName](args);
     });  
-
-    // automatically transfer player osc message 
-    this.osc.receive('/player', (msg) => {
-      let args = msg.split(' ');
-      let moduleName = args.shift();
-      args.numberify();
-      this.broadcast('player', null, moduleName, args);
-    });
 
     // send OSC client msg when server started 
     // (TOFIX: delayed in setTimeout for now because OSC not init at start.)
@@ -220,6 +209,11 @@ export default class PlayerExperience extends soundworks.Experience {
     this.coordinatesMap.forEach((item, key)=>{
       this.osc.send('/nuMain/playerPos', [key, item[0], item[1]] );
     });
+  }
+
+  reloadPlayers(){
+    // re-route to clients
+    this.broadcast( 'player', null, 'nuMain', ['reload'] );    
   }
 
 }

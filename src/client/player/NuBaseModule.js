@@ -28,7 +28,7 @@ export default class NuBaseModule {
   }
 
   paramCallback(name, args){
-    // console.log(this.moduleName, name, args)
+    console.log(this.moduleName, name, args);
     // either route to internal function
     if( this[name] !== undefined )
       this[name](args);

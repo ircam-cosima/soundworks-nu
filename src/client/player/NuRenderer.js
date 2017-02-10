@@ -37,10 +37,7 @@ export default class NuRenderer extends soundworks.Renderer {
     this.soundworksClient.receive('nuRenderer', (args) => {
       // get header
       let name = args.shift();
-      // discard if msg does not concern current player
-      let playerId = args.shift();
-      if( playerId !== client.index && playerId !== -1 ) return;
-      // reduce args array to singleton if only one element left
+      // convert singleton array if need be
       args = (args.length == 1) ? args[0] : args;
       if( this.params[name] !== undefined )
         this.params[name] = args; // parameter set

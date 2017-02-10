@@ -65,6 +65,9 @@ export default class NuStream extends NuBaseModule {
 
     // remove streaming callback
     else{ clearInterval( this.pointerToStreamInterval ); }
+
+    // notify clients of on/off status
+    this.soundworksServer.broadcast( 'player', null, this.moduleName, ['onOff', value] );
   }
 
   streamCallback(){

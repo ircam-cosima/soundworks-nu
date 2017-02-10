@@ -131,7 +131,7 @@ export default class NuGrain extends NuBaseModule {
     this.synth.engine.randomVar = value;
   }
 
-  reloadEngine(){
+  reset(){
     // stop synth
     let wasRunning = false
     if( this.synth.isRunning ){

@@ -23,5 +23,20 @@ export default class NuGrain extends NuBaseModule {
     };
 
   }
+
+  reset(){
+    // re-route to clients
+    this.soundworksServer.broadcast( 'player', null, this.moduleName, ['reset'] );
+  }  
+
+  enterPlayer(client){
+    // send to new client information regarding current groups parameters
+    Object.keys(this.params).forEach( (key) => {
+      this.soundworksServer.send(client, this.moduleName, [key, this.params[key]] );
+    });
+    // reset granular engine to take preset values into account
+    this.soundworksServer.send( client, this.moduleName, ['reset'] );
+  } 
+
 }
 
