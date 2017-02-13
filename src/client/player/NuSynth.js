@@ -1,5 +1,6 @@
 /**
- * NuSynth: distributed synthetizer
+ * NuSynth: distributed synthetizer, sending "note" information via OSC
+ * to trigger real notes in local synthetizer
  **/
 
 import NuBaseModule from './NuBaseModule'
@@ -23,30 +24,39 @@ export default class NuSynth extends NuBaseModule {
     this.volume = this.volume.bind(this);
   }
 
+  // set note on / off (args = [noteId, onOff status])
   noteOnOff(args){
     let noteId = args.shift();
     let status = args.shift();
     this.audioSynth.playNote(noteId, status);
   }
 
+  // set local volume
   volume(value){
     this.localGain.gain.value = value;
   }
 
+  /**
+  * set noteId volume, "linking" the note to the player
+  * (e.g. to attribute a unique note to each player)
+  **/
   linkPlayerToNote(args){
     let noteId = args.shift();
     let volume = args.shift();
     this.audioSynth.setNoteVolume(noteId, volume);
   }
 
+  // define local synthetizer used for audio rendering
   synthType(type){
     this.audioSynth.setType(type); 
   }
 
+  // define synth. attack time
   attackTime(value){
     this.audioSynth.attackTime = value; 
   }
 
+  // define synth. release time
   releaseTime(value){
     this.audioSynth.releaseTime = value; 
   }
@@ -157,10 +167,12 @@ class AudioSynth {
     this.type = value;
   }
 
+  // define synth. waveform
   setPeriodicWave(wave){
     this.periodicWave = wave;
   }
 
+  // play a note on the synth.
   playNote(noteId, status){
     // get note based on id
     let note = this.noteMap.get(noteId);
@@ -236,6 +248,7 @@ class AudioSynth {
     this.updateRendererStatus();
   }
 
+  // enable / disable visualization (enable as long as at least one note plays)
   updateRendererStatus(){
     if( this.numNotesPlayed === 1 && !this.isPlaying){
       this.soundworksClient.renderer.enable();

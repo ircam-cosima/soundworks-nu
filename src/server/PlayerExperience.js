@@ -1,6 +1,7 @@
 import * as soundworks from 'soundworks/server';
 import './utils';
 
+// import Nu modules
 import NuRoomReverb from './NuRoomReverb';
 import NuGroups from './NuGroups';
 import NuPath from './NuPath';
@@ -13,9 +14,23 @@ import NuStream from './NuStream';
 import NuSynth from './NuSynth';
 import NuOutput from './NuOutput';
 
+const Nu = {
+  RoomReverb: NuRoomReverb,
+  Groups: NuGroups,
+  Path: NuPath,
+  Loop: NuLoop,
+  Template: NuTemplate,
+  Grain: NuGrain,
+  Spy: NuSpy,
+  Renderer: NuRenderer,
+  Stream: NuStream,
+  Synth: NuSynth,
+  Output: NuOutput,
+};
+
 const server = soundworks.server;
 
-// server-side 'player' experience.
+// server-side experience.
 export default class PlayerExperience extends soundworks.Experience {
   constructor(clientType) {
     super(clientType);
@@ -23,8 +38,8 @@ export default class PlayerExperience extends soundworks.Experience {
     // require services
     this.checkin = this.require('checkin');
     this.sharedConfig = this.require('shared-config');
-    this.sharedConfig.share('setup', 'player'); // share `setup` entry to ... (crashes else)
-    this.sharedConfig.share('socketIO', 'player'); // share `setup` entry to ... (crashes else)
+    this.sharedConfig.share('setup', 'player'); // share `setup` entry to players
+    this.sharedConfig.share('socketIO', 'player'); // share `socketIO` entry to players
     this.params = this.require('shared-params');
     this.sync = this.require('sync');
     this.osc = this.require('osc');
@@ -46,20 +61,10 @@ export default class PlayerExperience extends soundworks.Experience {
   }
 
   start() {
-
     // init Nu modules
-    this.nuRoomReverb = new NuRoomReverb(this);
-    this.nuGroups = new NuGroups(this);
-    this.nuPath = new NuPath(this);
-    this.nuLoop = new NuLoop(this);
-    this.nuTemplate = new NuTemplate(this);
-    this.nuGrain = new NuGrain(this);
-    this.nuSpy = new NuSpy(this);
-    this.nuRenderer = new NuRenderer(this);
-    this.nuStream = new NuStream(this);
-    this.nuSynth = new NuSynth(this);
-    this.nuOutput = new NuOutput(this);
-
+    Object.keys(Nu).forEach( (nuClass) => {
+      this['nu' + nuClass] = new Nu[nuClass](this);
+    });
     // init OSC callbacks
     this.initOsc();
   }
@@ -74,17 +79,9 @@ export default class PlayerExperience extends soundworks.Experience {
         this.playerMap.set( client.index, client );
 
         // update nu modules
-        this.nuRoomReverb.enterPlayer(client);
-        this.nuGroups.enterPlayer(client);
-        this.nuPath.enterPlayer(client);
-        this.nuLoop.enterPlayer(client);
-        this.nuTemplate.enterPlayer(client);
-        this.nuGrain.enterPlayer(client);
-        this.nuSpy.enterPlayer(client);
-        this.nuRenderer.enterPlayer(client);
-        this.nuStream.enterPlayer(client);
-        this.nuSynth.enterPlayer(client);
-        this.nuOutput.enterPlayer(client);
+        Object.keys(Nu).forEach( (nuClass) => {
+          this['nu' + nuClass].enterPlayer(client);
+        });
 
         // msg callback: receive client coordinates 
         // (could use local service, this way lets open for pos estimation in client in the future)
@@ -94,7 +91,7 @@ export default class PlayerExperience extends soundworks.Experience {
           this.osc.send('/nuMain/playerPos', [client.index, xy[0], xy[1]] );
         });
 
-        // direct forward to OSC
+        // direct forward of players message to OSC client
         this.receive(client, 'osc', (header, args) => {
           // append client index to msg
           args.unshift(client.index);
@@ -132,8 +129,11 @@ export default class PlayerExperience extends soundworks.Experience {
         // update local attributes
         this.playerMap.delete( client.index );
         this.coordinatesMap.delete( client.index );
-        // update modules
-        // this.nuTemplate.exitPlayer(client);
+
+        // update Nu modules
+        Object.keys(Nu).forEach( (nuClass) => {
+          this['nu' + nuClass].exitPlayer(client);
+        });
 
         // update osc mapper
         this.osc.send('/nuMain/playerRemoved', client.index );
@@ -204,6 +204,10 @@ export default class PlayerExperience extends soundworks.Experience {
 
   }
 
+  /**
+  * method triggered by OSC client upon connection, requiring an update on all 
+  * the "knowledge" the server already gathered about the current experiment setup
+  **/
   updateRequest(){
     // send back players position at osc client request
     this.coordinatesMap.forEach((item, key)=>{
@@ -211,6 +215,7 @@ export default class PlayerExperience extends soundworks.Experience {
     });
   }
 
+  // force all players to reload the current page
   reloadPlayers(){
     // re-route to clients
     this.broadcast( 'player', null, 'nuMain', ['reload'] );    

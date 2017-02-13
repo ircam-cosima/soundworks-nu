@@ -1,5 +1,5 @@
 /**
- * NuBaseModule: base class of all Nu modules
+ * NuBaseModule: base class extended by all Nu modules
  **/
 
 import * as soundworks from 'soundworks/client';
@@ -20,6 +20,7 @@ export default class NuBaseModule {
       let name = args.shift();
       // convert singleton array if need be
       args = (args.length == 1) ? args[0] : args;
+      // process msg
       this.paramCallback(name, args);
     });
 
@@ -27,14 +28,16 @@ export default class NuBaseModule {
     this.paramCallback = this.paramCallback.bind(this);
   }
 
+  /**
+  * default callback applied to all incoming 'OSC' messages
+  * (come from OSC at least, the protocol would however be web-socket 
+  * since message pre-processed by soundworks server
+  **/
   paramCallback(name, args){
-    console.log(this.moduleName, name, args);
     // either route to internal function
-    if( this[name] !== undefined )
-      this[name](args);
+    if( this[name] !== undefined ){ this[name]( args ); }
     // or to this.params value
-    else
-      this.params[name] = args;
+    else{ this.params[name] = args; }
   }
 
 }

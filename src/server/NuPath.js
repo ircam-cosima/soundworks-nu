@@ -28,18 +28,16 @@ export default class NuPath extends NuBaseModule {
   }
 
   setPath(args){
-
+    // extract from arguments
     let pathId = args.shift();
-    // console.log('computing ir of path', pathId);
     
-    // shape args (from [x0 y0 t0 ... xN yN tN] to ...)
+    // shape args from [x0 y0 t0 ... xN yN tN] to [ [t0, [x0, y0]], [tN, [xN, yN]] ]
     let pathArray = [];
     for( let i = 0; i < args.length; i+=3){
       let time = args[i];
       let pos = [ args[i+1], args[i+2] ];
       pathArray.push( [time, pos] );
     }
-    // console.log('path array:', pathArray);
     
     // avoid zero propagation speed
     let propagationSpeed = this.params.propagationSpeed;
@@ -49,6 +47,7 @@ export default class NuPath extends NuBaseModule {
     let dist, time, gain, timeMin = 0;
     let irsArray = [];
     this.soundworksServer.coordinatesMap.forEach(( clientPos, clientId) => {
+      
       // init
       irsArray[clientId] = [];
       gain = 1.0;
@@ -61,16 +60,15 @@ export default class NuPath extends NuBaseModule {
         dist = Math.sqrt(Math.pow(clientPos[0] - pathPos[0], 2) + Math.pow(clientPos[1] - pathPos[1], 2));
         time = pathTime + ( dist / propagationSpeed );
         // gain *= Math.pow( this.params.propagationGain, dist );
-        gain = Math.pow( this.params.propagationGain, dist ); 
         // the gain doesn't decrease along the path, rather it decreases as the player
-        // got further away from current path point
+        // gets further away from current path point:
+        gain = Math.pow( this.params.propagationGain, dist ); 
         // save tap if valid
         if (gain >= this.params.propagationRxMinGain) {
           // push IR in array
           irsArray[clientId].push(time, gain);
           // prepare handle neg speed
           if (time < timeMin) timeMin = time;
-          // console.log(index,pathTime,pathPos,dist,time,gain, this.params.propagationGain, this.params.propagationRxMinGain)
         }
       });
     });
@@ -90,13 +88,15 @@ export default class NuPath extends NuBaseModule {
     });
   }
 
+  // trigger path rendering in clients
   startPath(args){
     let pathId = args;
-    // console.log('start path', pathId);
+    // set rendez-vous time in 2 seconds from now.
     let rdvTime = this.soundworksServer.sync.getSyncTime() + 2.0;
     this.soundworksServer.broadcast('player', null, this.moduleName, ['startPath', pathId, rdvTime] );
   }
 
+  // reset clients (stop all sounds)
   reset(){
     // re-route to clients
     this.soundworksServer.broadcast( 'player', null, this.moduleName, ['reset'] );

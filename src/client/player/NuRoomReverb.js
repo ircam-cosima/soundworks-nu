@@ -53,7 +53,6 @@ export default class NuRoomReverb extends NuBaseModule {
     this.irMap.set(emitterId, ir);
 
     // feedback user that IR has been loaded
-
     this.soundworksClient.renderer.blink([0, 100, 0]);
   }
 
@@ -86,9 +85,6 @@ export default class NuRoomReverb extends NuBaseModule {
     let inputBuffer = this.soundworksClient.loader.audioBuffers.default[this.params.audioFileId];
     let outputDuration = ir.duration + inputBuffer.duration + 1;
     let outputBuffer = audioContext.createBuffer(1, Math.max(outputDuration * audioContext.sampleRate, 512), audioContext.sampleRate);
-
-    // this.controlParams = {audioFileId: 0, segment: {perc: 1, loop: true, accSlope: 0, timeBound: 0} };
-
 
     // fill sound source with delayed audio buffer version (tap delay line mecanism)
     let inputData = inputBuffer.getChannelData(0);

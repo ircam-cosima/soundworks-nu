@@ -31,6 +31,10 @@ export default class NuStream extends NuBaseModule {
     this.out.gain.value = val;
   }
 
+  /** 
+  * enable / disable streaming (only thing enabled / disabled here is visual feedback, 
+  * actual streaming is done automatically when receiving audio data from dedicated web-socket
+  **/
   onOff(value){
     if( value ){ this.soundworksClient.renderer.enable(); }
     else{ this.soundworksClient.renderer.disable(); }
@@ -44,7 +48,6 @@ export default class NuStream extends NuBaseModule {
     // decode 
     let packetId = Math.round( data.slice(0, 1) * 100 ) / 100; // other digit are not relevant
     let audioArray = new Float32Array(data.slice(1, data.length));
-    // console.log('received audio data: id:',packetId, 'size:', audioArray.length);
 
     // get start time
     const now = this.soundworksClient.sync.getSyncTime();
@@ -52,7 +55,6 @@ export default class NuStream extends NuBaseModule {
     let relOffset = sysTime - now;
 
     // discard data if start time passed (packet deprecated)
-    // console.log('start source at', sysTime, 'in', relOffset, 'sec');
     if( relOffset < 0 ){ 
       this.soundworksClient.renderer.blink([100, 0, 0]); 
       return;

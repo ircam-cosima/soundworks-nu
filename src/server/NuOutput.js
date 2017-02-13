@@ -10,7 +10,7 @@ export default class NuOutput extends NuBaseModule {
   constructor(soundworksServer) {
     super(soundworksServer, 'nuOutput');
 
-    // to be saved params to send to client when connects:
+    // to be saved parameters to send to client when connects:
     this.params = { 
       gain: 1.0, 
       enableSpat: false,

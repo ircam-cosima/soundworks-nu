@@ -3,8 +3,8 @@
 CHROME_APP=/Applications/Browsers/Google\ Chrome.app/Contents/MacOS/Google\ Chrome
 URL="http://127.0.0.1:8000"
 
-windowWidth=300
-windowHeight=300
+windowWidth=200
+windowHeight=200
 
 # FAKEUSER="${1:-fake-chrome-user}"
 # CHROMEROOT=$HOME/.chromeroot/

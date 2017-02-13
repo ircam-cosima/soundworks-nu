@@ -15,6 +15,7 @@ export default class NuTemplate extends NuBaseModule{
     this.giveGlobalInstruction = this.giveGlobalInstruction.bind(this);
   }
 
+  // send a global timed instruction to all players from OSC client
   giveGlobalInstruction(args){
     let delay = args;
     let rdvTime = this.soundworksServer.sync.getSyncTime() + delay;

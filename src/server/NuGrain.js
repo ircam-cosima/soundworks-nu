@@ -1,5 +1,5 @@
 /**
- * NuGrain: Granular synthesis (based on soudworks-shaker). An audio track is segmented
+ * NuGrain: Granular synthesis (based on soundworks-shaker). An audio track is segmented
  * and segments are sorted by loudness. Segments are afterwards playing in a sequencer, 
  * the current active segment being selected based on shaking energy or OSC client sent 
  * energy.
@@ -24,11 +24,17 @@ export default class NuGrain extends NuBaseModule {
 
   }
 
+  // reset granular engine on client's side (required e.g. to set tempo)
   reset(){
     // re-route to clients
     this.soundworksServer.broadcast( 'player', null, this.moduleName, ['reset'] );
   }  
 
+  /**
+  * had to redefine the enterPlayer method here to send a "reset" message once
+  * all initial parameters were sent, to make sure the granular engine of the 
+  * new player will indeed take into account said parameters
+  **/
   enterPlayer(client){
     // send to new client information regarding current groups parameters
     Object.keys(this.params).forEach( (key) => {

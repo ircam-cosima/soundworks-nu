@@ -1,7 +1,8 @@
 /**
- * NuSynth: distributed synthetizer
+ * NuSynth: distributed synthetizer, sending "note" information via OSC
+ * to trigger real notes in local synthetizer
  **/
-
+ 
 import NuBaseModule from './NuBaseModule'
 
 export default class NuSynth extends NuBaseModule {

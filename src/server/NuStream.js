@@ -70,6 +70,11 @@ export default class NuStream extends NuBaseModule {
     this.soundworksServer.broadcast( 'player', null, this.moduleName, ['onOff', value] );
   }
 
+  /** 
+  * callback in charge of reading audio file from disk, 
+  * broadcasting their audio content to players, and deleting 
+  * said audio files once used
+  **/
   streamCallback(){
     
     // read files names from disk

@@ -1,5 +1,5 @@
 /**
- * NuBaseModule: base class of all Nu modules
+ * NuBaseModule: base class extended by all Nu modules
  **/
 
 export default class NuBaseModule {
@@ -10,17 +10,17 @@ export default class NuBaseModule {
     this.moduleName = moduleName;
     this.requiresPlayerId = requiresPlayerId;
 
-    // to be saved params to send to client when connects:
+    // to be saved parameters to send to client when connects:
     this.params = {};
 
     // binding
     this.enterPlayer = this.enterPlayer.bind(this);
     this.exitPlayer = this.exitPlayer.bind(this);
     if( requiresPlayerId ){ 
-      this.paramCallback = this.paramCallback2.bind(this); 
+      this.paramCallback = this.paramCallbackWithPlayerId.bind(this); 
     }
     else{
-      this.paramCallback = this.paramCallback1.bind(this);
+      this.paramCallback = this.paramCallbackDefault.bind(this);
     }
 
     // general router towards internal functions
@@ -29,14 +29,16 @@ export default class NuBaseModule {
       let msg = msgRaw.split(' ');
       msg.numberify();
       // pass msg to callback
-      console.log(this.moduleName, msg);
       this.paramCallback( msg );
     });
 
   }
 
-  // local equivalent of soundworks enter, only applied for clients of type 'player'
-  // init client's modules with all Nu parameters saved in server
+  /**
+  * local equivalent of soundworks "enter" method
+  * only applied for clients of type 'player'
+  * init client's modules with all Nu parameters saved in server
+  **/
   enterPlayer(client){
     // send to new client information regarding current groups parameters
     Object.keys(this.params).forEach( (key) => {
@@ -44,12 +46,14 @@ export default class NuBaseModule {
     });
   }
 
-  // local equivalent of soundworks exit, only applied for clients of type 'player'
-  exitPlayer(client){
-  }
+  /**
+  * local equivalent of soundworks exit.
+  * only applied for clients of type 'player'
+  **/
+  exitPlayer(client){}
 
-  // callback that handles Nu msg from OSC client
-  paramCallback1(msg){
+  // callback that handles Nu messages from OSC client
+  paramCallbackDefault(msg){
     // extract data
     let name = msg[0];
     let args = msg.slice(1, msg.length);
@@ -66,30 +70,38 @@ export default class NuBaseModule {
     }
   }
 
-  // callback that handles Nu msg from OSC client.
-  // this second version supposes that every msg received contains 
-  // playerId, and will re-route messages to the corresponding player
-  paramCallback2(msg){
+  /**
+  * callback that handles Nu msg from OSC client.
+  * this second version supposes that every msg received contains 
+  * playerId, and will re-route messages to the corresponding player
+  **/
+  paramCallbackWithPlayerId(msg){
     // extract data
     let name = msg[0];
-    let playerId = msg[1];
-    let args = msg.slice(2, msg.length);
-    // the msgStippedOfPlayerId is a replica of msg without playerId
-    let msgStippedOfPlayerId = [name].concat(args);
-    // either call dedicated method
+    
+    // call dedicated method if defined
     if( this[name] !== undefined ){  
-      this[name]( msg.slice(1, msg.length) );
-    }    
-    // if player specific instruction
+      this[name]( msg.splice(1, 1) );
+      return;
+    }
+
+    // extract player Id from msg
+    let playerId = msg.splice(1, 1)[0]; 
+
+    // if player specific instruction, send to player
     if( playerId !== -1 ){
       let client = this.soundworksServer.playerMap.get( playerId );
       if( client === undefined ){ return; }
-      this.soundworksServer.send( client, this.moduleName, msgStippedOfPlayerId );
+      this.soundworksServer.send( client, this.moduleName, msg );
     }
-    // if instruction concerns all the players
+    
+    // else, broadcast and save local
     else{
-      // broadcast msg
-      this.soundworksServer.broadcast( 'player', null, this.moduleName, msgStippedOfPlayerId ); 
+      // broadcast message
+      this.soundworksServer.broadcast( 'player', null, this.moduleName, msg );
+      
+      // extract parameter value
+      let args = msg.slice(1);
       // convert eventual remaining array to singleton
       args = (args.length == 1) ? args[0] : args;
       // store value

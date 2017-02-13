@@ -23,10 +23,12 @@ export default class NuTemplate extends NuBaseModule {
     this.soundworksClient.receive('nuTemplateInternal_aMethodTriggeredFromServer', this.aMethodTriggeredFromServer);
   }
 
+  // trigger event directly from OSC client
   aMethodTriggeredFromOsc(args){
     console.log('aMethodTriggeredFromOsc', args);
   }
 
+  // re-routed event for sync. playback: server add a rdv time to msg sent by OSC client
   aMethodTriggeredFromServer(args){
     console.log('aMethodTriggeredFromServer, e.g. play a sound at synchronized time:', args);
     this.soundworksClient.renderer.blink([0, 160, 200], 0.4);

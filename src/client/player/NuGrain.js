@@ -1,16 +1,18 @@
 /**
- * NuGrain: Granular synthesis (based on soudworks-shaker). An audio track is segmented
+ * NuGrain: Granular synthesis (based on soundworks-shaker). An audio track is segmented
  * and segments are sorted by loudness. Segments are afterwards playing in a sequencer, 
  * the current active segment being selected based on shaking energy or OSC client sent 
  * energy.
  **/
 
-// had to add to package.json for this specific module:
-// "waves-lfo": "wavesjs/lfo#v0.2.0",
-// "typedarray-methods": "^1.0.0", (safary missng Float32Array methods used in wavejs)
+/**
+* Note: had to add to package.json for this specific module:
+* "waves-lfo": "wavesjs/lfo#v0.2.0",
+* "typedarray-methods": "^1.0.0", (Safari missing Float32Array methods used in wavejs)
+**/
 
-// required because Safari doesn't implement float32Array.fill, used in old version of 
-// waves-lfo
+// required because Safari doesn't implement float32Array.fill. 
+// used in old version of waves-lfo
 require('typedarray');
 require('typedarray-methods');
 
@@ -39,13 +41,13 @@ export default class NuGrain extends NuBaseModule {
     this.setEnergyCallback = this.setEnergyCallback.bind(this);
     this.enable = this.enable.bind(this);
 
-    // create audio analyser
+    // create audio analyzer
     this.analyzer = new Analyzer({
       frameDuration: 0.020,
       framePeriod: 0.005,
     });
 
-    // create and configure synthetizer
+    // create and configure synthesizer
     this.synth = new Synthesizer(this.soundworksClient.scheduler, this.soundworksClient.nuOutput.in);
 
     this.synth.setBeatCallback((delay, index, energy = 1) => {
@@ -57,7 +59,12 @@ export default class NuGrain extends NuBaseModule {
     this.localEnergy = energy;
   }
 
-  // had to use a a setInterval callback rather than only the motion input to be able to use the module on non-smartphone devices)
+  /**
+  * Note: this method is called via a "setInterval" callback rather than a 
+  * "motion input" listener (that would make more sense, e.g. throttling 
+  * message based on movements activity) to be able to use the module on 
+  * non-smartphone devices (computer)
+  **/
   setEnergyCallback(){
     // allow to control the amount of local / vs global energy
     let summedEnergy = this.params.override * this.params.energy + 
@@ -65,6 +72,7 @@ export default class NuGrain extends NuBaseModule {
     this.synth.setShakeEnergy(summedEnergy);
   }
 
+  // enable / disable granular synthesis looper
   enable(value){
     // notify no sound loaded
     if( value && this.audioBuffer === undefined )
@@ -76,7 +84,7 @@ export default class NuGrain extends NuBaseModule {
       // add motion input listener 
       this.soundworksClient.motionInput.addListener('energy', this.motionInputEnergyCallback);
       this.setIntervalListener = window.setInterval( this.setEnergyCallback, 100);
-      // start synth
+      // start synthesizer
       this.synth.start();
       // enable visual feedback
       this.soundworksClient.renderer.enable();
@@ -99,6 +107,7 @@ export default class NuGrain extends NuBaseModule {
     }
   }
 
+  // set current audio file from OSC
   audioFileId(fileId){
     // reset locals
     this.audioBuffer = undefined;
@@ -119,18 +128,28 @@ export default class NuGrain extends NuBaseModule {
     });  
   }
 
+  /** 
+  * feed sequencer / looper with audio buffer + 
+  * segments (infos to build granular synthesis)
+  **/
   onPlayState(audioBuffer, segments) {
     this.synth.setBuffers(audioBuffer, segments);
   }
 
+  // set audio gain
   gain(value){
     this.synth.master.gain.value = value;
   }
 
+  /**
+  * set amount of randomness in audio segment selection 
+  * (set to 1, current segment is no longer defined by current energy only)
+  **/
   randomVar(value){
     this.synth.engine.randomVar = value;
   }
 
+  // reset granular engine (required e.g. to change its tempo)
   reset(){
     // stop synth
     let wasRunning = false
@@ -149,6 +168,7 @@ export default class NuGrain extends NuBaseModule {
       this.synth.start();
   }
 
+  // ugly wrapper to access engine parameters from OSC client
   engineParams(args){
     this.synth.engineOptions[args[0]] = args[1];
   }
@@ -156,11 +176,9 @@ export default class NuGrain extends NuBaseModule {
 }
 
 
-
 //////////////////////////////////////////////////////////////////////////////////////////
 // Analyzer
 //////////////////////////////////////////////////////////////////////////////////////////
-
 
 import { EventEmitter } from 'events';
 import * as lfo from 'waves-lfo';
@@ -214,7 +232,6 @@ export class Analyzer extends EventEmitter {
     return Promise.all([promisedBuffer, this.dataRecorder.retrieve()]);
   }
 }
-
 
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -326,7 +343,7 @@ export class Synthesizer {
     this.master = audioContext.createGain();
     this.master.gain.value = 1;
 
-    // connect to visual feeback analyser
+    // connect to visual feedback analyzer
     this.master.connect(output);
 
     this.engineOptions = {
@@ -375,7 +392,7 @@ export class Synthesizer {
     // set audio buffer
     this.engine.buffer = buffer;
 
-    // if segment is too short (len 1), duplicate unique element
+    // if segment is too short (length 1), duplicate unique element
     if( segments.length == 1 )
       segments.push( segments[0] );
 
@@ -425,8 +442,3 @@ export class Synthesizer {
     }
   }
 }
-
-
-//////////////////////////////////////////////////////////////////////////////////////////
-// Analytics
-//////////////////////////////////////////////////////////////////////////////////////////

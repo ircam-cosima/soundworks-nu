@@ -1,5 +1,5 @@
 /**
- * Nu module, in charge of room reverb
+ * NuLoop: Nu module sequencer-like (drum machine)
  **/
 
 import NuBaseModule from './NuBaseModule'

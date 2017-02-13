@@ -168,6 +168,7 @@ export default class NuPath extends NuBaseModule {
 
   }
 
+  // kill audio
   reset(){
     this.srcSet.forEach( (src) => {
       // stop source

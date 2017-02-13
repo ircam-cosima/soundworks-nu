@@ -1,7 +1,8 @@
 /**
  * NuOutput: render output, either directly to audioContext.destination or 
  * to spatialization engine for debug sessions (i.e. to get a feel of the final 
- * result while players are emulated on server's laptop)
+ * result while players are emulated on server's laptop). Spatialization is based 
+ * Ambisonic encoding plugged in binaural decoding.
  **/
 
 import NuBaseModule from './NuBaseModule'
@@ -11,13 +12,16 @@ import * as ambisonics from 'ambisonics';
 const client = soundworks.client;
 const audioContext = soundworks.audioContext;
 
+/** 
+* convert Cartesian to spherical coordinates 
+* (azimuth is in xy. elev at zero is in xy, positive up)
+**/
 const cart2sph = function(xyz){
   let r2d = 180 / Math.PI;
   let d = Math.sqrt( Math.pow(xyz[0], 2) + Math.pow(xyz[1], 2) + Math.pow(xyz[2], 2) );
   let a = r2d * Math.atan2(xyz[0], xyz[1]);
   let e = 0;
-  if( d !== 0 )
-    e = r2d * Math.asin(xyz[2] / d);
+  if( d !== 0 ){ e = r2d * Math.asin(xyz[2] / d); }
   return [a,e,d];
 }
 
@@ -28,13 +32,11 @@ export default class NuOutput extends NuBaseModule {
     // local attributes
     this.params = { userPos: [0, 0, 0] };
 
-    // input gain
+    // input gain (connected to analyzer for visual feedback)
     this.in = audioContext.createGain();
-
-    // connect to analyser for visual feedback
     this.in.connect( this.soundworksClient.renderer.audioAnalyser.in );
 
-    // create ambisonic encoder / decoder
+    // create Ambisonic encoder / decoder
     this.maxOrder = 3;
     this.ambiOrderValue = 3;
     this.encoder = new ambisonics.monoEncoder(audioContext, this.ambiOrderValue);
@@ -60,6 +62,7 @@ export default class NuOutput extends NuBaseModule {
     this.in.gain.value = val;
   }
 
+  // enable / disable spatialization of player based on its position in the room
   enableSpat(val){
     if(val){
       try{ this.in.disconnect( audioContext.destination ); }
@@ -77,6 +80,7 @@ export default class NuOutput extends NuBaseModule {
     }
   }
 
+  // set encoding Ambisonic order
   ambiOrder(val){
     // filter order in
     if( val > 3 || val < 1 ){ return; }
@@ -84,6 +88,10 @@ export default class NuOutput extends NuBaseModule {
     this.limiter.out.connect( this.decoder.in );
   }
 
+  /** 
+  * enable spatialized room reverberation 
+  * (replace dry Ambisonic IR with Room Ambisonic IR)
+  **/
   enableRoom(val){
     let irUrl = '';
     if( val ){
@@ -100,12 +108,17 @@ export default class NuOutput extends NuBaseModule {
     loader_filters.load();
   }
 
+  /** define fake user position (the user here is the composer / debugger, 
+   * sitting in front of browsers simulating the players, deciding where 
+   * he/she wants to be in the room during the composition / debug session)
+  **/
   userPos(args){
     this.params.userPos[0] = args[0];
     this.params.userPos[1] = args[1];
     this.setPos();
   }
 
+  // update player position
   setPos(){
     // get rel. pos from user (debug listener)
     let relXYZ = [];
@@ -113,10 +126,6 @@ export default class NuOutput extends NuBaseModule {
       relXYZ.push( this.params.userPos[i] - this.coordXYZ[i] ); 
     }
     let coordSph = cart2sph( relXYZ );
-    // console.log('user', this.params.userPos);
-    // console.log('me', this.coordXYZ);
-    // console.log('rel', relXYZ);
-    // console.log('rel sph', coordSph);
     // update encoder parameters
     this.encoder.azim = coordSph[0];
     this.encoder.elev = coordSph[0];
