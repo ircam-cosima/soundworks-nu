@@ -68,7 +68,6 @@ export default class NuGroups extends NuBaseModule {
     // send to new client information regarding current groups parameters
     this.groupMap.forEach( (group, groupId) => {
       Object.keys(group).forEach( (key) => {
-        console.log([key, groupId, group[key]])
         this.soundworksServer.send(client, 'nuGroups', [key, groupId, group[key]]);
       });          
     });    
