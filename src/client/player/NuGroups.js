@@ -29,7 +29,6 @@ export default class NuGroups extends NuBaseModule {
   }
 
   paramCallback(name, args){
-    console.log(this.moduleName , name, args)
     // either route to internal function
     if( this[name] !== undefined )
       if( args.length == 2 ) this[name](args[0], args[1]);

@@ -187,7 +187,7 @@ export default class PlayerExperience extends soundworks.Experience {
       // shape msg into array of arguments      
       let args = msg.split(' ');
       args.numberify();
-      console.log(args);
+      // console.log(args);
 
       // call function associated with first arg in msg
       let functionName = args.shift();
