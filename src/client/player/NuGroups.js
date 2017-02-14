@@ -57,6 +57,8 @@ export default class NuGroups extends NuBaseModule {
       let timeOffset = this.soundworksClient.scheduler.syncTime - value;
       // modulo buffer length for slow / late connected players 
       timeOffset %= group.src.buffer.duration;
+      // make sure timeOffset is positive (if e.g. player not yet perfectly sync.)
+      timeOffset = Math.max(timeOffset, 0.0);
       // start source at group time
       group.src.start(audioContext.currentTime, timeOffset);
       // remember start time

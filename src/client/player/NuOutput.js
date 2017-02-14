@@ -32,9 +32,14 @@ export default class NuOutput extends NuBaseModule {
     // local attributes
     this.params = { userPos: [0, 0, 0] };
 
-    // input gain (connected to analyzer for visual feedback)
-    this.in = audioContext.createGain();
-    this.in.connect( this.soundworksClient.renderer.audioAnalyser.in );
+    /**
+    * input gain (connected to analyzer for visual feedback)
+    * (had to do it the other around since Safari's analyser would
+    * remain frozen this.in was the gain connected to the analyser)
+    **/
+    this.in = this.soundworksClient.renderer.audioAnalyser.in;
+    this.masterGain = audioContext.createGain();
+    this.in.connect( this.masterGain );
 
     // create Ambisonic encoder / decoder
     this.maxOrder = 3;
@@ -59,24 +64,24 @@ export default class NuOutput extends NuBaseModule {
 
   // set audio gain out
   gain(val){
-    this.in.gain.value = val;
+    this.masterGain.gain.value = val;
   }
 
   // enable / disable spatialization of player based on its position in the room
   enableSpat(val){
     if(val){
-      try{ this.in.disconnect( audioContext.destination ); }
+      try{ this.masterGain.disconnect( audioContext.destination ); }
       catch(e){ if( e.name !== 'InvalidAccessError'){ console.error(e); } }
-      this.in.connect( this.ambiGain );
+      this.masterGain.connect( this.ambiGain );
       this.decoder.out.connect( audioContext.destination );
     }
     else{
       try{
         this.decoder.out.disconnect( audioContext.destination );
-        this.in.disconnect( this.ambiGain ); 
+        this.masterGain.disconnect( this.ambiGain ); 
       }
       catch(e){ if( e.name !== 'InvalidAccessError'){ console.error(e); } }
-      this.in.connect( audioContext.destination );
+      this.masterGain.connect( audioContext.destination );
     }
   }
 
