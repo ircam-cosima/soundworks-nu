@@ -108,21 +108,18 @@ class AudioSynth {
       207.652,
       220,
       233.082,
-      246.942,
-      261.626,
-      277.183,
-      293.665,
-      311.127,
-      329.628,
-      349.228,
-      369.994,
-      391.995,
-      415.305,
-      440,
-      466.164,
-      493.883,
-      523.251,      
+      246.942,    
     ];
+
+    // add octaves (not just? true)
+    let numOctaves = 4;
+    const initTableLength = noteFreqTable.length;
+    for( let i = 1; i < numOctaves; i++ ){
+    for( let j = 0; j < initTableLength; j++ ){
+      noteFreqTable.push( noteFreqTable[j] * Math.pow(2, i) );
+      }
+    }
+    console.log(noteFreqTable);
 
     // create notes
     for (let i = 0; i < noteFreqTable.length; i++) {
