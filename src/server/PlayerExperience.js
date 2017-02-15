@@ -1,32 +1,7 @@
 import * as soundworks from 'soundworks/server';
-import './utils';
 
 // import Nu modules
-import NuRoomReverb from './NuRoomReverb';
-import NuGroups from './NuGroups';
-import NuPath from './NuPath';
-import NuLoop from './NuLoop';
-import NuTemplate from './NuTemplate';
-import NuGrain from './NuGrain';
-import NuSpy from './NuSpy';
-import NuRenderer from './NuRenderer';
-import NuStream from './NuStream';
-import NuSynth from './NuSynth';
-import NuOutput from './NuOutput';
-
-const Nu = {
-  RoomReverb: NuRoomReverb,
-  Groups: NuGroups,
-  Path: NuPath,
-  Loop: NuLoop,
-  Template: NuTemplate,
-  Grain: NuGrain,
-  Spy: NuSpy,
-  Renderer: NuRenderer,
-  Stream: NuStream,
-  Synth: NuSynth,
-  Output: NuOutput,
-};
+import * as Nu from './Nu'
 
 const server = soundworks.server;
 

@@ -1,18 +1,8 @@
 import * as soundworks from 'soundworks/client';
 
 import NuRenderer from './NuRenderer';
-import NuRoomReverb from './NuRoomReverb';
-import NuGroups from './NuGroups';
-import NuPath from './NuPath';
-import NuLoop from './NuLoop';
-import NuTemplate from './NuTemplate';
-import NuGrain from './NuGrain';
-import NuSpy from './NuSpy';
-import NuSynth from './NuSynth';
-import NuStream from './NuStream';
-import NuOutput from './NuOutput';
+import * as Nu from './Nu'
 
-import * as utils from './utils';
 const audioContext = soundworks.audioContext;
 const client = soundworks.client;
 
@@ -37,14 +27,15 @@ const viewTemplate = `
 
 
 /* Description:
-...
+* The PlayerExperience script defines the behavior of default clients (of type 'player').
+* Here it simply imports and instantiate all Nu modules.
 */
 
 export default class PlayerExperience extends soundworks.Experience {
   constructor(assetsDomain, audioFiles) {
     super();
 
-    // soundworks services
+    // require soundworks services
     this.platform = this.require('platform', { features: ['web-audio'] });
     this.params = this.require('shared-params');
     this.sharedConfig = this.require('shared-config');
@@ -60,11 +51,6 @@ export default class PlayerExperience extends soundworks.Experience {
       descriptors: ['accelerationIncludingGravity', 'deviceorientation', 'energy']
     });
 
-    // binding
-    // ...
-
-    // local attributes
-    this.propagParams = {};
   }
 
   init() {
@@ -92,25 +78,15 @@ export default class PlayerExperience extends soundworks.Experience {
     this.coordinates = coordinates[client.index];
     this.send('coordinates', this.coordinates);
 
-    // init Nu modules
-    this.nuOutput = new NuOutput(this);
-    this.nuRoomReverb = new NuRoomReverb(this);
-    this.nuGroups = new NuGroups(this);
-    this.nuPath = new NuPath(this);
-    this.nuLoop = new NuLoop(this);
-    this.nuTemplate = new NuTemplate(this);
-    this.nuGrain = new NuGrain(this);
-    this.nuSpy = new NuSpy(this);
-    this.nuSynth = new NuSynth(this);
-    this.nuStream = new NuStream(this);
-
     // init Nu Main
     this.receive('nuMain', (args) => {
-      // console.log('nuMain:', args);
       let paramName = args.shift();
+      if( paramName === 'reload' ){ window.location.reload(true); }
+    });
 
-      if( paramName === 'reload' )
-        window.location.reload(true)
+    // init Nu modules
+    Object.keys(Nu).forEach( (nuClass) => {
+      this['nu' + nuClass] = new Nu[nuClass](this);
     });
 
     // disable text selection, magnifier, and screen move on swipe on ios
