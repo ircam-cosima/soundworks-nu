@@ -26,7 +26,7 @@ const viewTemplate = `
 `;
 
 
-/* Description:
+/*
 * The PlayerExperience script defines the behavior of default clients (of type 'player').
 * Here it simply imports and instantiate all Nu modules.
 */
@@ -77,12 +77,6 @@ export default class PlayerExperience extends soundworks.Experience {
     let coordinates = this.sharedConfig.get('setup.coordinates');
     this.coordinates = coordinates[client.index];
     this.send('coordinates', this.coordinates);
-
-    // init Nu Main
-    this.receive('nuMain', (args) => {
-      let paramName = args.shift();
-      if( paramName === 'reload' ){ window.location.reload(true); }
-    });
 
     // init Nu modules
     Object.keys(Nu).forEach( (nuClass) => {

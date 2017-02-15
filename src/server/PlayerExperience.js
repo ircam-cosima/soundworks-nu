@@ -1,9 +1,5 @@
 import * as soundworks from 'soundworks/server';
-
-// import Nu modules
-import * as Nu from './Nu'
-
-const server = soundworks.server;
+import * as Nu from './Nu';
 
 // server-side experience.
 export default class PlayerExperience extends soundworks.Experience {
@@ -26,7 +22,6 @@ export default class PlayerExperience extends soundworks.Experience {
     this.rawSocket = this.require('raw-socket', { protocol: protocol });
 
     // bind methods
-    this.initOsc = this.initOsc.bind(this);
     this.checkinController = this.checkinController.bind(this);
 
     // local attributes
@@ -40,8 +35,6 @@ export default class PlayerExperience extends soundworks.Experience {
     Object.keys(Nu).forEach( (nuClass) => {
       this['nu' + nuClass] = new Nu[nuClass](this);
     });
-    // init OSC callbacks
-    this.initOsc();
   }
 
   enter(client) {
@@ -57,22 +50,6 @@ export default class PlayerExperience extends soundworks.Experience {
         Object.keys(Nu).forEach( (nuClass) => {
           this['nu' + nuClass].enterPlayer(client);
         });
-
-        // msg callback: receive client coordinates 
-        // (could use local service, this way lets open for pos estimation in client in the future)
-        this.receive(client, 'coordinates', (xy) => {
-          this.coordinatesMap.set( client.index, xy );
-          // update client pos in osc client
-          this.osc.send('/nuMain/playerPos', [client.index, xy[0], xy[1]] );
-        });
-
-        // direct forward of players message to OSC client
-        this.receive(client, 'osc', (header, args) => {
-          // append client index to msg
-          args.unshift(client.index);
-          // forward to OSC
-          this.osc.send(header, args);
-        });        
 
         break; 
 
@@ -103,15 +80,11 @@ export default class PlayerExperience extends soundworks.Experience {
 
         // update local attributes
         this.playerMap.delete( client.index );
-        this.coordinatesMap.delete( client.index );
 
         // update Nu modules
         Object.keys(Nu).forEach( (nuClass) => {
           this['nu' + nuClass].exitPlayer(client);
         });
-
-        // update osc mapper
-        this.osc.send('/nuMain/playerRemoved', client.index );
 
         break;
 
@@ -146,54 +119,6 @@ export default class PlayerExperience extends soundworks.Experience {
     this.send(client, 'checkinId', clientId);
     // return Id
     return clientId
-  }
-
-  // ------------------------------------------------------------------------------------------------
-  // OSC Methods
-  // ------------------------------------------------------------------------------------------------
-
-  initOsc(){  
-
-    // osc related binding
-    this.updateRequest = this.updateRequest.bind(this);
-
-    // general router towards internal functions when msg concerning the server (i.e. not player) is received
-    this.osc.receive('/nuMain', (msg) => {
-      // shape msg into array of arguments      
-      let args = msg.split(' ');
-      args.numberify();
-      // console.log(args);
-
-      // call function associated with first arg in msg
-      let functionName = args.shift();
-      this[functionName](args);
-    });  
-
-    // send OSC client msg when server started 
-    // (TOFIX: delayed in setTimeout for now because OSC not init at start.)
-    setTimeout( () => { 
-            // sync. clocks
-      const clockInterval = 0.1; // refresh interval in seconds
-      setInterval(() => { this.osc.send('/nuMain/clock', this.sync.getSyncTime()); }, 1000 * clockInterval);
-    }, 1000);
-
-  }
-
-  /**
-  * method triggered by OSC client upon connection, requiring an update on all 
-  * the "knowledge" the server already gathered about the current experiment setup
-  **/
-  updateRequest(){
-    // send back players position at osc client request
-    this.coordinatesMap.forEach((item, key)=>{
-      this.osc.send('/nuMain/playerPos', [key, item[0], item[1]] );
-    });
-  }
-
-  // force all players to reload the current page
-  reloadPlayers(){
-    // re-route to clients
-    this.broadcast( 'player', null, 'nuMain', ['reload'] );    
   }
 
 }
