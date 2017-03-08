@@ -51,6 +51,7 @@ export default class PlayerExperience extends soundworks.Experience {
       descriptors: ['accelerationIncludingGravity', 'deviceorientation', 'energy']
     });
 
+    if( window.location.hash === "#emulate" ) { this.emulateClick(); } 
   }
 
   init() {
@@ -89,4 +90,12 @@ export default class PlayerExperience extends soundworks.Experience {
 
   }
 
+  emulateClick() {
+    setTimeout(() => {
+      const $el = document.querySelector('#service-platform');
+      const event = new MouseEvent('mousedown', { 'view': window, 'bubbles': true, 'cancelable': true });
+      if( $el !== null ){ $el.dispatchEvent(event); }
+      else setTimeout(() => { this.emulateClick(); }, 1000)
+    }, 1000);
+  }
 }
