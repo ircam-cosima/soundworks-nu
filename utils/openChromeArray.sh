@@ -10,10 +10,10 @@ J=4
 
 if [[ $1 == full ]]; then
     echo "full mode"
-    I=10
-    J=10
-    windowHeight=20
-    windowWidth=20
+    I=4
+    J=4
+    windowHeight=100
+    windowWidth=100
 fi
 
 for i in $(seq 1 $I);
@@ -35,18 +35,19 @@ do
 		window.location='http://127.0.0.1:8000#emulate';
 
 		</script> </body> </html>" &
+		sleep 0.1
 		if [[ $1 != full ]]; then
-			sleep 0.8 # ensures order in client pos / id
+			sleep 0.7 # ensures order in client pos / id
 		fi
 
 	done
 done
 
 
-if [[ $1 == full ]]; then
-read -p "Press any key to continue... "
-pkill -f "${CHROME_APP}"
-fi
+# if [[ $1 == full ]]; then
+# read -p "Press any key to continue... "
+# pkill -f "${CHROME_APP}"
+# fi
 
 # "${CHROME_APP}"
 

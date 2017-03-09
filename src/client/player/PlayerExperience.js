@@ -90,12 +90,19 @@ export default class PlayerExperience extends soundworks.Experience {
 
   }
 
+  /** 
+  * simulate user click to skip welcome screen (used e.g. for prototyping sessions on laptop)
+  * won't work on mobile (need a REAL user input to start audio)
+  **/
   emulateClick() {
-    setTimeout(() => {
-      const $el = document.querySelector('#service-platform');
-      const event = new MouseEvent('mousedown', { 'view': window, 'bubbles': true, 'cancelable': true });
-      if( $el !== null ){ $el.dispatchEvent(event); }
-      else setTimeout(() => { this.emulateClick(); }, 1000)
-    }, 1000);
+    // prepare click and gui elmt on which to click
+    const $el = document.querySelector('#service-platform');
+    const event = new MouseEvent('mousedown', { 'view': window, 'bubbles': true, 'cancelable': true });
+    // click if we've got gui elmt
+    if( $el !== null ){ $el.dispatchEvent(event); }
+    // re-iterate while not started (sometimes, even a click on gui will not start...)
+    if( this.coordinates === undefined ){
+      setTimeout(() => { this.emulateClick(); console.log('click delayed'); }, 300)
+    }
   }
 }
