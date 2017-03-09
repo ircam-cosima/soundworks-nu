@@ -20,10 +20,13 @@
   },
   "dependencies": {
     "ambisonics": "^0.2.2",
+    "audio": "^1.2.0",
+    "audio-encode-wav": "^0.2.0",
     "babel-runtime": "^6.6.1",
     "bufferutil": "^1.2.1",
     "debug": "^2.1.2",
     "fs": "0.0.1-security",
+    "recorderjs": "git+https://git@github.com/mattdiamond/Recorderjs.git",
     "soundworks": "github:collective-soundworks/soundworks.git#develop",
     "source-map-support": "^0.4.0",
     "typedarray-methods": "^1.0.0",

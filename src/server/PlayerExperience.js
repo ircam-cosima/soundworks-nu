@@ -18,6 +18,7 @@ export default class PlayerExperience extends soundworks.Experience {
       { channel: 'nuStream', type: 'Float32' },
       { channel: 'nuRoomReverb', type: 'Float32' },
       { channel: 'nuPath', type: 'Float32' },
+      { channel: 'nuOutput', type: 'Float32' },
       ];
     this.rawSocket = this.require('raw-socket', { protocol: protocol });
 

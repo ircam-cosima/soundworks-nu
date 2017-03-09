@@ -8,6 +8,7 @@
 import NuBaseModule from './NuBaseModule'
 import * as soundworks from 'soundworks/client';
 import * as ambisonics from 'ambisonics';
+import Recorder from 'recorderjs';
 
 const client = soundworks.client;
 const audioContext = soundworks.audioContext;
@@ -39,7 +40,7 @@ export default class NuOutput extends NuBaseModule {
     **/
     this.in = this.soundworksClient.renderer.audioAnalyser.in;
     this.masterGain = audioContext.createGain();
-    this.in.connect( this.masterGain );
+    this.out = audioContext.createGain();
 
     // create Ambisonic encoder / decoder
     this.maxOrder = 3;
@@ -51,15 +52,59 @@ export default class NuOutput extends NuBaseModule {
     // create additional gain to compensate for badly norm. room IR
     this.ambiGain = audioContext.createGain();
 
+    // create audio recorder
+    this.recorder = new Recorder( this.out, {bufferLen: 512} );
+    this.startRecTime = 0.0;
+
     // init coordinates
     let coordinates = this.soundworksClient.sharedConfig.get('setup.coordinates');
     let coordXY = coordinates[client.index];
     this.coordXYZ = [ coordXY[0], coordXY[1], 0];
 
     // connect graph
+    this.in.connect( this.masterGain );
+    this.out.connect( audioContext.destination );
     this.ambiGain.connect( this.encoder.in )
     this.encoder.out.connect( this.limiter.in );
     this.limiter.out.connect( this.decoder.in );
+  }
+
+  // trigger session recording to disk
+  record(val) {
+      // start recording
+      if (val) {
+        // start recording
+        this.recorder.clear();
+        this.recorder.record();
+        this.startRecTime = this.soundworksClient.sync.getSyncTime();
+      }
+      // stop recording
+      else {
+        // stop recorder
+        this.recorder.stop();
+        // get recorder buffer and send audio data to server
+        this.recorder.getBuffer( (buffers) => {
+          
+          // create empty buffer for interleaving before send
+          let headerLength = 3;
+          var interleavedBuffer = new Float32Array( 2*buffers[0].length + headerLength);
+
+          // add header
+          interleavedBuffer[0] = client.index;
+          interleavedBuffer[1] = this.startRecTime;
+          interleavedBuffer[2] = audioContext.sampleRate;
+
+          // fill interleaved buffer
+          for( let i = 0; i < buffers[0].length; i++ ){
+            interleavedBuffer[ headerLength + 2*i ] = buffers[0][i];
+            interleavedBuffer[ headerLength + 2*i + 1] = buffers[1][i];
+          }
+
+          // send audio data
+          this.soundworksClient.rawSocket.send( this.moduleName, interleavedBuffer );
+        });
+
+    }
   }
 
   // set audio gain out
@@ -70,18 +115,18 @@ export default class NuOutput extends NuBaseModule {
   // enable / disable spatialization of player based on its position in the room
   enableSpat(val){
     if(val){
-      try{ this.masterGain.disconnect( audioContext.destination ); }
+      try{ this.masterGain.disconnect( this.out ); }
       catch(e){ if( e.name !== 'InvalidAccessError'){ console.error(e); } }
       this.masterGain.connect( this.ambiGain );
-      this.decoder.out.connect( audioContext.destination );
+      this.decoder.out.connect( this.out );
     }
     else{
       try{
-        this.decoder.out.disconnect( audioContext.destination );
+        this.decoder.out.disconnect( this.out );
         this.masterGain.disconnect( this.ambiGain ); 
       }
       catch(e){ if( e.name !== 'InvalidAccessError'){ console.error(e); } }
-      this.masterGain.connect( audioContext.destination );
+      this.masterGain.connect( this.out );
     }
   }
 
