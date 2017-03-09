@@ -9,8 +9,8 @@ export default class NuLoop extends NuBaseModule {
     super(soundworksServer, 'nuLoop', true);
 
     // local attributes
-    this.params = { period: 4.0,
-                    divisions: 4, 
+    this.params = { period: 2.0,
+                    divisions: 16, 
                     jitter: 0.0,
                     jitterMemory: false,
                     masterGain: 1.0

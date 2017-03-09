@@ -119,7 +119,6 @@ class AudioSynth {
       noteFreqTable.push( noteFreqTable[j] * Math.pow(2, i) );
       }
     }
-    console.log(noteFreqTable);
 
     // create notes
     for (let i = 0; i < noteFreqTable.length; i++) {

@@ -143,7 +143,7 @@ export default class NuPath extends NuBaseModule {
     gain.connect( this.soundworksClient.nuOutput.in );
 
     // play sound if rendez-vous time is in the future (else report bug)
-    let now = this.soundworksClient.sync.getSyncTime()
+    let now = this.soundworksClient.sync.getSyncTime();
     if (syncStartTime > now) {
       let audioContextStartTime = audioContext.currentTime + syncStartTime - now;
       src.start(audioContextStartTime);
