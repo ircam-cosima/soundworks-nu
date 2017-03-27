@@ -52,7 +52,10 @@ export default class NuOutput extends NuBaseModule {
     // create additional gain to compensate for badly norm. room IR
     this.ambiGain = audioContext.createGain();
 
-    // create audio recorder
+    // create audio recorder, a too large bufferLen here will produce unsync
+    // recordings when server will add client's buffers together (the javascript 
+    // node "starting" to record samples in indpt worker will fire in between 
+    // "start record" and in bufferLen samples, and that "randomly" for each client)
     this.recorder = new Recorder( this.out, {bufferLen: 512} );
     this.startRecTime = 0.0;
 
