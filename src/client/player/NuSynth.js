@@ -1,5 +1,6 @@
 /**
- * NuSynth: distributed synthetizer
+ * NuSynth: distributed synthetizer, sending "note" information via OSC
+ * to trigger real notes in local synthetizer
  **/
 
 import NuBaseModule from './NuBaseModule'
@@ -17,47 +18,45 @@ export default class NuSynth extends NuBaseModule {
     this.localGain = audioContext.createGain();
     // connect graph
     this.audioSynth.out.connect(this.localGain);
-    this.localGain.connect(this.soundworksClient.renderer.audioAnalyser.in);
-    this.localGain.connect(audioContext.destination);
+    this.localGain.connect(this.soundworksClient.nuOutput.in);
     // binding
     this.noteOnOff = this.noteOnOff.bind(this);
     this.volume = this.volume.bind(this);
   }
 
-  paramCallback(name, args){
-    // discard if msg doesn't concern current player
-    let playerId = args.shift();
-    if( playerId !== client.index && playerId !== -1 ){ return; }
-    // convert eventual remaining array to singleton
-    args = (args.length == 1) ? args[0] : args;    
-    // route to internal function
-    this[name](args);
-  }
-
+  // set note on / off (args = [noteId, onOff status])
   noteOnOff(args){
     let noteId = args.shift();
     let status = args.shift();
     this.audioSynth.playNote(noteId, status);
   }
 
+  // set local volume
   volume(value){
     this.localGain.gain.value = value;
   }
 
+  /**
+  * set noteId volume, "linking" the note to the player
+  * (e.g. to attribute a unique note to each player)
+  **/
   linkPlayerToNote(args){
     let noteId = args.shift();
     let volume = args.shift();
     this.audioSynth.setNoteVolume(noteId, volume);
   }
 
+  // define local synthetizer used for audio rendering
   synthType(type){
     this.audioSynth.setType(type); 
   }
 
+  // define synth. attack time
   attackTime(value){
     this.audioSynth.attackTime = value; 
   }
 
+  // define synth. release time
   releaseTime(value){
     this.audioSynth.releaseTime = value; 
   }
@@ -109,21 +108,17 @@ class AudioSynth {
       207.652,
       220,
       233.082,
-      246.942,
-      261.626,
-      277.183,
-      293.665,
-      311.127,
-      329.628,
-      349.228,
-      369.994,
-      391.995,
-      415.305,
-      440,
-      466.164,
-      493.883,
-      523.251,      
+      246.942,    
     ];
+
+    // add octaves (not just? true)
+    let numOctaves = 4;
+    const initTableLength = noteFreqTable.length;
+    for( let i = 1; i < numOctaves; i++ ){
+    for( let j = 0; j < initTableLength; j++ ){
+      noteFreqTable.push( noteFreqTable[j] * Math.pow(2, i) );
+      }
+    }
 
     // create notes
     for (let i = 0; i < noteFreqTable.length; i++) {
@@ -168,10 +163,12 @@ class AudioSynth {
     this.type = value;
   }
 
+  // define synth. waveform
   setPeriodicWave(wave){
     this.periodicWave = wave;
   }
 
+  // play a note on the synth.
   playNote(noteId, status){
     // get note based on id
     let note = this.noteMap.get(noteId);
@@ -215,6 +212,8 @@ class AudioSynth {
     }
     // note OFF
     else{
+      // discard if note never set to on
+      if(note.osc === undefined){ return; }
       // handle enveloppe
       let now = audioContext.currentTime;
       note.envelopeGain.gain.cancelScheduledValues(now);
@@ -245,6 +244,7 @@ class AudioSynth {
     this.updateRendererStatus();
   }
 
+  // enable / disable visualization (enable as long as at least one note plays)
   updateRendererStatus(){
     if( this.numNotesPlayed === 1 && !this.isPlaying){
       this.soundworksClient.renderer.enable();

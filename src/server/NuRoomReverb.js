@@ -1,10 +1,14 @@
 /**
- * NuRoomReverb: Nu module in charge of room reverb where players 
- * emit bursts when the acoustical wave passes them by
+ * NuRoomReverb: Nu module in charge of room reverberation where players 
+ * emit bursts when the acoustical wave passes them by. To ensure "real-time", 
+ * the module 1st will compute potential IRs for all potential emission position, 
+ * for all players. As it appends, I arbitrarily defined "potential emission positions"
+ * as players'. Hence, when an "emit" message is received from OSC client, players are 
+ * instructed to play the IR according to the emit position, or at least from the pre-computed
+ * emit position closest from it.
  **/
 
 import NuBaseModule from './NuBaseModule'
-import RawSocketStreamer from './RawSocketStreamer';
 
 export default class NuRoomReverb extends NuBaseModule {
   constructor(soundworksServer) {
@@ -23,97 +27,98 @@ export default class NuRoomReverb extends NuBaseModule {
                     accSlope: 0, 
                     timeBound: 0 };
 
-    // setup dedicated websocket server (to handle IR msg: avoid to flood main communication socket)
-    this.rawSocketStreamer = new RawSocketStreamer(8080);
-
     // bind
     this.updatePropagation = this.updatePropagation.bind(this);
     this.exitPlayer = this.exitPlayer.bind(this);
   }
 
-  exitPlayer(client){
-    // close socket
-    this.rawSocketStreamer.close( client.index );
-  }
-  
+  /**
+  * recompute propagation based on local room parameters, send new IR 
+  * data to players whence done.
+  **/
   updatePropagation(){
 
     // get array of clients positions
     let posArray = [];
     let clientIdArray = [];
-    this.soundworksServer.coordinatesMap.forEach(( pos, key) => {
+    this.soundworksServer.coordinatesMap.forEach( (pos, key) => {
       posArray.push( pos );
       clientIdArray.push( key );
     });
 
-    this.soundworksServer.coordinatesMap.forEach(( emitterPos, emitterId) => {
-      // console.log(this.soundworksServer.coordinatesMap);
+    // for each player connected
+    this.soundworksServer.coordinatesMap.forEach( ( emitterPos, emitterId ) => {
       // consider each client as potential emitter
       this.propagation.computeSrcImg( emitterPos );
       // get IR associated for each potential receiver (each client)
       let data = this.propagation.getIrs( posArray );
-
-      // format and send IR via dedicated websocket
+      // format and send IR via dedicated web-socket
       data.irsArray.forEach(( ir, receiverId) => {
         ir.unshift( data.timeMin ); // add time min
         ir.unshift( emitterId ); // add emitter id
         let msgArray = new Float32Array( ir );
-        // console.log('send to client', receiverId, clientIdArray[ receiverId ], 'ir', ir);
-        this.rawSocketStreamer.send( clientIdArray[ receiverId ], msgArray.buffer );
+        // console.log('send to client', receiverId, clientIdArray[ receiverId ], 'IR', ir);
+        let receiverClient = this.soundworksServer.playerMap.get( receiverId );
+        this.soundworksServer.rawSocket.send( receiverClient, this.moduleName, msgArray );
       });
 
     });
-    // this.propagation.simulate([2,2], [[2, 2], [3, 2]]);
+
   }
 
-  // trigger sound in room, expect args = [floatX, floatY]
+  // trigger sound in room, expect args is a position, e.g. [floatX, floatY]
   emitAtPos(args) {
-
-    // convert arg in
+    // get position from arguments
     let emitPos = [args[0], args[1]];
 
-    // discrete position for now: 
-    // find player closest to emit pos to defined it as new emit pos
+    // discrete position for now:  find player closest to emit pos to defined it as new emit pos
     let dist = Infinity;
     let emitterId = -1;
     this.soundworksServer.coordinatesMap.forEach((item, key) => {
       let distTmp = Math.sqrt(Math.pow(item[0] - emitPos[0], 2) + Math.pow(item[1] - emitPos[1], 2));
-      // console.log(emitPos, item, distTmp, dist);
       if (distTmp < dist) {
         emitterId = key;
         dist = distTmp;
       }
     });
-    // console.log('emitterId:', emitterId, 'dist', dist);
 
     // if found discrete emitter pos (i.e. player), broadcast msg to players to trigger propagation
     if (emitterId > -1) {
       let rdvTime = this.soundworksServer.sync.getSyncTime() + 2.0;
-      this.soundworksServer.broadcast('player', null, 'nuRoomReverb', ['emitAtPos', emitterId, rdvTime] );
+      this.soundworksServer.broadcast('player', null, this.moduleName, ['emitAtPos', emitterId, rdvTime] );
     }
 
   }
 
+  // set room walls absorption coefficients (1 is full absorber)
   absorption(args){
     let wallId = args[0];
     let absorptionValue = args[1];
     this.propagation.room.absorption[wallId] = absorptionValue;
-    // console.log('abs:', this.propagation.room.absorption);
   }
 
+  // set scattering angle or rays when bouncing on walls.
   scatterAngle(args){
     let scatterAngle = args;
     this.propagation.room.scatterAngle = scatterAngle * (Math.PI / 180);
   }
 
+  // percentage of signal power that goes into scattered rays, zero means ray will not be scattered
   scatterAmpl(args){
     this.propagation.room.scatterAmpl =  args;
   }  
 
+  // define room walls positions
   roomCoord(args){
     let id = args[0]; // 0 is top left, 1 is bottom right
     this.propagation.room.coordsTopLeftBottomRight[id] = [ args[1], args[2] ];
-  }  
+  }
+
+  // stop all current sounds
+  reset(){
+    // re-route to clients
+    this.soundworksServer.broadcast( 'player', null, this.moduleName, ['reset'] );
+  }
 
 }
 
@@ -133,39 +138,31 @@ export default class NuRoomReverb extends NuBaseModule {
 
 class SimulatePropagation {
   constructor(parent) {
-
+    // locals
+    this.parent = parent;
+    this.sourceImageArray = [];
     this.room = {
       origin: [0, 0],
-      // width: 1,
-      // height: 1,
       coordsTopLeftBottomRight: [ [0, 0], [1, 1] ],
       absorption: [0, 0, 0, 0], // wall abs clockwise (in 0-1)
       scatterAmpl: 0.0,
       scatterAngle: Math.PI / 13.5
     };
-
-    this.parent = parent;
-
-    this.sourceImageArray = [];
   }
 
+  // get Impulse Responses from each potential emitter position in the room (each player)
   getIrs(speakerPosArray) {
-
-    // console.log(this.sourceImageArray);
-    // console.log('output source image array:');
-    // this.sourceImageArray.forEach((value, index) => {
-    //  console.log(value.order, value.ampl, value.time, value.pos[0], value.pos[1], value.wallId);
-    // });
     
+    // get propagation parameters
     let propagationGain = this.parent.params.propagationGain;
     let propagationSpeed = this.parent.params.propagationSpeed;
-    if( Math.abs(propagationSpeed) < 0.1 ) propagationSpeed = 0.1;
+    if( Math.abs(propagationSpeed) < 0.1 ){ propagationSpeed = 0.1 };
     let propagationRxMinGain = this.parent.params.propagationRxMinGain;
 
     // compute IR from sources images for all sensors (player)
     let irArray = [];
     let dist, time, gain, timeMin = 0;
-    speakerPosArray.forEach((spkPos, index) => {
+    speakerPosArray.forEach( (spkPos, index) => {
       irArray[index] = [];
       this.sourceImageArray.forEach((srcImg, index2) => {
         dist = Math.sqrt(Math.pow(srcImg.pos[0] - spkPos[0], 2) + Math.pow(srcImg.pos[1] - spkPos[1], 2));
@@ -181,16 +178,21 @@ class SimulatePropagation {
       });
     });
 
-    // return min time so that each client can apply global offset locally (for neg speed), 
-    // and avoids to do a double loop here again
+    // return IR array along with min emission time, so that each client 
+    // can apply global time offset locally (for neg speed)
     return { timeMin: timeMin, irsArray: irArray };
-
   }
 
+  /** 
+  * compute, for a given emitter position in the room, all the source images 
+  * (REGARDLESS of any player here) it will generate on the walls. These source 
+  * images are then used in the getIrs method to get the actual "Diracs“ composing
+  * the IR of each players.
+  **/
   computeSrcImg(emitterPos) {
-
+    // prepare output array
     this.sourceImageArray = [];
-
+    // get propagation parameters
     let propagationGain = this.parent.params.propagationGain;
     let propagationSpeed = this.parent.params.propagationSpeed;
     if( Math.abs(propagationSpeed) < 0.1 ) propagationSpeed = 0.1;
@@ -199,6 +201,7 @@ class SimulatePropagation {
     // add emitter to source images
     this.sourceImageArray.push({ order: 0, ampl: 1, time: 0, pos: emitterPos, wallId: -1 });
     // console.log('emitter pos: ', emitterPos, 'room:', this.room.width, this.room.height);
+
     // create first 4 source images, corresponding with orthogonal point-wall rays
     let pos, dist, ampl, time, sourceImage, vectDir, vectDirScat, wallId;
     for (let i = 0; i < 4; i++) {
@@ -226,9 +229,12 @@ class SimulatePropagation {
         this.sourceImageArray.push(sourceImage);
       }
 
-      // start direct path (orthogonal)
-      // ampl mod. added here and not before since scatterers are not added in the list themselves (see this as direct + scatterers at same pos)
-      // this way the ampl. mod will still be taken into account for propagate function
+      /** 
+      * start direct path (orthogonal)
+      * ampl mod. added here and not before since scatterers are not added in 
+      * the list themselves (see this as direct + scatterers at same pos)
+      * this way the ampl. mod will still be taken into account for propagate function
+      **/
       sourceImage = { order: 1, ampl: ampl * (1 - this.room.scatterAmpl), time: time, pos: pos, wallId: i }; // create anew to avoid reference issue
       vectDir = [emitterPos[0] - pos[0], emitterPos[1] - pos[1]];
       this.propagateFrom(sourceImage, vectDir);
@@ -241,13 +247,14 @@ class SimulatePropagation {
       sourceImage = { order: 1, ampl: ampl * this.room.scatterAmpl * 0.5, time: time, pos: pos };
       this.propagateFrom(sourceImage, vectDirScat);
       // 2nd
-      // axis-symetry
+      // axis-symmetry
       if (i % 2 == 0) vectDirScat[1] *= -1;
       else vectDirScat[0] *= -1;
       this.propagateFrom(sourceImage, vectDirScat);
     }
   }
 
+  // recursively compute sources images created by a given ray, starting at a given position
   propagateFrom(sourceImage, vectDir) {
     
     let propagationGain = this.parent.params.propagationGain;
@@ -316,7 +323,6 @@ class SimulatePropagation {
       }
     }
 
-
     // get wall hit and hit point
     let vectDirMid = [midCoord[0] - vectPos[0], midCoord[1] - vectPos[1]];
     let angle = Math.atan2(vectDirMid[1], vectDirMid[0]) - Math.atan2(vectDir[1], vectDir[0]);
@@ -325,8 +331,6 @@ class SimulatePropagation {
     else hitWallId = consideredWalls[0]; // wall "right" (or in-between)
     // console.log('potential walls:', consideredWalls, 'junction', midCoord, 'angle', angle);
 
-
-    // console.log('hit wall:', hitWallId);
     let c = this.room.coordsTopLeftBottomRight;
     this.wallLines = [
       [
@@ -375,6 +379,5 @@ class SimulatePropagation {
       seg2: ub >= 0 && ua <= 1
     };
   }
-
-
+  
 }

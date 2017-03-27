@@ -19,40 +19,23 @@ export default class NuRoomReverb extends NuBaseModule {
     this.params = {};
 
     // binding
-    this.onWebSocketOpen = this.onWebSocketOpen.bind(this);
-    this.onWebSocketEvent = this.onWebSocketEvent.bind(this);
+    this.rawSocketCallback = this.rawSocketCallback.bind(this);
     this.emitAtPos = this.emitAtPos.bind(this);
     this.reset = this.reset.bind(this);
 
-    // init websocket (used to receive IR)
-    let port = 8080;
-    let urlTmp = client.socket.socket.io.uri;
-    let host = urlTmp.split('/')[2].split(':')[0];
-    let url = "ws://" + host + ":" + port;
-    console.log('connecting websocket to', url);
-    this.ws = new WebSocket(url);
-    this.ws.binaryType = 'arraybuffer';
-    this.ws.onopen = this.onWebSocketOpen;
-    this.ws.onmessage = this.onWebSocketEvent;
-
-  }
-
-  // send client index (at websocket opening) to associate socket / index in server
-  onWebSocketOpen() {
-    this.ws.send(client.index, { binary: false, mask: true }, (error) => { console.log('websocket error:', error); });
+    // setup socket reveive callbacks (receiving raw audio data)
+    this.soundworksClient.rawSocket.receive('nuRoomReverb', this.rawSocketCallback );
   }
 
   /*
    * callback when websocket event (msg containing new IR sent by server) is received
    */
-  onWebSocketEvent(event) {
-    // decode 
-    let interleavedIrArray = new Float32Array(event.data);
+  rawSocketCallback(interleavedIrArray) {
 
     // extract header
     let emitterId = interleavedIrArray[0];
     let minTime = interleavedIrArray[1];
-    console.log(interleavedIrArray);
+    // exctract data
     interleavedIrArray = interleavedIrArray.slice(2, interleavedIrArray.length);
 
     // de-interleave + get max delay for IR buffer size
@@ -70,7 +53,6 @@ export default class NuRoomReverb extends NuBaseModule {
     this.irMap.set(emitterId, ir);
 
     // feedback user that IR has been loaded
-
     this.soundworksClient.renderer.blink([0, 100, 0]);
   }
 
@@ -83,7 +65,7 @@ export default class NuRoomReverb extends NuBaseModule {
     let syncStartTime = args.shift();
 
     // check if designated audioFile exists in loader
-    if (this.soundworksClient.loader.buffers[this.params.audioFileId] == undefined) {
+    if (this.soundworksClient.loader.audioBuffers.default[this.params.audioFileId] == undefined) {
       console.warn('required audio file id', this.params.audioFileId, 'not in client index, actual content:', this.soundworksClient.loader.options.files);
       return;
     }
@@ -100,12 +82,9 @@ export default class NuRoomReverb extends NuBaseModule {
 
     // create empty sound src
     let src = audioContext.createBufferSource();
-    let inputBuffer = this.soundworksClient.loader.buffers[this.params.audioFileId];
+    let inputBuffer = this.soundworksClient.loader.audioBuffers.default[this.params.audioFileId];
     let outputDuration = ir.duration + inputBuffer.duration + 1;
     let outputBuffer = audioContext.createBuffer(1, Math.max(outputDuration * audioContext.sampleRate, 512), audioContext.sampleRate);
-
-    // this.controlParams = {audioFileId: 0, segment: {perc: 1, loop: true, accSlope: 0, timeBound: 0} };
-
 
     // fill sound source with delayed audio buffer version (tap delay line mecanism)
     let inputData = inputBuffer.getChannelData(0);
@@ -144,7 +123,7 @@ export default class NuRoomReverb extends NuBaseModule {
       maxOutputValue = Math.max(Math.abs(outputData[i]), maxOutputValue);
     }
     let normFactor = Math.max.apply(null, ir.gains) / Math.max(maxOutputValue, 1.0);
-    console.log('max:', maxOutputValue, 'norm:', normFactor);
+    // console.log('max:', maxOutputValue, 'norm:', normFactor);
 
     // replace audio source buffer with created output buffer
     src.buffer = outputBuffer;
@@ -155,21 +134,20 @@ export default class NuRoomReverb extends NuBaseModule {
 
     // connect graph
     src.connect(gain);
-    gain.connect(audioContext.destination);
+    gain.connect( this.soundworksClient.nuOutput.in );
 
     // play sound if rendez-vous time is in the future (else report bug)
     let now = this.soundworksClient.sync.getSyncTime()
     if (syncStartTime > now) {
       let audioContextStartTime = audioContext.currentTime + syncStartTime - now;
       src.start(audioContextStartTime);
-      console.log('play scheduled in:', Math.round((syncStartTime - now) * 1000) / 1000, 'sec', 'at:', syncStartTime);
+      // console.log('play scheduled in:', Math.round((syncStartTime - now) * 1000) / 1000, 'sec', 'at:', syncStartTime);
     } else {
       console.warn('no sound played, I received the instruction to play to late');
       this.soundworksClient.renderer.blink([250, 0, 0]);
     }
 
     // setup screen color = f(amplitude) callback
-    gain.connect(this.soundworksClient.renderer.audioAnalyser.in);
     this.soundworksClient.renderer.enable();
 
     // save source for eventual global reset

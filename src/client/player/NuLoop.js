@@ -14,8 +14,8 @@ export default class NuLoop extends NuBaseModule {
 
     // local attributes
     this.params = {};
-    let audioBuffers = this.soundworksClient.loader.buffers;
-    this.synth = new SampleSynth(audioBuffers, this.soundworksClient.renderer.audioAnalyser);
+    let audioBuffers = this.soundworksClient.loader.audioBuffers.default;
+    this.synth = new SampleSynth(audioBuffers, this.soundworksClient.nuOutput.in);
     this.loops = new Matrix(audioBuffers.length, this.params.divisions);
 
     // binding
@@ -23,46 +23,47 @@ export default class NuLoop extends NuBaseModule {
     this.setTrackSlot = this.setTrackSlot.bind(this);
     this.start = this.start.bind(this);
     this.remove = this.remove.bind(this);
-    this.removeAll = this.removeAll.bind(this);
+    this.reset = this.reset.bind(this);
     this.updateNumDivisions = this.updateNumDivisions.bind(this);
     this.getSlotTime = this.getSlotTime.bind(this);
     this.divisions = this.divisions.bind(this);
   }
 
+  // set number of divisions in the loop
   divisions(value){
     this.params.divisions = value;
     this.updateNumDivisions();
   }
 
+  // update loop maps size
+  updateNumDivisions(){
+    // shut down all loops
+    this.reset();
+    // resize loop map
+    let numTracks = this.soundworksClient.loader.audioBuffers.default.length;
+    this.loops = new Matrix(numTracks, this.params.divisions);
+  }
+
+  // set loop period
   period(value){
     this.params.period = Math.round(value * 10) / 10;
   }
 
+  // set general output volume
   masterGain(value){
     this.synth.output.gain.value = value;
   }
 
-  // update loop maps size
-  updateNumDivisions(){
-    // shut down all loops
-    this.removeAll();
-    // resize loop map
-    let numTracks = this.soundworksClient.loader.buffers.length;
-    this.loops = new Matrix(numTracks, this.params.divisions);
-  }
-
+  // enable / disable a slot in the loop (a "beat")
   setTrackSlot(args){
     
     // extract parameters from args array
-    let playerId = args.shift();
     let trackId = args.shift();
     let slotId = args.shift();
     let onOff = args.shift();
 
-    // discard packets not concerning current user
-    if( playerId !== client.index && playerId !== -1 ) return;
     // check valid trackId
-    if( trackId >= this.soundworksClient.loader.buffers.length || trackId < 0) {
+    if( trackId >= this.soundworksClient.loader.audioBuffers.default.length || trackId < 0) {
       console.warn('required track id', trackId, 'not in client index, actual content:', this.soundworksClient.loader.options.files);
       return;
     }
@@ -76,19 +77,18 @@ export default class NuLoop extends NuBaseModule {
     if( onOff ){
       // discard start already started source
       if( this.loops.mat[trackId][slotId] !== undefined ) { return; }
-      
       // start new loop event
       let slotTime = this.getSlotTime(this.soundworksClient.scheduler.syncTime, slotId);
       this.start(slotTime, {trackId: trackId, slotId: slotId}, true);
-
-      // enable visual feedback (add +1 to its stack)
+      // enable visual feedback
       this.soundworksClient.renderer.enable();
     }
+
     // remove event from loop
     else{
       // this.looper.stop(time, soundParams, true);
       this.remove(trackId, slotId);
-      // disable visual feedback (add -1 to its stack)
+      // disable visual feedback
       this.soundworksClient.renderer.disable();
     }
 
@@ -105,55 +105,56 @@ export default class NuLoop extends NuBaseModule {
 
   // start new loop
   start(time, soundParams) {
-    const loop = new Loop(this, soundParams); // create new loop
+    // create new loop
+    const loop = new Loop(this, soundParams);
+    // add loop to set
+    this.loops.mat[soundParams.trackId][soundParams.slotId] = loop;
+    // add loop to scheduler
+    this.soundworksClient.scheduler.add(loop, time);
+  }
 
-    this.loops.mat[soundParams.trackId][soundParams.slotId] = loop; // add loop to set
-    this.soundworksClient.scheduler.add(loop, time); // add loop to scheduler
-  }  
-
-  // called each loop (in scheduler)
+  // callback: called at each loop (in scheduler)
   advanceLoop(time, loop) {
     const soundParams = loop.soundParams;
     const params = this.params;
-
     // trigger sound
     const duration = this.synth.trigger(this.soundworksClient.scheduler.audioTime, soundParams);
-
-    // add jitter
+    // add jitter (randomness to beat exact time)
     let jitter = this.params.jitter * // jitter gain in [0:1]
                  Math.random() *  // random value in [0:1[
                  ( this.params.period / this.params.divisions); // normalization (jitter never goes beyond other time slots)
-
+    // get absolute time for current loop if not required to keep track of old jitter injected previously
+    // (otherwise, keep jittered time offset for current loop)
     if( !this.params.jitterMemory ){
-      // get absolute time for current loop
       time = this.getSlotTime(time, loop.soundParams.slotId);
     }
-    // console.log('time', time, 'perdiod', this.params.period, 'jitter', jitter, 'next time:', time + this.params.period + jitter);
-
-    // return next time
+    // console.log('time', time, 'period', this.params.period, 'jitter', jitter, 'next time:', time + this.params.period + jitter);
+    // return next time (it's how the advanceLoop works)
     return time + this.params.period + jitter;
   }  
 
-  // remove loop by index
+  // remove loop by index (both track index and time slot index)
   remove(trackId, slotId) {
-
+    // get corresponding loop
     let loop = this.loops.mat[trackId][slotId];
-    // check for valid loop
+    // check if loop is defined
     if( loop === undefined ) { return; }
-    this.soundworksClient.scheduler.remove(loop); // remove loop from scheduler
-    this.loops.mat[trackId][slotId] = undefined; // delete loop from set
+    // remove loop from scheduler
+    this.soundworksClient.scheduler.remove(loop);
+    // delete loop from set
+    this.loops.mat[trackId][slotId] = undefined;
   }
 
-  // remove all loops (for clear in conductor)
-  removeAll() {
-    // remove all loops from scheduler
+  // remove all loops from scheduler
+  reset() {
     let loop;
     for( let i = 0; i < this.loops.i; i++ ){
       for( let j = 0; j < this.loops.j; j++ ){
         loop = this.loops.mat[i][j];
-        if( loop !== undefined ){ 
+        if( loop !== undefined ){
+          // remove loop
           this.soundworksClient.scheduler.remove(loop);
-          // notify renderer
+          // disable renderer
           this.soundworksClient.renderer.disable();
         }
       }
@@ -163,8 +164,7 @@ export default class NuLoop extends NuBaseModule {
 
 }
 
-
-// loop corresponding to a single drop
+// loop corresponding to a single audio sample
 class Loop extends soundworks.audio.TimeEngine {
   constructor(looper, soundParams) {
     super();
@@ -178,6 +178,7 @@ class Loop extends soundworks.audio.TimeEngine {
   }
 }
 
+// rough i.j matrix like array class
 class Matrix{
   constructor(i, j){
     this.i = i;
@@ -201,12 +202,12 @@ class Matrix{
 
 }
 
+// in charge of playing the final sample
 class SampleSynth {
-  constructor(audioBuffers, audioAnalyser) {
+  constructor(audioBuffers, output) {
     this.audioBuffers = audioBuffers;
     this.output = audioContext.createGain();
-    this.output.connect(audioContext.destination);
-    this.output.connect(audioAnalyser.in);
+    this.output.connect( output );
     this.output.gain.value = 1;
   }
 

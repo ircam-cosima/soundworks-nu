@@ -1,20 +1,7 @@
 import * as soundworks from 'soundworks/server';
-import './utils';
+import * as Nu from './Nu';
 
-import NuRoomReverb from './NuRoomReverb';
-import NuGroups from './NuGroups';
-import NuPath from './NuPath';
-import NuLoop from './NuLoop';
-import NuTemplate from './NuTemplate';
-import NuGrain from './NuGrain';
-import NuSpy from './NuSpy';
-import NuRenderer from './NuRenderer';
-import NuStream from './NuStream';
-import NuSynth from './NuSynth';
-
-const server = soundworks.server;
-
-// server-side 'player' experience.
+// server-side experience.
 export default class PlayerExperience extends soundworks.Experience {
   constructor(clientType) {
     super(clientType);
@@ -22,14 +9,20 @@ export default class PlayerExperience extends soundworks.Experience {
     // require services
     this.checkin = this.require('checkin');
     this.sharedConfig = this.require('shared-config');
-    this.sharedConfig.share('setup', 'player'); // share `setup` entry to ... (crashes else)
-    this.sharedConfig.share('socketIO', 'player'); // share `setup` entry to ... (crashes else)
+    this.sharedConfig.share('setup', 'player'); // share `setup` entry to players
+    this.sharedConfig.share('socketIO', 'player'); // share `socketIO` entry to players
     this.params = this.require('shared-params');
     this.sync = this.require('sync');
     this.osc = this.require('osc');
+    var protocol = [ 
+      { channel: 'nuStream', type: 'Float32' },
+      { channel: 'nuRoomReverb', type: 'Float32' },
+      { channel: 'nuPath', type: 'Float32' },
+      { channel: 'nuOutput', type: 'Float32' },
+      ];
+    this.rawSocket = this.require('raw-socket', { protocol: protocol });
 
     // bind methods
-    this.initOsc = this.initOsc.bind(this);
     this.checkinController = this.checkinController.bind(this);
 
     // local attributes
@@ -39,21 +32,10 @@ export default class PlayerExperience extends soundworks.Experience {
   }
 
   start() {
-
     // init Nu modules
-    this.nuRoomReverb = new NuRoomReverb(this);
-    this.nuGroups = new NuGroups(this);
-    this.nuPath = new NuPath(this);
-    this.nuLoop = new NuLoop(this);
-    this.nuTemplate = new NuTemplate(this);
-    this.nuGrain = new NuGrain(this);
-    this.nuSpy = new NuSpy(this);
-    this.nuRenderer = new NuRenderer(this);
-    this.nuStream = new NuStream(this);
-    this.nuSynth = new NuSynth(this);
-
-    // init OSC callbacks
-    this.initOsc();
+    Object.keys(Nu).forEach( (nuClass) => {
+      this['nu' + nuClass] = new Nu[nuClass](this);
+    });
   }
 
   enter(client) {
@@ -66,32 +48,9 @@ export default class PlayerExperience extends soundworks.Experience {
         this.playerMap.set( client.index, client );
 
         // update nu modules
-        this.nuRoomReverb.enterPlayer(client);
-        this.nuGroups.enterPlayer(client);
-        this.nuPath.enterPlayer(client);
-        this.nuLoop.enterPlayer(client);
-        this.nuTemplate.enterPlayer(client);
-        this.nuGrain.enterPlayer(client);
-        this.nuSpy.enterPlayer(client);
-        this.nuRenderer.enterPlayer(client);
-        this.nuStream.enterPlayer(client);
-        this.nuSynth.enterPlayer(client);
-
-        // msg callback: receive client coordinates 
-        // (could use local service, this way lets open for pos estimation in client in the future)
-        this.receive(client, 'coordinates', (xy) => {
-          this.coordinatesMap.set( client.index, xy );
-          // update client pos in osc client
-          this.osc.send('/nuMain/playerPos', [client.index, xy[0], xy[1]] );
+        Object.keys(Nu).forEach( (nuClass) => {
+          this['nu' + nuClass].enterPlayer(client);
         });
-
-        // direct forward to OSC
-        this.receive(client, 'osc', (header, args) => {
-          // append client index to msg
-          args.unshift(client.index);
-          // forward to OSC
-          this.osc.send(header, args);
-        });        
 
         break; 
 
@@ -122,15 +81,11 @@ export default class PlayerExperience extends soundworks.Experience {
 
         // update local attributes
         this.playerMap.delete( client.index );
-        this.coordinatesMap.delete( client.index );
-        // update modules
-        this.nuPath.exitPlayer(client);
-        this.nuRoomReverb.exitPlayer(client);
-        this.nuTemplate.exitPlayer(client);
-        this.nuStream.exitPlayer(client);
 
-        // update osc mapper
-        this.osc.send('/nuMain/playerRemoved', client.index );
+        // update Nu modules
+        Object.keys(Nu).forEach( (nuClass) => {
+          this['nu' + nuClass].exitPlayer(client);
+        });
 
         break;
 
@@ -165,55 +120,6 @@ export default class PlayerExperience extends soundworks.Experience {
     this.send(client, 'checkinId', clientId);
     // return Id
     return clientId
-  }
-
-  // ------------------------------------------------------------------------------------------------
-  // OSC Methods
-  // ------------------------------------------------------------------------------------------------
-
-  initOsc(){  
-
-    // osc related binding
-    this.updateRequest = this.updateRequest.bind(this);
-
-    // general router towards internal functions when msg concerning the server (i.e. not player) is received
-    this.osc.receive('/server', (msg) => {
-      console.log(msg);
-      // shape msg into array of arguments      
-      let args = msg.split(' ');
-      args.numberify();
-      // check if msg concerns current Nu module
-      if (args[0] !== 'nuMain') return;
-      else args.shift();
-
-      // call function associated with first arg in msg
-      let functionName = args.shift();
-      this[functionName](args);
-    });  
-
-    // automatically transfer player osc message 
-    this.osc.receive('/player', (msg) => {
-      let args = msg.split(' ');
-      let moduleName = args.shift();
-      args.numberify();
-      this.broadcast('player', null, moduleName, args);
-    });
-
-    // send OSC client msg when server started 
-    // (TOFIX: delayed in setTimeout for now because OSC not init at start.)
-    setTimeout( () => { 
-            // sync. clocks
-      const clockInterval = 0.1; // refresh interval in seconds
-      setInterval(() => { this.osc.send('/nuMain/clock', this.sync.getSyncTime()); }, 1000 * clockInterval);
-    }, 1000);
-
-  }
-
-  updateRequest(){
-    // send back players position at osc client request
-    this.coordinatesMap.forEach((item, key)=>{
-      this.osc.send('/nuMain/playerPos', [key, item[0], item[1]] );
-    });
   }
 
 }

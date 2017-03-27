@@ -1,5 +1,8 @@
 # Soundworks Nü
+
 The objective of the Nü framework, based on [Soundworks](https://github.com/collective-soundworks/soundworks/), is to give composers control over the speakers of spectators smartphones during a performance. Connecting their devices to a web page broadcasted by the performer's laptop, spectators become part of the composition: from simple sound sources to active musicians. The performer can then control the behaviours of "Nü modules" via a Max/MSP based interface: modular units (distributed room reverb, granular synthesis, etc.) designed for live composition. Nü has been developed as part of the [CoSiMa project](http://cosima.ircam.fr/).
+
+## [Demo](https://youtu.be/a4taMsypqos)
 
 [//]: # (For a complete documentation of the *Soundworks* framework, please refer to http://collective-soundworks.github.io/soundworks/.)
 

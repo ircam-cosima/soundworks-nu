@@ -37,10 +37,7 @@ export default class NuRenderer extends soundworks.Renderer {
     this.soundworksClient.receive('nuRenderer', (args) => {
       // get header
       let name = args.shift();
-      // discard if msg does not concern current player
-      let playerId = args.shift();
-      if( playerId !== client.index && playerId !== -1 ) return;
-      // reduce args array to singleton if only one element left
+      // convert singleton array if need be
       args = (args.length == 1) ? args[0] : args;
       if( this.params[name] !== undefined )
         this.params[name] = args; // parameter set
@@ -62,6 +59,7 @@ export default class NuRenderer extends soundworks.Renderer {
     
   }
 
+  // define rest color: the screen color when no sound is playing
   restColor(rgb){
     this.colors.rest = rgb;
     // update background only if analyser not active
@@ -71,6 +69,7 @@ export default class NuRenderer extends soundworks.Renderer {
     }
   }
 
+  // define active color: the screen color when sound is playing
   activeColor(rgb){
     this.colors.active = rgb;
   }  
@@ -107,24 +106,23 @@ export default class NuRenderer extends soundworks.Renderer {
     }
   }
 
-
-
-  // requestAnimationFrame(draw);    /// use rAF here
-
-
+  // enable renderer, i.e. add +1 to its stack of "I need you renderer" clients
   enable(){
     this.numOfElmtInNeedOfMe += 1;
     // if need to be triggered on for the first time:
-    if( this.numOfElmtInNeedOfMe == 1 )
+    if( this.numOfElmtInNeedOfMe == 1 ){
       requestAnimationFrame(this.analyserCallback);
+    }
   }
 
+  // disable renderer, i.e. remove 1 from its stack of "I need you renderer" clients
   disable(){
     // decrement status
     this.numOfElmtInNeedOfMe = Math.max(this.numOfElmtInNeedOfMe-1, 0);
     // reset background color
-    if( this.numOfElmtInNeedOfMe == 0 )
+    if( this.numOfElmtInNeedOfMe == 0 ){
       this.bkgChangeColor = true;
+    }
   }
 
   /*
@@ -143,6 +141,7 @@ export default class NuRenderer extends soundworks.Renderer {
     }
   }
 
+  // amplitude to color converter
   setCurrentColorAmpl(amp){
     for (let i = 0; i < this.colors.current.length; i++) {
       this.colors.current[i] = this.colors.rest[i]  + 
@@ -169,65 +168,57 @@ export default class NuRenderer extends soundworks.Renderer {
     }, time * 1000);
   }
 
-  /**
-   * Tell render to change background color at next update.
-   * @param {Number} colorId - color index in this.bkgColorList
-   */
-  // setBkgColor(rgb) {
-  //   this.bkgColorArray = rgb;
-  //   this.bkgColor = 'rgb('
-  //     + Math.round(rgb[0]) + ','
-  //     + Math.round(rgb[1]) + ','
-  //     + Math.round(rgb[2]) + ')';
-  //   this.bkgChangeColor = true;
-  // }
-
+  // defined text (on top of the player's screen) from OSC client (header)
   text1(args){
     let str = this.formatText(args);
     document.getElementById('text1').innerHTML = str;
   }
 
+  // defined text (on middle of the player's screen) from OSC client (instructions)
   text2(args){
     let str = this.formatText(args);
     document.getElementById('text2').innerHTML = str;
   }
 
+  // defined text (on bottom of the player's screen) from OSC client (sub-instructions)
   text3(args){
     let str = this.formatText(args);
     document.getElementById('text3').innerHTML = str;
   }
 
+  // convert array of elements to string
   formatText(args){
-    // from array of elmt to string
     let str = '';
     // simple string
-    if( typeof args === 'string' )
-      str = args;
+    if( typeof args === 'string' ){ str = args; }
     // array of strings
-    else
-      args.forEach( (elmt) => { str += ' ' + elmt;  });
-    // replace "cliendId" with actual client index
+    else{ args.forEach( (elmt) => { str += ' ' + elmt;  }); }
+    // replace "cliendId" with actual client index and other conventional naming
     str = str.replace("clientId", client.index);
     str = str.replace("None", '');
     // return formatted string
     return str;
   }
 
+  // set analyzer min audio dB range (clip)
   minDb(value){
     if( value > -100 && value < 0 && value < this.audioAnalyser.in.maxDecibels )
       this.audioAnalyser.in.minDecibels = value;
   }
 
+  // set analyzer max audio dB range (clip)
   maxDb(value){
     if( value > -100 && value < 0 && value < this.audioAnalyser.in.minDecibels )
       this.audioAnalyser.in.maxDecibels = value;
   }
 
+  // set visualizer smoothing time constant (to avoid epileptic prone behaviors from player's devices)
   smoothingTimeConstant(value){
     if( value >= 0 && value <= 1 )
       this.audioAnalyser.in.smoothingTimeConstant = value;
   }
 
+  // set min frequency considered by the analyzer
   minFreq(value){
     if( value > 0 && value < this.audioAnalyser.maxFreq ){
       this.audioAnalyser.minFreq = value;
@@ -235,6 +226,7 @@ export default class NuRenderer extends soundworks.Renderer {
     }
   }
 
+  // set max frequency considered by the analyzer
   maxFreq(value){
     if( value < 20000 && value > this.audioAnalyser.minFreq ){
       this.audioAnalyser.maxFreq = value;
@@ -245,7 +237,7 @@ export default class NuRenderer extends soundworks.Renderer {
 }
 
 /**
- * Audio analyser for visual feedback of sound amplitude on screen
+ * Audio analyzer for visual feedback of sound amplitude on screen
  */
 
 class AudioAnalyser {
@@ -265,6 +257,7 @@ class AudioAnalyser {
     this.magnitudes = new Uint8Array(this.in.frequencyBinCount);
   }
 
+  // update normalization parameters
   updateBinNorm(){
     let norm = this.in.fftSize / audioContext.sampleRate;
     this.minBin = Math.round(this.minFreq * norm);
@@ -272,18 +265,17 @@ class AudioAnalyser {
     this.binsNormalisation = 1 / (this.maxBin - this.minBin + 1);
   }
 
-  // return current analyser amplitude (no freq. specific) between 0 and 1
+  // return current analyzer amplitude (no freq. specific) between 0 and 1
   getAmplitude() {
-    // extract data from analyser
+    // extract data from analyzer
     this.in.getByteFrequencyData(this.magnitudes);
-    // get average ampl. value
+    // get average amplitude value
     let amplitude = 0.0;
     for( let i = this.minBin; i <= this.maxBin; ++i ) {
       amplitude += this.magnitudes[i];
     }
     amplitude *= this.binsNormalisation / 250;
     // let norm = this.in.frequencyBinCount * 100; // arbitrary value, to be cleaned
-    // console.log(amplitude);
     return amplitude;
   }
 

@@ -1,5 +1,6 @@
 /**
- * NuGroup: Nu module to assign audio tracks to groups of players
+ * NuGroup: Nu module to assign audio tracks to groups of players. 
+ * the term "group" hereafter is to be intepreted as "track" more often than not
  **/
 
 import NuBaseModule from './NuBaseModule'
@@ -16,8 +17,7 @@ export default class NuGroups extends NuBaseModule {
     this.groupMap = new Map();
     this.localGain = audioContext.createGain();
     this.localGain.gain.value = 1.0;
-    this.localGain.connect(audioContext.destination);
-    this.localGain.connect(this.soundworksClient.renderer.audioAnalyser.in)
+    this.localGain.connect( this.soundworksClient.nuOutput.in );
 
     // binding
     this.onOff = this.onOff.bind(this);
@@ -29,13 +29,10 @@ export default class NuGroups extends NuBaseModule {
   }
 
   paramCallback(name, args){
-    let playerId = args.shift();
-    // discard if msg doesn't concern current player
-    if( playerId !== client.index && playerId !== -1 ){ return; }
     // either route to internal function
     if( this[name] !== undefined )
       if( args.length == 2 ) this[name](args[0], args[1]);
-      else this[name](args[0]);
+      else this[name](args);
     // or to this.params value
     else
       this.params[name] = args;
@@ -53,22 +50,20 @@ export default class NuGroups extends NuBaseModule {
         // notify renderer we don't need it anymore
         this.soundworksClient.renderer.disable();
       }
+
     // start group (src)
     else{
       // get time delay since order to start has been given
       let timeOffset = this.soundworksClient.scheduler.syncTime - value;
       // modulo buffer length for slow / late connected players 
       timeOffset %= group.src.buffer.duration;
+      // make sure timeOffset is positive (if e.g. player not yet perfectly sync.)
+      timeOffset = Math.max(timeOffset, 0.0);
       // start source at group time
       group.src.start(audioContext.currentTime, timeOffset);
       // remember start time
       group.startTime = value;
-      // schedule loop
-      // if( group.src.loop )
-      //   group.src.src.onended = () => { 
-      //     group.src.start();
-      //   };
-      // notify parent +1 source here to enable visual feedback on sound amplitude
+      // enable render
       this.soundworksClient.renderer.enable();
     }      
   }
@@ -76,6 +71,8 @@ export default class NuGroups extends NuBaseModule {
   // TODO: a player not in a group shouldn't play its sound as happends now with above on/off
   // function. Rather, only when both on/off and linked are ok should player start to play.
   // this would require a sync. mechanism with groups already started when linked to player.
+
+  // set player to group (track) volume
   linkPlayerToGroup(groupId, value){
     // get group
     let group = this.getGroup( groupId );
@@ -83,6 +80,7 @@ export default class NuGroups extends NuBaseModule {
     group.linkGain.gain.value = value;
   }
 
+  // set group volume
   volume(groupId, value){
     // get group
     let group = this.getGroup( groupId );
@@ -90,15 +88,18 @@ export default class NuGroups extends NuBaseModule {
     group.gain.gain.value = value;
   }
 
+  // set player volume (for all its tracks)
   localVolume(value){
     // set local value
     this.localGain.gain.value = value;
   }
 
+  // set group time
   time(groupId, value){
     console.log('time function not implemented yet (in NuGroup.js)');
   }
 
+  // enable / disable group loop
   loop(groupId, value){
     // get group
     let group = this.getGroup( groupId );
@@ -106,13 +107,14 @@ export default class NuGroups extends NuBaseModule {
     group.src.loop = value;
   }
 
+  // get group based on id, create if need be
   getGroup(groupId) {
     // get already existing group
     if( this.groupMap.has(groupId) )
       return this.groupMap.get(groupId);
 
     // check if audio buffer associated to group exists
-    let buffer = this.soundworksClient.loader.buffers[groupId];
+    let buffer = this.soundworksClient.loader.audioBuffers.default[groupId];
     if (buffer === undefined) {
       console.warn('required audio file id', groupId, 'not in client index, actual content:', this.soundworksClient.loader.options.files, '-> initializing empty audio source..');
       buffer = audioContext.createBuffer(1, 22050, 44100);
@@ -136,7 +138,7 @@ export default class NuGroups extends NuBaseModule {
     group.src.out.connect(group.gain);
     group.gain.connect(group.linkGain);
     group.linkGain.connect(this.localGain);
-    // console.log('connect source', groupId, 'to local gain', this.localGain);
+
     // store new group in local map
     this.groupMap.set(groupId, group);
 
@@ -144,6 +146,7 @@ export default class NuGroups extends NuBaseModule {
     return group;
   }
 
+  // ramp gain node to "targetValue" in fadeTime secs
   fadeGainTo(gainNode, targetValue, fadeTime){
     // reset eventual planned changes
     gainNode.gain.cancelScheduledValues(audioContext.currentTime);
@@ -160,19 +163,19 @@ export default class NuGroups extends NuBaseModule {
 
 }
 
-
+// "surcharged" audio source node class
 class AudioSourceNode {
   constructor(buffer){
-
+    // local gain
     this.out = audioContext.createGain();
     this.out.gain.value = 1.0;
-
+    // locals
     this.buffer = buffer;
     this.src = this.getNewSource();
     this._loop = 0;
 
   }
-
+  // start audio source at time, with time offset
   start(time = 0, offset = 0){
     // stop eventual old source
     this.stop(0);
@@ -182,6 +185,7 @@ class AudioSourceNode {
     this.src.start(time, offset);
   }
 
+  // stop source (doesn't crash if source already stopped)
   stop(time = 0){
     try{
       this.src.stop(time);
@@ -191,15 +195,18 @@ class AudioSourceNode {
     }
   }
 
+  // set source loop
   set loop(value){
     this._loop = value;
     this.src.loop = value;
   }
 
+  // ...
   get loop(){
     return this._loop;
   }
 
+  // create new audio source node
   getNewSource(){
     // create source
     let src = audioContext.createBufferSource();
