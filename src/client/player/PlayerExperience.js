@@ -41,7 +41,7 @@ export default class PlayerExperience extends soundworks.Experience {
     this.sharedConfig = this.require('shared-config');
     this.sync = this.require('sync');
     this.checkin = this.require('checkin', { showDialog: false });
-    this.scheduler = this.require('scheduler', { lookahead: 0.050 });
+    this.scheduler = this.require('sync-scheduler', { lookahead: 0.050 });
     this.rawSocket = this.require('raw-socket');
     this.loader = this.require('audio-buffer-manager', {
       assetsDomain: assetsDomain,

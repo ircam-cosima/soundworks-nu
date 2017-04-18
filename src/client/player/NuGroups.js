@@ -114,7 +114,7 @@ export default class NuGroups extends NuBaseModule {
       return this.groupMap.get(groupId);
 
     // check if audio buffer associated to group exists
-    let buffer = this.soundworksClient.loader.audioBuffers.default[groupId];
+    let buffer = this.soundworksClient.loader.data[groupId];
     if (buffer === undefined) {
       console.warn('required audio file id', groupId, 'not in client index, actual content:', this.soundworksClient.loader.options.files, '-> initializing empty audio source..');
       buffer = audioContext.createBuffer(1, 22050, 44100);

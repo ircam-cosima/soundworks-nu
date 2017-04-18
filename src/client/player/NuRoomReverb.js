@@ -65,7 +65,7 @@ export default class NuRoomReverb extends NuBaseModule {
     let syncStartTime = args.shift();
 
     // check if designated audioFile exists in loader
-    if (this.soundworksClient.loader.audioBuffers.default[this.params.audioFileId] == undefined) {
+    if (this.soundworksClient.loader.data[this.params.audioFileId] == undefined) {
       console.warn('required audio file id', this.params.audioFileId, 'not in client index, actual content:', this.soundworksClient.loader.options.files);
       return;
     }
@@ -82,7 +82,7 @@ export default class NuRoomReverb extends NuBaseModule {
 
     // create empty sound src
     let src = audioContext.createBufferSource();
-    let inputBuffer = this.soundworksClient.loader.audioBuffers.default[this.params.audioFileId];
+    let inputBuffer = this.soundworksClient.loader.data[this.params.audioFileId];
     let outputDuration = ir.duration + inputBuffer.duration + 1;
     let outputBuffer = audioContext.createBuffer(1, Math.max(outputDuration * audioContext.sampleRate, 512), audioContext.sampleRate);
 

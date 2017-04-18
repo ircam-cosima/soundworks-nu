@@ -12,6 +12,8 @@ export default class PlayerExperience extends soundworks.Experience {
     this.sharedConfig.share('setup', 'player'); // share `setup` entry to players
     this.sharedConfig.share('socketIO', 'player'); // share `socketIO` entry to players
     this.params = this.require('shared-params');
+    this.audioBufferManager = this.require('audio-buffer-manager');
+    this.syncScheduler = this.require('sync-scheduler');
     this.sync = this.require('sync');
     this.osc = this.require('osc');
     var protocol = [ 

@@ -114,7 +114,7 @@ export default class NuGrain extends NuBaseModule {
     this.segments = undefined;
 
     // load new
-    const audioBuffer = this.soundworksClient.loader.audioBuffers.default[fileId];
+    const audioBuffer = this.soundworksClient.loader.data[fileId];
     this.analyzer.process(audioBuffer).then((values) => {
       const [audioBuffer, segments] = values;
       this.audioBuffer = audioBuffer;
