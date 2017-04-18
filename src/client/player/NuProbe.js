@@ -1,5 +1,5 @@
 /**
- * NuSpy: get motion etc. info from given client in OSC
+ * NuProbe: get motion etc. info from given client in OSC
  **/
 
 import NuBaseModule from './NuBaseModule'
@@ -8,9 +8,9 @@ import * as soundworks from 'soundworks/client';
 const client = soundworks.client;
 const audioContext = soundworks.audioContext;
 
-export default class NuSpy extends NuBaseModule {
+export default class NuProbe extends NuBaseModule {
   constructor(soundworksClient) {
-    super(soundworksClient, 'nuSpy');
+    super(soundworksClient, 'nuProbe');
 
     // local attributes
     this.params = {};
@@ -56,7 +56,7 @@ export default class NuSpy extends NuBaseModule {
     this.throttle.ori[1] = data[1];
     this.throttle.ori[2] = data[2];
     // send to OSC via server
-    this.soundworksClient.send('osc', '/nuSpy', ['orientation', data[0], data[1], data[2]] );
+    this.soundworksClient.send('osc', '/' + this.moduleName, ['orientation', data[0], data[1], data[2]] );
   }
 
   accelerationCallback(data){
@@ -70,7 +70,7 @@ export default class NuSpy extends NuBaseModule {
     this.throttle.acc[1] = data[1];
     this.throttle.acc[2] = data[2];
     // send to OSC via server
-    this.soundworksClient.send('osc', '/nuSpy', ['acceleration', data[0], data[1], data[2]] );
+    this.soundworksClient.send('osc', '/' + this.moduleName, ['acceleration', data[0], data[1], data[2]] );
   }
 
   energyCallback(data){
@@ -80,12 +80,12 @@ export default class NuSpy extends NuBaseModule {
     // save new throttle values
     this.throttle.energy = data;
     // send to OSC via server
-    this.soundworksClient.send('osc', '/nuSpy', ['energy', data] );
+    this.soundworksClient.send('osc', '/' + this.moduleName, ['energy', data] );
   }
 
   touchStartCallback(id, normX, normY){
     // notify touch on
-    this.soundworksClient.send('osc', '/nuSpy', ['touchOn', 1] );
+    this.soundworksClient.send('osc', '/' + this.moduleName, ['touchOn', 1] );
     // common touch callback
     this.touchCommonCallback(id, normX, normY);      
   }
@@ -97,7 +97,7 @@ export default class NuSpy extends NuBaseModule {
 
   touchEndCallback(id, normX, normY){
     // notify touch off
-    this.soundworksClient.send('osc', '/nuSpy', ['touchOn', 0] );
+    this.soundworksClient.send('osc', '/' + this.moduleName, ['touchOn', 0] );
     // common touch callback
     this.touchCommonCallback(id, normX, normY);      
   }  
@@ -107,7 +107,7 @@ export default class NuSpy extends NuBaseModule {
     // window.postMessage(['nuRenderer', 'touch', id, normX, normY], location.origin);
     // ----------
     // send touch pos
-    this.soundworksClient.send('osc', '/nuSpy', ['touchPos', id, normX, normY]);
+    this.soundworksClient.send('osc', '/' + this.moduleName, ['touchPos', id, normX, normY]);
   }
 
   // Note: hereafter are the OSC triggered functions used to enable / disable 

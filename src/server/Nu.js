@@ -10,7 +10,7 @@ export { default as Path } from './NuPath';
 export { default as Loop } from './NuLoop';
 export { default as Template } from './NuTemplate';
 export { default as Grain } from './NuGrain';
-export { default as Spy } from './NuSpy';
+export { default as Probe } from './NuProbe';
 export { default as Synth } from './NuSynth';
 export { default as Stream } from './NuStream';
 
