@@ -9,7 +9,7 @@
 			"modernui" : 1
 		}
 ,
-		"rect" : [ 1416.0, 252.0, 600.0, 763.0 ],
+		"rect" : [ 751.0, 384.0, 600.0, 761.0 ],
 		"bgcolor" : [ 0.862745, 0.870588, 0.878431, 1.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
@@ -68,7 +68,7 @@
 							"modernui" : 1
 						}
 ,
-						"rect" : [ 38.0, 79.0, 650.0, 787.0 ],
+						"rect" : [ 3173.0, 616.0, 650.0, 787.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 12.0,
@@ -393,7 +393,7 @@
 									"numoutlets" : 0,
 									"patching_rect" : [ 3596.0, 96.666748, 200.0, 20.0 ],
 									"style" : "",
-									"text" : "loop playerId onOff"
+									"text" : "loop groupId onOff"
 								}
 
 							}
@@ -4519,7 +4519,7 @@
 							"modernui" : 1
 						}
 ,
-						"rect" : [ 0.0, 26.0, 600.0, 737.0 ],
+						"rect" : [ 0.0, 26.0, 600.0, 735.0 ],
 						"bgcolor" : [ 0.862745, 0.870588, 0.878431, 1.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 1,
@@ -6603,7 +6603,7 @@
 									"presentation" : 1,
 									"presentation_rect" : [ 35.875, 526.0, 71.5, 22.0 ],
 									"style" : "",
-									"text" : "0.89",
+									"text" : "0.01",
 									"textcolor" : [ 0.0, 0.0, 0.0, 1.0 ]
 								}
 
@@ -9985,7 +9985,7 @@
 							"modernui" : 1
 						}
 ,
-						"rect" : [ 0.0, 26.0, 600.0, 737.0 ],
+						"rect" : [ 0.0, 26.0, 600.0, 735.0 ],
 						"bgcolor" : [ 0.862745, 0.870588, 0.878431, 1.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 1,
@@ -10485,14 +10485,14 @@
 , 											{
 												"box" : 												{
 													"id" : "obj-63",
-													"linecount" : 3,
+													"linecount" : 4,
 													"maxclass" : "message",
 													"numinlets" : 2,
 													"numoutlets" : 1,
 													"outlettype" : [ "" ],
 													"patching_rect" : [ 53.5, 340.0, 205.0, 49.0 ],
 													"style" : "",
-													"text" : "\"Macintosh HD:/Users/davipoir/Projects/Cosima/Nu/soundworks-nu/public/sounds\""
+													"text" : "\"Macintosh HD:/Users/davipoir/Projects/Cosima/devs/Nu/soundworks-nu/public/sounds\""
 												}
 
 											}
@@ -11903,7 +11903,7 @@
 							"modernui" : 1
 						}
 ,
-						"rect" : [ 0.0, 26.0, 600.0, 737.0 ],
+						"rect" : [ 0.0, 26.0, 600.0, 735.0 ],
 						"bgcolor" : [ 0.862745, 0.870588, 0.878431, 1.0 ],
 						"bglocked" : 1,
 						"openinpresentation" : 1,
@@ -12808,9 +12808,9 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 571.5, 243.5, 145.0, 22.0 ],
 									"presentation" : 1,
-									"presentation_rect" : [ 253.0, 467.0, 116.0, 22.0 ],
+									"presentation_rect" : [ 253.0, 467.0, 130.0, 22.0 ],
 									"style" : "",
-									"text" : "Bonojfds"
+									"text" : "in the forest at night"
 								}
 
 							}
@@ -12830,16 +12830,15 @@
 , 							{
 								"box" : 								{
 									"id" : "obj-45",
-									"linecount" : 3,
 									"maxclass" : "message",
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 568.0, 184.0, 39.0, 49.0 ],
+									"patching_rect" : [ 568.0, 184.0, 39.0, 22.0 ],
 									"presentation" : 1,
-									"presentation_rect" : [ 253.0, 406.0, 72.0, 22.0 ],
+									"presentation_rect" : [ 253.0, 406.0, 39.0, 22.0 ],
 									"style" : "",
-									"text" : "Let s klfdskl"
+									"text" : "None"
 								}
 
 							}
@@ -12865,9 +12864,9 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 568.0, 123.5, 75.0, 22.0 ],
 									"presentation" : 1,
-									"presentation_rect" : [ 253.0, 347.0, 159.0, 22.0 ],
+									"presentation_rect" : [ 253.0, 347.0, 49.0, 22.0 ],
 									"style" : "",
-									"text" : "now Go"
+									"text" : "clientId"
 								}
 
 							}
@@ -12986,7 +12985,7 @@
 , 							{
 								"box" : 								{
 									"angle" : 0.0,
-									"bgcolor" : [ 0.735043, 1.0, 0.205128, 1.0 ],
+									"bgcolor" : [ 1.0, 1.0, 1.0, 1.0 ],
 									"border" : 1,
 									"bordercolor" : [ 0.0, 0.0, 0.0, 1.0 ],
 									"id" : "obj-22",
@@ -14443,7 +14442,7 @@
 							"modernui" : 1
 						}
 ,
-						"rect" : [ 0.0, 26.0, 600.0, 737.0 ],
+						"rect" : [ 0.0, 26.0, 600.0, 735.0 ],
 						"bgcolor" : [ 0.862745, 0.870588, 0.878431, 1.0 ],
 						"bglocked" : 1,
 						"openinpresentation" : 1,
@@ -16110,7 +16109,7 @@
 							"modernui" : 1
 						}
 ,
-						"rect" : [ 0.0, 26.0, 600.0, 737.0 ],
+						"rect" : [ 751.0, 410.0, 600.0, 735.0 ],
 						"bgcolor" : [ 0.862745, 0.870588, 0.878431, 1.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 1,
@@ -16242,7 +16241,7 @@
 									"presentation" : 1,
 									"presentation_rect" : [ 237.875, 288.0, 71.5, 22.0 ],
 									"style" : "",
-									"text" : "1.",
+									"text" : "0.15",
 									"textcolor" : [ 0.0, 0.0, 0.0, 1.0 ]
 								}
 
@@ -16441,7 +16440,7 @@
 									"presentation" : 1,
 									"presentation_rect" : [ 31.875, 302.0, 71.5, 22.0 ],
 									"style" : "",
-									"text" : "5",
+									"text" : "0",
 									"textcolor" : [ 0.0, 0.0, 0.0, 1.0 ]
 								}
 
@@ -16513,7 +16512,7 @@
 									"presentation" : 1,
 									"presentation_rect" : [ 31.875, 468.0, 71.5, 22.0 ],
 									"style" : "",
-									"text" : "0.67",
+									"text" : "0.77",
 									"textcolor" : [ 0.0, 0.0, 0.0, 1.0 ]
 								}
 
@@ -16771,7 +16770,7 @@
 									"presentation" : 1,
 									"presentation_rect" : [ 31.875, 230.0, 71.5, 22.0 ],
 									"style" : "",
-									"text" : "1.",
+									"text" : "0.11",
 									"textcolor" : [ 0.0, 0.0, 0.0, 1.0 ]
 								}
 
@@ -17519,7 +17518,7 @@
 							"modernui" : 1
 						}
 ,
-						"rect" : [ 0.0, 26.0, 600.0, 737.0 ],
+						"rect" : [ 0.0, 26.0, 600.0, 735.0 ],
 						"bgcolor" : [ 0.862745, 0.870588, 0.878431, 1.0 ],
 						"bglocked" : 1,
 						"openinpresentation" : 1,
@@ -18232,7 +18231,7 @@
 							"modernui" : 1
 						}
 ,
-						"rect" : [ 0.0, 26.0, 600.0, 737.0 ],
+						"rect" : [ 0.0, 26.0, 600.0, 735.0 ],
 						"bgcolor" : [ 0.862745, 0.870588, 0.878431, 1.0 ],
 						"bglocked" : 1,
 						"openinpresentation" : 1,
@@ -38710,7 +38709,7 @@
 							"modernui" : 1
 						}
 ,
-						"rect" : [ 0.0, 26.0, 600.0, 737.0 ],
+						"rect" : [ 0.0, 26.0, 600.0, 735.0 ],
 						"bgcolor" : [ 0.862745, 0.870588, 0.878431, 1.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 1,
@@ -38812,7 +38811,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 203.0, 536.0, 50.0, 22.0 ],
 									"style" : "",
-									"text" : "15 14 0"
+									"text" : "2 5 0"
 								}
 
 							}
@@ -38826,7 +38825,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 171.0, 662.0, 53.0, 49.0 ],
 									"style" : "",
-									"text" : "setTrackSlot -1 4 12 0"
+									"text" : "setTrackSlot -1 5 2 0"
 								}
 
 							}
@@ -38879,7 +38878,7 @@
 									"presentation" : 1,
 									"presentation_rect" : [ 401.0, 417.666748, 71.5, 22.0 ],
 									"style" : "",
-									"text" : "1.",
+									"text" : "0.17",
 									"textcolor" : [ 0.0, 0.0, 0.0, 1.0 ]
 								}
 
@@ -41368,7 +41367,7 @@
 							"modernui" : 1
 						}
 ,
-						"rect" : [ 0.0, 26.0, 600.0, 737.0 ],
+						"rect" : [ 0.0, 26.0, 600.0, 735.0 ],
 						"bgcolor" : [ 0.862745, 0.870588, 0.878431, 1.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 1,
@@ -41773,7 +41772,7 @@
 									"presentation" : 1,
 									"presentation_rect" : [ 213.25, 410.083313, 71.5, 22.0 ],
 									"style" : "",
-									"text" : "6.64",
+									"text" : "7.05",
 									"textcolor" : [ 0.0, 0.0, 0.0, 1.0 ]
 								}
 
@@ -47366,7 +47365,7 @@
 							"modernui" : 1
 						}
 ,
-						"rect" : [ 1416.0, 278.0, 600.0, 737.0 ],
+						"rect" : [ 0.0, 26.0, 600.0, 735.0 ],
 						"bgcolor" : [ 0.862745, 0.870588, 0.878431, 1.0 ],
 						"bglocked" : 1,
 						"openinpresentation" : 1,
@@ -48498,7 +48497,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 921.0, 441.083191, 66.0, 22.0 ],
 									"style" : "",
-									"text" : "99.664818"
+									"text" : "54.414654"
 								}
 
 							}
@@ -49067,7 +49066,7 @@
 									"patching_rect" : [ 20.75, 68.333313, 69.0, 20.0 ],
 									"preset_data" : [ 										{
 											"number" : 1,
-											"data" : [ 5, "obj-201", "slider", "float", 0.0, 5, "obj-97", "slider", "float", 0.0, 5, "obj-113", "slider", "float", 0.0, 5, "obj-142", "led", "int", 1, 5, "obj-76", "led", "int", 1 ]
+											"data" : [ 5, "obj-201", "slider", "float", 0.0, 5, "obj-97", "slider", "float", 0.0, 5, "obj-113", "slider", "float", 0.0, 5, "obj-142", "led", "int", 0, 5, "obj-76", "led", "int", 0 ]
 										}
 , 										{
 											"number" : 2,
@@ -49541,7 +49540,7 @@
 													"outlettype" : [ "" ],
 													"patching_rect" : [ 142.666626, 316.0, 50.0, 102.0 ],
 													"style" : "",
-													"text" : "mouseidleout 9.313725 -1.490196 0 0 0 0 0 0"
+													"text" : "mouseidleout 2.901961 -0.254902 0 0 0 0 0 0"
 												}
 
 											}
@@ -49587,14 +49586,14 @@
 , 											{
 												"box" : 												{
 													"id" : "obj-23",
-													"linecount" : 3,
+													"linecount" : 2,
 													"maxclass" : "message",
 													"numinlets" : 2,
 													"numoutlets" : 1,
 													"outlettype" : [ "" ],
 													"patching_rect" : [ 679.5, 390.0, 64.0, 35.0 ],
 													"style" : "",
-													"text" : "15 21.070742"
+													"text" : "0 1.744329"
 												}
 
 											}
@@ -51464,7 +51463,7 @@
 									"patching_rect" : [ 20.75, 494.583191, 169.0, 22.0 ],
 									"presentation" : 1,
 									"presentation_rect" : [ 15.75, 227.333435, 169.0, 22.0 ],
-									"size" : 3478.0,
+									"size" : 3406.0,
 									"style" : ""
 								}
 
@@ -52945,7 +52944,7 @@
 							"modernui" : 1
 						}
 ,
-						"rect" : [ 0.0, 26.0, 600.0, 737.0 ],
+						"rect" : [ 0.0, 26.0, 600.0, 735.0 ],
 						"bgcolor" : [ 0.862745, 0.870588, 0.878431, 1.0 ],
 						"bglocked" : 1,
 						"openinpresentation" : 1,
@@ -54233,7 +54232,7 @@
 													"outlettype" : [ "" ],
 													"patching_rect" : [ 798.5, 765.0, 226.5, 22.0 ],
 													"style" : "",
-													"text" : "roomCoord 1 4.901961 4.54902"
+													"text" : "roomCoord 1 4.51 4.51"
 												}
 
 											}
@@ -54857,7 +54856,7 @@
 													"outlettype" : [ "" ],
 													"patching_rect" : [ 405.0, 6.0, 272.0, 22.0 ],
 													"style" : "",
-													"text" : "mouseidleout 4.941176 -0.411765 0 0 0 0 0 0"
+													"text" : "mouseidleout 3.254902 -0.078431 0 0 0 0 0 0"
 												}
 
 											}
@@ -59526,7 +59525,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 134.0, 386.5, 509.0, 22.0 ],
 									"style" : "",
-									"text" : "/nuGroups \"linkPlayerToGroup 15 13 0.0000\""
+									"text" : "/nuGrain \"enable 0\""
 								}
 
 							}
@@ -59976,11 +59975,11 @@
 			}
  ],
 		"parameters" : 		{
+			"obj-4::obj-42::obj-345::obj-22" : [ "live.toggle[2]", "live.toggle", 0 ],
 			"obj-12::obj-10::obj-35" : [ "[5]", "Level", 0 ],
 			"obj-10::obj-101" : [ "rslider[1]", "rslider", 0 ],
-			"obj-4::obj-42::obj-345::obj-22" : [ "live.toggle[2]", "live.toggle", 0 ],
-			"obj-10::obj-77" : [ "rslider", "rslider", 0 ],
-			"obj-12::obj-10::obj-21::obj-6" : [ "live.tab[3]", "live.tab[1]", 0 ]
+			"obj-12::obj-10::obj-21::obj-6" : [ "live.tab[3]", "live.tab[1]", 0 ],
+			"obj-10::obj-77" : [ "rslider", "rslider", 0 ]
 		}
 ,
 		"dependency_cache" : [ 			{
@@ -59991,25 +59990,25 @@
 			}
 , 			{
 				"name" : "b_nuMainMap.maxpat",
-				"bootpath" : "~/Projects/Cosima/Nu/soundworks-nu/src/maxmsp",
+				"bootpath" : "~/Projects/Cosima/devs/Nu/soundworks-nu/src/maxmsp",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "j_nuRoomWalls.js",
-				"bootpath" : "~/Projects/Cosima/Nu/soundworks-nu/src/maxmsp",
+				"bootpath" : "~/Projects/Cosima/devs/Nu/soundworks-nu/src/maxmsp",
 				"type" : "TEXT",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "b_nuMainFileList.maxpat",
-				"bootpath" : "~/Projects/Cosima/Nu/soundworks-nu/src/maxmsp",
+				"bootpath" : "~/Projects/Cosima/devs/Nu/soundworks-nu/src/maxmsp",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "b_nuMain.maxpat",
-				"bootpath" : "~/Projects/Cosima/Nu/soundworks-nu/src/maxmsp",
+				"bootpath" : "~/Projects/Cosima/devs/Nu/soundworks-nu/src/maxmsp",
 				"type" : "JSON",
 				"implicit" : 1
 			}
