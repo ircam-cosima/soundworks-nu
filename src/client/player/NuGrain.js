@@ -181,61 +181,63 @@ export default class NuGrain extends NuBaseModule {
 //////////////////////////////////////////////////////////////////////////////////////////
 
 import { EventEmitter } from 'events';
-import * as lfo from 'waves-lfo';
+import * as lfo from 'waves-lfo/client';
 // import * as soundworks from 'soundworks/client';
 // const audioContext = soundworks.audioContext;
 
 export class Analyzer extends EventEmitter {
-  constructor(options) {
-    super();
+ constructor(options) {
+   super();
 
-    const frameSize = Math.floor(options.frameDuration * audioContext.sampleRate);
-    const hopSize = Math.floor(options.framePeriod * audioContext.sampleRate);
+   const frameSize = Math.floor(options.frameDuration * audioContext.sampleRate);
+   const hopSize = Math.floor(options.framePeriod * audioContext.sampleRate);
 
-    this.audioBuffer = null;
+   this.audioBuffer = null;
 
-    this.framer = new lfo.operators.Framer({ frameSize, hopSize, centeredTimeTags: true });
-    this.power = new lfo.operators.Magnitude({ power: true, normalize: true });
-    this.segmenter = new lfo.operators.Segmenter({
-      logInput: true,
-      filterOrder: 5,
-      threshold: 3,
-      offThreshold: -Infinity,
-      minInter: 0.050,
-      maxDuration: Infinity,
-    });
+   this.slicer = new lfo.operator.Slicer({ frameSize, hopSize, centeredTimeTags: true });
+   this.power = new lfo.operator.Rms({ power: true });
+   this.segmenter = new lfo.operator.Segmenter({
+     logInput: true,
+     filterOrder: 5,
+     threshold: 3,
+     offThreshold: -Infinity,
+     minInter: 0.050,
+     maxDuration: Infinity,
+   });
 
-    this.dataRecorder = new lfo.sinks.DataRecorder();
+   this.bridge = new lfo.sink.Bridge({
+     processFrame: (frame) => this.emit('time', frame.time),
+   });
 
-    this.onProcess = new lfo.operators.Noop();
-    this.onProcess.process = (time, frame, metaData) => this.emit('time', time);
+   this.slicer.connect(this.power);
+   this.power.connect(this.segmenter);
+   this.segmenter.connect(this.bridge);
+ }
 
-    this.framer.connect(this.power);
-    this.power.connect(this.segmenter);
-    this.segmenter.connect(this.onProcess);
-    this.segmenter.connect(this.dataRecorder);
-  }
+ process(audioBuffer) {
+   return new Promise( (resolve, reject) => {
+     const promisedBuffer = Promise.resolve(audioBuffer);
 
-  process(audioBuffer) {
-    const promisedBuffer = Promise.resolve(audioBuffer);
+     const audioInBuffer = new lfo.source.AudioInBuffer({
+       audioBuffer: audioBuffer,
+     });
 
-    const audioInBuffer = new lfo.sources.AudioInBuffer({
-      buffer: audioBuffer,
-      ctx: audioContext,
-      useWorker: true,
-    });
+     const dataRecorder = new lfo.sink.DataRecorder({
+       callback: (data) => resolve([audioBuffer, data])
+     });
 
-    audioInBuffer.connect(this.framer);
-    audioInBuffer.start();
-    this.dataRecorder.start();
+     audioInBuffer.connect(this.slicer);
+     this.segmenter.connect(dataRecorder);
 
-    return Promise.all([promisedBuffer, this.dataRecorder.retrieve()]);
-  }
+     audioInBuffer.start();
+     dataRecorder.start();
+   });
+ }
 }
 
 
 //////////////////////////////////////////////////////////////////////////////////////////
-// Synthtizer
+// Synthesizer
 //////////////////////////////////////////////////////////////////////////////////////////
 
 // import * as soundworks from 'soundworks/client';
