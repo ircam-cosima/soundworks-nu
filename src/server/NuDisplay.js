@@ -1,12 +1,12 @@
 /**
- * NuRenderer: visual feedback
+ * NuDisplay: visual feedback
  **/
 
 import NuBaseModule from './NuBaseModule'
 
-export default class NuRenderer extends NuBaseModule {
+export default class NuDisplay extends NuBaseModule {
   constructor(soundworksServer) {
-    super(soundworksServer, 'nuRenderer', true);
+    super(soundworksServer, 'nuDisplay', true);
 
     // to be saved params to send to client when connects:
     this.params = {

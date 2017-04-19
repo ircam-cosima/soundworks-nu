@@ -1,12 +1,12 @@
 /**
- * NuRenderer: nu module in charge of visual feedback
+ * NuDisplay: nu module in charge of visual feedback
  **/
 
 import * as soundworks from 'soundworks/client';
 const client = soundworks.client;
 const audioContext = soundworks.audioContext;
 
-export default class NuRenderer extends soundworks.Renderer {
+export default class NuDisplay extends soundworks.Renderer {
   constructor(soundworksClient) {
     super(1/24); // update rate = 0: synchronize updates to frame rate
 
@@ -34,7 +34,7 @@ export default class NuRenderer extends soundworks.Renderer {
     this.analyserCallback = this.analyserCallback.bind(this);
 
     // setup receive callbacks
-    this.soundworksClient.receive('nuRenderer', (args) => {
+    this.soundworksClient.receive('nuDisplay', (args) => {
       // get header
       let name = args.shift();
       // convert singleton array if need be
@@ -50,7 +50,7 @@ export default class NuRenderer extends soundworks.Renderer {
     // console.log('setup event listener')
     // window.addEventListener("message", (event) => {
     //   console.log('received msg', event);
-    //   if( event.origin !== location.origin || event.data[0] !== 'nuRenderer' )
+    //   if( event.origin !== location.origin || event.data[0] !== 'nuDisplay' )
     //     return;
     //   console.log(event.data[4]);
     //   this.restColor([255*event.data[4], 0, 0]);
@@ -106,7 +106,7 @@ export default class NuRenderer extends soundworks.Renderer {
     }
   }
 
-  // enable renderer, i.e. add +1 to its stack of "I need you renderer" clients
+  // enable display, i.e. add +1 to its stack of "I need you display" clients
   enable(){
     this.numOfElmtInNeedOfMe += 1;
     // if need to be triggered on for the first time:
@@ -115,7 +115,7 @@ export default class NuRenderer extends soundworks.Renderer {
     }
   }
 
-  // disable renderer, i.e. remove 1 from its stack of "I need you renderer" clients
+  // disable display, i.e. remove 1 from its stack of "I need you display" clients
   disable(){
     // decrement status
     this.numOfElmtInNeedOfMe = Math.max(this.numOfElmtInNeedOfMe-1, 0);

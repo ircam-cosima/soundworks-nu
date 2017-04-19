@@ -1,6 +1,6 @@
 import * as soundworks from 'soundworks/client';
 
-import NuRenderer from './NuRenderer';
+import NuDisplay from './NuDisplay';
 import * as Nu from './Nu'
 
 const audioContext = soundworks.audioContext;
@@ -61,7 +61,7 @@ export default class PlayerExperience extends soundworks.Experience {
     this.viewCtor = soundworks.CanvasView;
     this.viewOptions = { preservePixelRatio: false };
     this.view = this.createView();
-    this.renderer = new NuRenderer(this);
+    this.renderer = new NuDisplay(this);
     this.view.addRenderer(this.renderer);
   }
 

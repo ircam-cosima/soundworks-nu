@@ -2,7 +2,7 @@
  * Nu: Simple wrapper to export all Nu modules
  **/
 
-export { default as Renderer } from './NuRenderer';
+export { default as Display } from './NuDisplay';
 export { default as Output } from './NuOutput';
 export { default as Groups } from './NuGroups';
 export { default as RoomReverb } from './NuRoomReverb';

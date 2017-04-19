@@ -14,10 +14,10 @@ export { default as Synth } from './NuSynth';
 export { default as Stream } from './NuStream';
 
 /** 
-* the NuRenderer is a bit specific, not exposed as other modules
+* the NuDisplay is a bit specific, not exposed as other modules
 * but rather invoked directly in PlayerExperience
 **/
-// export { default as Renderer } from './NuRenderer';`
+// export { default as Display } from './NuDisplay';`
 
 
 // ------------------------------------------------------------

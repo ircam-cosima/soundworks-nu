@@ -11905,7 +11905,7 @@
 ,
 						"rect" : [ 0.0, 26.0, 600.0, 735.0 ],
 						"bgcolor" : [ 0.862745, 0.870588, 0.878431, 1.0 ],
-						"bglocked" : 1,
+						"bglocked" : 0,
 						"openinpresentation" : 1,
 						"default_fontsize" : 12.0,
 						"default_fontface" : 0,
@@ -12076,7 +12076,7 @@
 									"presentation" : 1,
 									"presentation_rect" : [ 334.700012, 299.0, 71.5, 22.0 ],
 									"style" : "",
-									"text" : "8030",
+									"text" : "80",
 									"textcolor" : [ 0.0, 0.0, 0.0, 1.0 ],
 									"textjustification" : 2
 								}
@@ -12117,7 +12117,7 @@
 									"presentation" : 1,
 									"presentation_rect" : [ 234.0, 299.0, 71.5, 22.0 ],
 									"style" : "",
-									"text" : "152",
+									"text" : "60",
 									"textcolor" : [ 0.0, 0.0, 0.0, 1.0 ]
 								}
 
@@ -12214,7 +12214,7 @@
 									"presentation" : 1,
 									"presentation_rect" : [ 126.700012, 235.583313, 71.5, 22.0 ],
 									"style" : "",
-									"text" : "-7",
+									"text" : "23",
 									"textcolor" : [ 0.0, 0.0, 0.0, 1.0 ],
 									"textjustification" : 2
 								}
@@ -12255,7 +12255,7 @@
 									"presentation" : 1,
 									"presentation_rect" : [ 26.0, 235.583313, 71.5, 22.0 ],
 									"style" : "",
-									"text" : "-57",
+									"text" : "3",
 									"textcolor" : [ 0.0, 0.0, 0.0, 1.0 ]
 								}
 
@@ -13252,9 +13252,9 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 41.75, 526.083313, 125.0, 22.0 ],
+									"patching_rect" : [ 41.75, 526.083313, 114.0, 22.0 ],
 									"style" : "",
-									"text" : "prepend /nuRenderer"
+									"text" : "prepend /nuDisplay"
 								}
 
 							}
@@ -13420,7 +13420,7 @@
 									"presentation" : 1,
 									"presentation_rect" : [ 12.0, 10.5, 150.0, 24.0 ],
 									"style" : "",
-									"text" : "Nü nuRenderer"
+									"text" : "Nü nuDisplay"
 								}
 
 							}
@@ -14422,7 +14422,7 @@
 					}
 ,
 					"style" : "",
-					"text" : "p NüRender"
+					"text" : "p NüDisplay"
 				}
 
 			}
@@ -16109,7 +16109,7 @@
 							"modernui" : 1
 						}
 ,
-						"rect" : [ 751.0, 410.0, 600.0, 735.0 ],
+						"rect" : [ 0.0, 26.0, 600.0, 735.0 ],
 						"bgcolor" : [ 0.862745, 0.870588, 0.878431, 1.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 1,
@@ -16145,9 +16145,9 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 251.75, 634.0, 200.0, 22.0 ],
+									"patching_rect" : [ 251.75, 634.0, 189.0, 22.0 ],
 									"style" : "",
-									"text" : "/nuRenderer enableFeedback -1 $1"
+									"text" : "/nuDisplay enableFeedback -1 $1"
 								}
 
 							}
@@ -18231,7 +18231,7 @@
 							"modernui" : 1
 						}
 ,
-						"rect" : [ 0.0, 26.0, 600.0, 735.0 ],
+						"rect" : [ 751.0, 410.0, 600.0, 735.0 ],
 						"bgcolor" : [ 0.862745, 0.870588, 0.878431, 1.0 ],
 						"bglocked" : 1,
 						"openinpresentation" : 1,
@@ -19567,9 +19567,9 @@
 													"numinlets" : 1,
 													"numoutlets" : 1,
 													"outlettype" : [ "" ],
-													"patching_rect" : [ 755.0, 624.5, 95.0, 22.0 ],
+													"patching_rect" : [ 755.0, 624.5, 107.0, 22.0 ],
 													"style" : "",
-													"text" : "prepend /nuSpy"
+													"text" : "prepend /nuProbe"
 												}
 
 											}
@@ -20414,9 +20414,9 @@
  ]
 									}
 ,
-									"patching_rect" : [ 622.0, 614.5, 156.671417, 22.0 ],
+									"patching_rect" : [ 622.0, 614.5, 151.0, 22.0 ],
 									"presentation" : 1,
-									"presentation_rect" : [ 431.5, 579.0, 140.0, 22.0 ],
+									"presentation_rect" : [ 431.5, 579.0, 151.0, 22.0 ],
 									"saved_object_attributes" : 									{
 										"description" : "",
 										"digest" : "",
@@ -20426,7 +20426,7 @@
 									}
 ,
 									"style" : "",
-									"text" : "p nuSpyControlExample"
+									"text" : "p nuProbeControlExample"
 								}
 
 							}
@@ -37552,7 +37552,7 @@
 									"numoutlets" : 0,
 									"patching_rect" : [ 197.0, 220.0, 150.0, 20.0 ],
 									"presentation" : 1,
-									"presentation_rect" : [ 314.0, 241.0, 79.0, 20.0 ],
+									"presentation_rect" : [ 314.0, 246.0, 79.0, 20.0 ],
 									"style" : "",
 									"text" : "acceleration"
 								}
@@ -37566,7 +37566,7 @@
 									"numoutlets" : 0,
 									"patching_rect" : [ 505.200012, 653.5, 150.0, 20.0 ],
 									"presentation" : 1,
-									"presentation_rect" : [ 314.0, 436.5, 150.0, 20.0 ],
+									"presentation_rect" : [ 314.0, 441.5, 150.0, 20.0 ],
 									"style" : "",
 									"text" : "energy"
 								}
@@ -37773,7 +37773,7 @@
 									"patching_rect" : [ 392.200012, 674.5, 250.0, 62.0 ],
 									"peakcolor" : [ 0.498039, 0.498039, 0.498039, 1.0 ],
 									"presentation" : 1,
-									"presentation_rect" : [ 314.0, 456.5, 250.0, 62.0 ],
+									"presentation_rect" : [ 314.0, 461.5, 250.0, 62.0 ],
 									"setminmax" : [ 0.0, 100.0 ],
 									"setstyle" : 3,
 									"style" : ""
@@ -37862,7 +37862,7 @@
 									"patching_rect" : [ 40.0, 242.0, 253.0, 174.0 ],
 									"peakcolor" : [ 0.498039, 0.498039, 0.498039, 1.0 ],
 									"presentation" : 1,
-									"presentation_rect" : [ 314.0, 260.0, 253.0, 174.0 ],
+									"presentation_rect" : [ 314.0, 265.0, 253.0, 174.0 ],
 									"setminmax" : [ 0.0, 100.0 ],
 									"setstyle" : 3,
 									"size" : 3,
@@ -39707,7 +39707,7 @@
 													"outlettype" : [ "" ],
 													"patching_rect" : [ 558.0, 280.0, 50.0, 22.0 ],
 													"style" : "",
-													"text" : "720"
+													"text" : "45"
 												}
 
 											}
@@ -47961,7 +47961,7 @@
 									"patching_rect" : [ 485.5, 445.000061, 69.0, 20.0 ],
 									"preset_data" : [ 										{
 											"number" : 1,
-											"data" : [ 5, "obj-104", "slider", "float", 100.0, 5, "obj-108", "slider", "float", 100.0 ]
+											"data" : [ 5, "obj-104", "slider", "float", 0.0, 5, "obj-108", "slider", "float", 0.0 ]
 										}
 , 										{
 											"number" : 2,
@@ -48429,7 +48429,7 @@
 									"presentation" : 1,
 									"presentation_rect" : [ 216.5, 290.666748, 71.5, 22.0 ],
 									"style" : "",
-									"text" : "1.",
+									"text" : "0.",
 									"textcolor" : [ 0.0, 0.0, 0.0, 1.0 ]
 								}
 
@@ -48456,7 +48456,7 @@
 									"presentation" : 1,
 									"presentation_rect" : [ 27.0, 290.666748, 71.5, 22.0 ],
 									"style" : "",
-									"text" : "0.95",
+									"text" : "0.",
 									"textcolor" : [ 0.0, 0.0, 0.0, 1.0 ]
 								}
 
@@ -48536,7 +48536,7 @@
 									"presentation" : 1,
 									"presentation_rect" : [ 216.5, 226.916748, 71.5, 22.0 ],
 									"style" : "",
-									"text" : "1.",
+									"text" : "0.",
 									"textcolor" : [ 0.0, 0.0, 0.0, 1.0 ]
 								}
 
@@ -59525,7 +59525,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 134.0, 386.5, 509.0, 22.0 ],
 									"style" : "",
-									"text" : "/nuGrain \"enable 0\""
+									"text" : "/nuRoomReverb \"audioFileId 0\""
 								}
 
 							}
