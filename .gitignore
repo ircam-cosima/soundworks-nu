@@ -2,10 +2,7 @@
 /node_modules
 /public/js
 /public/css
-/server
-/client
-/shared
-/common
+/dist
 
 # ignore all config except default
 /src/server/config/*
