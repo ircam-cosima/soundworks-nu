@@ -25,6 +25,7 @@ const viewTemplate = `
   </div>
 `;
 
+const model = { title: `` };
 
 /*
 * The PlayerExperience script defines the behavior of default clients (of type 'player').
@@ -45,8 +46,8 @@ export default class PlayerExperience extends soundworks.Experience {
     this.rawSocket = this.require('raw-socket');
     this.loader = this.require('audio-buffer-manager', {
       assetsDomain: assetsDomain,
-      files: audioFiles,
-    });    
+      directories: { path: 'sounds', recursive: true },
+    });
     this.motionInput = this.require('motion-input', {
       descriptors: ['accelerationIncludingGravity', 'deviceorientation', 'energy']
     });
@@ -54,39 +55,36 @@ export default class PlayerExperience extends soundworks.Experience {
     if( window.location.hash === "#emulate" ) { this.emulateClick(); } 
   }
 
-  init() {
-    // init view (GUI)
-    this.viewTemplate = viewTemplate;
-    this.viewContent = {};
-    this.viewCtor = soundworks.CanvasView;
-    this.viewOptions = { preservePixelRatio: false };
-    this.view = this.createView();
-    this.renderer = new NuDisplay(this);
-    this.view.addRenderer(this.renderer);
-  }
-
   start() {
     super.start();
 
-    if (!this.hasStarted) {
-      this.init();
-    }
-
-    this.show();
-
-    // init client position in room
-    let coordinates = this.sharedConfig.get('setup.coordinates');
-    this.coordinates = coordinates[client.index];
-    this.send('coordinates', this.coordinates);
-
-    // init Nu modules
-    Object.keys(Nu).forEach( (nuClass) => {
-      this['nu' + nuClass] = new Nu[nuClass](this);
+    // initialize the view
+    this.view = new soundworks.CanvasView(viewTemplate, {}, {}, {
+      id: this.id,
+      preservePixelRatio: true,
     });
 
-    // disable text selection, magnifier, and screen move on swipe on ios
-    document.getElementsByTagName("body")[0].addEventListener("touchstart",
-    function(e) { e.returnValue = false });
+    // as show can be async, we make sure that the view is actually rendered
+    this.show().then(() => {
+
+      // initialize renderer
+      this.renderer = new NuDisplay(this);
+      this.view.addRenderer(this.renderer);
+
+      // init client position in room
+      let coordinates = this.sharedConfig.get('setup.coordinates');
+      this.coordinates = coordinates[client.index];
+      this.send('coordinates', this.coordinates);
+
+      // init Nu modules
+      Object.keys(Nu).forEach( (nuClass) => {
+        this['nu' + nuClass] = new Nu[nuClass](this);
+      });
+
+      // disable text selection, magnifier, and screen move on swipe on ios
+      document.getElementsByTagName("body")[0].addEventListener("touchstart",
+      function(e) { e.returnValue = false });
+    });
 
   }
 

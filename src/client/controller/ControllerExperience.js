@@ -8,11 +8,11 @@ const viewTemplate = `
   <div class="foreground">
 
     <div class="section-top flex-middle">
-      <p class="huge"></p>
+      <p class="huge"></p>
     </div>
 
     <div class="section-center flex-middle">
-      <p class="big" id="checkinId"></p>
+      <p class="big" ><%= checkinId %></p>
     </div>
 
     <div class="section-bottom flex-center">
@@ -54,28 +54,23 @@ export default class PlayerExperience extends soundworks.Experience {
 
   }
 
-  init() {
-    // init view (GUI)
-    this.viewTemplate = viewTemplate;
-    this.viewContent = { subtitle: `controller` };
-    this.viewCtor = soundworks.CanvasView;
-    this.viewOptions = { preservePixelRatio: true };
-    this.view = this.createView();
-  }
-
   start() {
     super.start();
 
-    if (!this.hasStarted) {
-      this.init();
-    }
-
-    this.show();
-
     // receive and display controller id
     this.receive('checkinId', (id) => {
-      document.getElementById("checkinId").innerHTML = id;
+      // initialize the view
+      this.view = new soundworks.CanvasView(viewTemplate, { subtitle: `controller`, checkinId: id }, {}, {
+        id: this.id,
+        preservePixelRatio: true,
+      });
+      // start exp. once view showed
+      this.show().then( this.startOnceViewShowed() );
     }); 
+
+  }
+
+  startOnceViewShowed() {
 
     // setup motion input listeners
     if (this.motionInput.isAvailable('accelerationIncludingGravity')) {

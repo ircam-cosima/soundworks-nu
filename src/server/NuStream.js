@@ -11,7 +11,7 @@ import NuBaseModule from './NuBaseModule'
 const fs = require('fs');
 var AudioContext = require('web-audio-api').AudioContext
 const audioContext = new AudioContext;
-const assetsPath = __dirname + '/../public/sounds/stream/';
+const assetsPath = __dirname + '/../../public/stream/';
 
 export default class NuStream extends NuBaseModule {
   constructor(soundworksServer) {
@@ -39,6 +39,7 @@ export default class NuStream extends NuBaseModule {
   // clean all files containing "stream" in assetsPath 
   cleanStreamDir(){
     fs.readdir(assetsPath, (err, files) => {
+      if( err ){ console.log('at ' +  __filename + ':'); throw err; }
       for( let file of files ){
         if( file.search('stream') < 0 ){ continue; }
         fs.unlinkSync(assetsPath + file);

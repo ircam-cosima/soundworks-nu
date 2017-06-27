@@ -10,11 +10,6 @@ var childProcess = require('child_process');
 var cwd = process.cwd();
 
 /**
- * Path to the server index
- */
-var serverIndex = path.join(cwd, 'server/index.js');
-
-/**
  * Process hosting the server
  */
 var server = null;
@@ -22,9 +17,12 @@ var server = null;
 /**
  * Run the `serverIndex` in a forked process
  */
-function start() {
+function start(serverIndex) {
   try {
     if (fse.statSync(serverIndex).isFile()) {
+      if (server)
+        stop();
+
       log.serverStart();
       server = childProcess.fork(serverIndex);
     }

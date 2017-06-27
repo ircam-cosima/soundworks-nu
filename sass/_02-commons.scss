@@ -132,29 +132,35 @@ p, .normal {
 
 .btn {
   background-color: $backgroundColor;
-  border: 1px solid $textColor;
+  border: $borderSize solid $textColor;
   border-radius: $borderRadius;
   color: $textColor;
   padding: 6px 0;
   font-size: 1rem;
   display: block;
-  @include transition(background-color 50ms);
   letter-spacing: 0.05em;
 
-  &:active {
+  &:active, &.active {
     background-color: $textColor;
+    color: $backgroundColor;
   }
 
   &:focus {
     outline: none;
   }
 
-  &.unselected, &.disabled, &[disabled] {
+  &.disabled, &[disabled] {
     opacity: 0.5;
   }
 
-  &.selected {
-    opacity: 1;
+  &.pushed {
+    background-color: $textColor;
+    color: $backgroundColor;
+  }
+
+  &.released {
+    background-color: $backgroundColor;
+    color: $textColor;
   }
 }
 
@@ -175,4 +181,3 @@ p, .normal {
 .soft-blink {
   @include animation('soft-blink 3.6s ease-in-out infinite');
 }
-

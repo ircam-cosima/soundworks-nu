@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 var pkg = require('../package.json');
 var colors = require('colors');
-var ora = require('ora');
 var path = require('path');
 
 'use strict';
@@ -17,13 +16,10 @@ function getDeltaTime(time) {
   return new Date().getTime() - time;
 }
 
-var spinners = {};
-
 var log = {
   transpileSuccess: function(src, dest, startTime) {
     var time = getDeltaTime(startTime);
     var msg = prefix + '%s: successfully transpiled to "%s" (%sms)'.green;
-
     console.log(msg, toRel(src), toRel(dest), time);
   },
 
@@ -36,27 +32,18 @@ var log = {
   },
 
   bundleStart: function(dest) {
-    var msg = prefix + (toRel(dest) + ': bundle start').yellow;
-    var spinner = ora({ color: 'white', text: msg });
-    spinner.start();
-
-    spinners[dest] = spinner;
+    var msg = prefix + '%s: bundle start'.yellow;
+    console.log(msg, toRel(dest));
   },
 
   bundleSuccess: function(dest, startTime) {
-    var spinner = spinners[dest];
     var time = getDeltaTime(startTime);
-    var msg = prefix + '%s: successfully created (%sms)'.green;
-
-    spinner.stop();
+    var msg = prefix + '%s: successfully bundled (%sms)'.green;
     console.log(msg, toRel(dest), time);
   },
 
   bundleError: function(dest, err) {
-    var spinner = spinners[dest];
     var msg = prefix + '%s: bundle error'.red;
-
-    spinner.stop();
     console.log(msg, toRel(dest));
     console.log('> ' + err.message);
   },
@@ -67,19 +54,13 @@ var log = {
   },
 
   minifyStart: function(filename) {
-    var msg = prefix + (toRel(filename) + ': minify start').yellow;
-    var spinner = ora({ color: 'white', text: msg });
-    spinner.start();
-
-    spinners[filename] = spinner;
+    var msg = prefix + '%s: minify start'.yellow;
+    console.log(msg, toRel(filename));
   },
 
   minifySuccess: function(filename, outFilename, startTime) {
-    var spinner = spinners[filename];
-    var msg = prefix + '%s: minified version successfully created (%sms)'.green;
+    var msg = prefix + '%s: successfully minified (%sms)'.green;
     var time = getDeltaTime(startTime);
-
-    spinner.stop();
     console.log(msg, toRel(outFilename), time);
   },
 
@@ -89,7 +70,6 @@ var log = {
   },
 
   sassError: function(err) {
-    // console.log(err);
     var msg = prefix + ('%s (%s:%s): sass error').red;
     console.log(msg, toRel(err.file), err.line, err.column);
     console.log('> ' + err.message);

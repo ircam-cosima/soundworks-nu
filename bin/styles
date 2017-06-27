@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 var fse = require('fs-extra');
+var klaw = require('klaw');
 var log = require('./log');
 var path = require('path');
 var sass = require('node-sass');
@@ -11,8 +12,7 @@ var sass = require('node-sass');
  * and are not prefixed by `_`. Transpile them to the `distDirectory`
  */
 function processSass(srcDirectory, distDirectory, isAllowed, sassOptions) {
-  fse
-    .walk(srcDirectory)
+  klaw(srcDirectory)
     .on('data', function(item) {
       var filename = item.path;
       var basename = path.basename(filename);

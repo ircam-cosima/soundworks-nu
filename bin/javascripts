@@ -121,29 +121,34 @@ function getTranspiler(srcDirectory, distDirectory, isAllowed, babelOptions, bro
         var bundler = browserify(entryPoint, browserifyOptions);
 
         function rebundle() {
-          var startTime = new Date().getTime();
-
-          log.bundleStart(outFilename);
           fse.ensureFileSync(outFilename); // ensure file exists
 
-          bundler
-            .bundle()
+          var startTime = new Date().getTime();
+          var writeStream = fse.createWriteStream(outFilename);
+
+          bundler.bundle()
             .on('error', function(err) {
               log.bundleError(outFilename, err);
             })
             .on('end', function() {
-              log.bundleSuccess(outFilename, startTime);
+              if (stopWhenDone) {
+                // don't remove, handle some bug of watchify when file is empty
+                setTimeout(function() { bundler.close(); }, 100);
+              }
 
-              if (stopWhenDone)
-                bundler.close();
+              log.bundleSuccess(outFilename, startTime);
             })
-            .pipe(fse.createWriteStream(outFilename));
+            .pipe(writeStream);
+
+          log.bundleStart(outFilename);
         }
 
-        bundler.on('update', rebundle);
-        rebundle();
+        if (!stopWhenDone) {
+          bundler.on('update', rebundle);
+          this._bundlers[entryPoint] = bundler;
+        }
 
-        this._bundlers[entryPoint] = bundler;
+        rebundle();
       }
     },
 

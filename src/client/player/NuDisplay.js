@@ -6,7 +6,7 @@ import * as soundworks from 'soundworks/client';
 const client = soundworks.client;
 const audioContext = soundworks.audioContext;
 
-export default class NuDisplay extends soundworks.Renderer {
+export default class NuDisplay extends soundworks.Canvas2dRenderer {
   constructor(soundworksClient) {
     super(1/24); // update rate = 0: synchronize updates to frame rate
 
