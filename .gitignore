@@ -17,8 +17,5 @@ npm-debug.log
 .DS_Store
 Thumbs.db
 
-# ignore cordova extra files
-/app-player/platforms/*
-/app-player/www/*
-/app-player/plugins/*
-/app-player/hooks/*
+# ignore audio file description (dynamically gen.)
+src/client/shared/audioFiles.js
