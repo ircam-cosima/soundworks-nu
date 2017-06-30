@@ -2,6 +2,7 @@ import * as soundworks from 'soundworks/client';
 
 import NuDisplay from './NuDisplay';
 import * as Nu from './Nu'
+import audioFiles from '../shared/audioFiles';
 
 const audioContext = soundworks.audioContext;
 const client = soundworks.client;
@@ -33,7 +34,7 @@ const model = { title: `` };
 */
 
 export default class PlayerExperience extends soundworks.Experience {
-  constructor(assetsDomain, audioFiles) {
+  constructor(assetsDomain) {
     super();
 
     // require soundworks services
@@ -46,7 +47,7 @@ export default class PlayerExperience extends soundworks.Experience {
     this.rawSocket = this.require('raw-socket');
     this.loader = this.require('audio-buffer-manager', {
       assetsDomain: assetsDomain,
-      directories: { path: 'sounds', recursive: true },
+      files: audioFiles,
     });
     this.motionInput = this.require('motion-input', {
       descriptors: ['accelerationIncludingGravity', 'deviceorientation', 'energy']

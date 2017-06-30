@@ -206,6 +206,17 @@ function _getFileList(folder, excludeDirectories, callback) {
     });
 }
 
+/**
+ * return true if must ignore file change during watch sessions
+ */
+function ignoreChangeFiles(filepath){
+  // files in this array will be ignored upon change during watch session
+  var ignoredFiles = ['audioFiles.js'];
+  let filename = filepath.split('/').slice(-1)[0];
+  if(ignoredFiles.indexOf(filename) >= 0) return true;
+  else return false;
+}
+
 /* --------------------------------------------------------------------------
  * Process and execute the given command.
  * -------------------------------------------------------------------------- */
@@ -375,7 +386,7 @@ function watchSharedJavascriptFiles(srcDirectories, distDirectories) {
         });
 
         monitor.on('changed', function(filename) {
-          if (isAllowed(filename)) {
+          if (isAllowed(filename) && !ignoreChangeFiles(filename)) {
             server.stop();
             transpiler.transpile(filename, [], () => server.start(serverIndex));
           }

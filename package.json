@@ -25,6 +25,7 @@
     "babel-runtime": "^6.6.1",
     "bufferutil": "^1.2.1",
     "debug": "^2.6.4",
+    "directory-tree": "^2.0.0",
     "fs": "0.0.1-security",
     "recorderjs": "mattdiamond/Recorderjs.git",
     "soundworks": "collective-soundworks/soundworks.git#square",
