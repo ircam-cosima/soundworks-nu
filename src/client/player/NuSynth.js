@@ -31,6 +31,13 @@ export default class NuSynth extends NuBaseModule {
     this.audioSynth.playNote(noteId, status);
   }
 
+  // stop all playing notes
+  clear(){
+    this.audioSynth.noteMap.forEach( (note, noteId) => {
+      this.audioSynth.playNote(noteId, 0);
+    });
+  }
+
   // set local volume
   volume(value){
     this.localGain.gain.value = value;
@@ -138,7 +145,8 @@ class AudioSynth {
         gain: gain,
         envelopeGain: envelopeGain,
         osc: undefined, 
-        timeout: undefined
+        timeout: undefined,
+        isPlaying: false,
       });
     }
   }
@@ -180,6 +188,8 @@ class AudioSynth {
     }
     // note ON
     if( status ){
+      // discard if note already playing
+      if(note.isPlaying){ return; }
       // create osc.
       let osc = audioContext.createOscillator();
       // setup osc
@@ -209,6 +219,7 @@ class AudioSynth {
       }
       // start      
       osc.start();
+      note.isPlaying = true;
     }
     // note OFF
     else{
@@ -231,6 +242,7 @@ class AudioSynth {
         if(note.osc === undefined){ return; }
         try{ // weird Safari behavior...
           note.osc.stop();
+          note.isPlaying = false
         }
         catch(e){
           if( e.name !== 'InvalidStateError'){ console.error(e); }
