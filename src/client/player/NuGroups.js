@@ -88,10 +88,23 @@ export default class NuGroups extends NuBaseModule {
     group.gain.gain.value = value;
   }
 
-  // set player volume (for all its tracks)
-  localVolume(value){
+  // set player volume (for all its tracks) groupId is dummy here, for uniform inputs wrt other methods
+  localVolume(groupId, value){
     // set local value
     this.localGain.gain.value = value;
+  }
+
+  // stop all currently playing groups
+  clear(){
+    // loop over groups
+    this.groupMap.forEach( (group) => {
+      // stop source 
+      group.src.stop(0);
+      // notify renderer we don't need it anymore
+      this.soundworksClient.renderer.disable();
+    });
+    // reset local map
+    this.groupMap = new Map();
   }
 
   // set group time
@@ -128,7 +141,7 @@ export default class NuGroups extends NuBaseModule {
 
     // create group gain
     group.gain = audioContext.createGain();
-    group.gain.gain.value = 0.0;
+    group.gain.gain.value = 1.0;
 
     // create group-player link gain
     group.linkGain = audioContext.createGain();
