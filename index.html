@@ -4,9 +4,52 @@
 	<meta charset='utf-8' />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<link rel="stylesheet" type="text/css" media="all" href="style.css">
-	<title>gh-pages template</title>
+	<title>Nü</title>
 </head>
 <body>
-  <div id="helloworld">Hello world!</div>
+	<div id="helloworld">
+	<h1> Soundworks Nü </h1>
+	<p>
+		The objective of the Nü framework, based on <a href="https://github.com/collective-soundworks/soundworks/">Soundworks</a>, is to give composers control over the speakers of spectators smartphones during a performance. Connecting their devices to a web page broadcasted by the performer's laptop, spectators become part of the composition: from simple sound sources to active musicians. The performer can then control the behaviours of "Nü modules" via a Max/MSP based interface: modular units (distributed room reverb, granular synthesis, etc.) designed for live composition. Nü has been developed as part of the <a href="http://cosima.ircam.fr/">CoSiMa Project</a>.
+	</p>
+
+	<iframe width="560" height="315" src="https://www.youtube.com/embed/a4taMsypqos" frameborder="0" allowfullscreen></iframe>
+
+	<img src="img/group_interface.png" alt="Screenshots of a development session, (*a*) simulated Nü players, (*b*) Nü GUI" style="width:304px;height:228px;">
+
+	<img src="img/group_real_performance.png" alt="During a performance, Nü players (smartphones) distributed in the room" style="width:304px;height:228px;">
+
+	<img src="img/nu_architecture.png" alt="Architecture of the Nü framework" style="width:304px;height:228px;">
+
+	<h2>Install Node.js</h2>
+
+	<p>
+		Node.js or "npm" is a toolbox / framework / magic wizard for javascript & web developers, required to run Nü. Check the official <a href="https://docs.npmjs.com/getting-started/installing-node">Node.js installation guide</a>.
+	</p>
+
+	<h2>Install Nü (master)</h2>
+
+	```sh
+	git clone https://github.com/ircam-cosima/soundworks-nu.git soundworks-nu
+	cd soundworks-nu
+	npm install
+	echo '## DEV ## working with develop version of soundworks even here, requires transpile'
+	cd node_modules/soundworks
+	npm run transpile
+	cd ../..
+	echo '## DEV ##'
+	npm run watch
+	```
+
+	<h2>How to use</h2>
+
+	<ul>
+		<li>Open Max/MSP main patch `src/maxmsp/_maxControllerv2.maxpat`</li>
+		<li>Start the server (see Install)</li>
+		<li>Connect client to server (default: open your browser at 127.0.0.1:8000)</li>
+		<li>Use Max/MSP patch to control client's behavior</li>		
+	</ul>
+
+	</div>
 </body>
 </html>
