@@ -13,7 +13,7 @@ var encodeWav = require('audio-encode-wav');
 import Audio from 'audio';
 var AudioContext = require('web-audio-api').AudioContext
 const audioContext = new AudioContext;
-const assetsPath = __dirname + '/../public/';
+const assetsPath = __dirname + '/../../public/';
 const downloadPath = '/Users/davipoir/Downloads/';
 
 export default class NuOutput extends NuBaseModule {
