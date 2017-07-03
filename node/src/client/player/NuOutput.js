@@ -149,7 +149,7 @@ export default class NuOutput extends NuBaseModule {
     let irUrl = '';
     if( val ){
       // different IR for reverb (+ gain adjust for iso-loudness)
-      irUrl = 'irs/room-medium-1-furnished-src-20-Set1_16b.wav';
+      irUrl = 'irs/HOA3_BRIRs-medium.wav';
       this.ambiGain.gain.value = 0.5;
     }
     else{
