@@ -1,16 +1,16 @@
 # Transpiled files and dependencies
-/node_modules
-/public/js
-/public/css
-/dist
+node/node_modules
+node/public/js
+node/public/css
+node/dist
 
 # ignore all config except default
-/src/server/config/*
-!/src/server/config/default.js
+node/src/server/config/*
+!node/src/server/config/default.js
 
 # Application instance specific
-/logs
-/db
+node/logs
+node/db
 
 # ignore junk files
 npm-debug.log
@@ -18,4 +18,4 @@ npm-debug.log
 Thumbs.db
 
 # dynamic audio file list gen upon transpile
-/src/client/shared/audioFiles.js
+node/src/client/shared/audioFiles.js
