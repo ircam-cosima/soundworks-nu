@@ -1,10 +1,6 @@
 import * as soundworks from 'soundworks/server';
 import * as Nu from './Nu';
 
-// required in initAudioFileTree():
-const dirTree = require('directory-tree');
-const fs = require('fs');
-
 // server-side experience.
 export default class PlayerExperience extends soundworks.Experience {
   constructor(clientType) {
@@ -42,8 +38,6 @@ export default class PlayerExperience extends soundworks.Experience {
     Object.keys(Nu).forEach( (nuClass) => {
       this['nu' + nuClass] = new Nu[nuClass](this);
     });
-    // init audio file json description for audioBufferManager
-    this.initAudioFileTree();
   }
 
   enter(client) {
@@ -128,24 +122,6 @@ export default class PlayerExperience extends soundworks.Experience {
     this.send(client, 'checkinId', clientId);
     // return Id
     return clientId
-  }
-
-  // automatically update audioFile.js (shared client) file to describe the content of the public/sounds directory
-  // (flattened), imported in client to use with the audioBufferLoader. Allows for name-based audio files
-  // definition in MaxMSP (rather than with numbers)
-  initAudioFileTree(){
-    // extract directory audio files to tree
-    const tree = {};
-    const filteredTree = dirTree('./public/sounds/', { extensions: /\.wav|\.mp3/ }, (item, path) => { 
-      // assign elmt to tree (reduce structure to zero-depth tree for easy access)
-      let name = item.name.replace(' ', '_').split('.')[0];
-      tree[name] = item.path.replace('public/', '');
-    });
-    // write flattened tree in audioFiles.js
-    let str = "export default " + JSON.stringify(tree);
-    fs.writeFile('./src/client/shared/' + 'audioFiles.js', str, (err) => {
-        if(err) return console.log(err);
-    });
   }
 
 }

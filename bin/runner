@@ -206,17 +206,6 @@ function _getFileList(folder, excludeDirectories, callback) {
     });
 }
 
-/**
- * return true if must ignore file change during watch sessions
- */
-function ignoreChangeFiles(filepath){
-  // files in this array will be ignored upon change during watch session
-  var ignoredFiles = ['audioFiles.js'];
-  let filename = filepath.split('/').slice(-1)[0];
-  if(ignoredFiles.indexOf(filename) >= 0) return true;
-  else return false;
-}
-
 /* --------------------------------------------------------------------------
  * Process and execute the given command.
  * -------------------------------------------------------------------------- */
@@ -386,7 +375,7 @@ function watchSharedJavascriptFiles(srcDirectories, distDirectories) {
         });
 
         monitor.on('changed', function(filename) {
-          if (isAllowed(filename) && !ignoreChangeFiles(filename)) {
+          if (isAllowed(filename)) {
             server.stop();
             transpiler.transpile(filename, [], () => server.start(serverIndex));
           }
@@ -403,6 +392,29 @@ function watchSharedJavascriptFiles(srcDirectories, distDirectories) {
   });
 }
 
+
+/**
+ * DPQ: update audioFile.js (shared client) file to describe the content of the public/sounds directory
+ * (flattened), imported in client to use with the audioBufferLoader. Allows for name-based audio files
+ * definition in MaxMSP (rather than with numbers). Function defined here so that the audioFiles.js 
+ * modification happends before transpile, resulting in up-to-date dist/client/shared/audioFiles.js file.
+ */
+function uploadAudioFilesSharedDescription(){
+    const dirTree = require('directory-tree');
+    const fs = require('fs');
+    // extract directory audio files to tree
+    const tree = {};
+    const filteredTree = dirTree('./public/sounds/', { extensions: /\.wav|\.mp3/ }, (item, path) => { 
+      // assign elmt to tree (reduce structure to zero-depth tree for easy access)
+      let name = item.name.replace(' ', '_').split('.')[0];
+      tree[name] = item.path.replace('public/', '');
+    });
+    // write flattened tree in audioFiles.js
+    let str = "export default " + JSON.stringify(tree);
+    fs.writeFile('./src/client/shared/' + 'audioFiles.js', str, (err) => {
+        if(err) return console.log(err);
+    });
+}
 
 function transpile() {
   // 1. transpile common files
@@ -446,6 +458,9 @@ function transpile() {
 
   // 3. transpile client files
   function transpileClientFiles() {
+    // upload audioFiles.js file
+    uploadAudioFilesSharedDescription();
+
     var next = rebundleClientFiles;
 
     _getFileList(clientSrcDirectory, sharedSrcDirectories, function(files) {
