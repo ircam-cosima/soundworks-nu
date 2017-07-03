@@ -16,3 +16,6 @@
 npm-debug.log
 .DS_Store
 Thumbs.db
+
+# dynamic audio file list gen upon transpile
+/src/client/shared/audioFiles.js
