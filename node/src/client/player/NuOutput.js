@@ -181,7 +181,7 @@ export default class NuOutput extends NuBaseModule {
     let coordSph = cart2sph( relXYZ );
     // update encoder parameters
     this.encoder.azim = coordSph[0];
-    this.encoder.elev = coordSph[0];
+    this.encoder.elev = coordSph[1];
     this.encoder.updateGains();
   }
 
