@@ -194,7 +194,7 @@ export default class NuDisplay extends soundworks.Canvas2dRenderer {
     // array of strings
     else{ args.forEach( (elmt) => { str += ' ' + elmt;  }); }
     // replace "cliendId" with actual client index and other conventional naming
-    str = str.replace("clientId", client.index);
+    str = str.replace("clientId", client.index + 1);
     str = str.replace("None", '');
     // return formatted string
     return str;
