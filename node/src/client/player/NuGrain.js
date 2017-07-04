@@ -113,8 +113,16 @@ export default class NuGrain extends NuBaseModule {
     this.audioBuffer = undefined;
     this.segments = undefined;
 
-    // load new
+    // get audio buffer
     const audioBuffer = this.soundworksClient.loader.data[fileId];
+    
+    // discard if file not found
+    if( audioBuffer === undefined) {
+      console.warn('required track ', fileId, 'not available, actual content:', this.soundworksClient.loader.options.files);
+      return;
+    }
+
+    // load new
     this.analyzer.process(audioBuffer).then((values) => {
       const [audioBuffer, segments] = values;
       this.audioBuffer = audioBuffer;

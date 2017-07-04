@@ -4,9 +4,23 @@
 
 import NuBaseModule from './NuBaseModule'
 import * as soundworks from 'soundworks/client';
+import audioFiles from '../shared/audioFiles';
 
 const client = soundworks.client;
 const audioContext = soundworks.audioContext;
+
+// previous impl. was based on audio buffer calls view integer.
+// adapt: from name to integar to avoid changing whole code here.
+const audioFileNameToId = new Map();
+const audioFileIdToName = new Map();
+var count = 0;
+for (var key in audioFiles) {
+  if (audioFiles.hasOwnProperty(key)) {
+    audioFileNameToId.set(key, count);
+    audioFileIdToName.set(count, key);
+    count += 1;
+  }
+}
 
 export default class NuLoop extends NuBaseModule {
   constructor(soundworksClient) {
@@ -40,7 +54,7 @@ export default class NuLoop extends NuBaseModule {
     // shut down all loops
     this.reset();
     // resize loop map
-    let numTracks = this.soundworksClient.loader.data.length;
+    let numTracks = audioFileNameToId.size;
     this.loops = new Matrix(numTracks, this.params.divisions);
   }
 
@@ -58,13 +72,14 @@ export default class NuLoop extends NuBaseModule {
   setTrackSlot(args){
     
     // extract parameters from args array
-    let trackId = args.shift();
+    let trackName = args.shift();
     let slotId = args.shift();
     let onOff = args.shift();
 
-    // check valid trackId
-    if( trackId >= this.soundworksClient.loader.data.length || trackId < 0) {
-      console.warn('required track id', trackId, 'not in client index, actual content:', this.soundworksClient.loader.options.files);
+    // check valid trackName / trackId
+    let trackId = audioFileNameToId.get(trackName);
+    if( trackId === undefined) {
+      console.warn('required track ', trackName, 'not available, actual content:', this.soundworksClient.loader.options.files);
       return;
     }
     // check valid slotId
@@ -212,19 +227,19 @@ class SampleSynth {
   }
 
   trigger(time, params) {
-    const audioBuffers = this.audioBuffers;
     let duration = 0;
 
-    if (audioBuffers && audioBuffers.length > 0) {
-      const b1 = audioBuffers[params.trackId];
+    let trackName = audioFileIdToName.get(params.trackId);
+    if (this.audioBuffers[trackName] === undefined) { return duration; }
 
-      duration += b1.duration;
+    const b1 = this.audioBuffers[trackName];
 
-      const s1 = audioContext.createBufferSource();
-      s1.buffer = b1;
-      s1.connect(this.output);
-      s1.start(time);
-    }
+    duration += b1.duration;
+
+    const s1 = audioContext.createBufferSource();
+    s1.buffer = b1;
+    s1.connect(this.output);
+    s1.start(time);
 
     return duration;
   }
