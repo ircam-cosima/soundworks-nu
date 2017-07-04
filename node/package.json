@@ -28,7 +28,7 @@
     "directory-tree": "^2.0.0",
     "fs": "0.0.1-security",
     "recorderjs": "mattdiamond/Recorderjs.git",
-    "soundworks": "collective-soundworks/soundworks.git#square",
+    "soundworks": "collective-soundworks/soundworks.git#v2.1.0",
     "source-map-support": "^0.4.0",
     "typedarray-methods": "^1.0.0",
     "utf-8-validate": "^1.2.1",

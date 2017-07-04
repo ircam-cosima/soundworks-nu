@@ -19,7 +19,6 @@ brew install node
 
 # install and transpile project
 npm install
-cd node_modules/soundworks && npm run transpile && cd ../.. # to remove once nü no longer on soundworks develop branch
 npm run transpile
 
 # output success
