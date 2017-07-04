@@ -194,20 +194,20 @@ export default class NuDisplay extends soundworks.Canvas2dRenderer {
     // array of strings
     else{ args.forEach( (elmt) => { str += ' ' + elmt;  }); }
     // replace "cliendId" with actual client index and other conventional naming
-    str = str.replace("clientId", client.index + 1);
+    str = str.replace("clientId", client.index);
     str = str.replace("None", '');
     // return formatted string
     return str;
   }
 
   // set analyzer min audio dB range (clip)
-  minDb(value){
+  dBmin(value){
     if( value > -100 && value < 0 && value < this.audioAnalyser.in.maxDecibels )
       this.audioAnalyser.in.minDecibels = value;
   }
 
   // set analyzer max audio dB range (clip)
-  maxDb(value){
+  dBmax(value){
     if( value > -100 && value < 0 && value < this.audioAnalyser.in.minDecibels )
       this.audioAnalyser.in.maxDecibels = value;
   }
@@ -219,7 +219,7 @@ export default class NuDisplay extends soundworks.Canvas2dRenderer {
   }
 
   // set min frequency considered by the analyzer
-  minFreq(value){
+  freqMin(value){
     if( value > 0 && value < this.audioAnalyser.maxFreq ){
       this.audioAnalyser.minFreq = value;
       this.audioAnalyser.updateBinNorm();
@@ -227,7 +227,7 @@ export default class NuDisplay extends soundworks.Canvas2dRenderer {
   }
 
   // set max frequency considered by the analyzer
-  maxFreq(value){
+  freqMax(value){
     if( value < 20000 && value > this.audioAnalyser.minFreq ){
       this.audioAnalyser.maxFreq = value;
       this.audioAnalyser.updateBinNorm();
