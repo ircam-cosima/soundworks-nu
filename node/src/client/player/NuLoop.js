@@ -180,10 +180,9 @@ export default class NuLoop extends NuBaseModule {
 }
 
 // loop corresponding to a single audio sample
-class Loop extends soundworks.audio.TimeEngine {
+class Loop extends soundworks.audio.AudioTimeEngine {
   constructor(looper, soundParams) {
     super();
-
     this.looper = looper;
     this.soundParams = soundParams; // drop parameters
   }
