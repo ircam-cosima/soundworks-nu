@@ -9,7 +9,7 @@
 			"modernui" : 1
 		}
 ,
-		"rect" : [ 597.0, 443.0, 786.0, 480.0 ],
+		"rect" : [ 597.0, 443.0, 786.0, 501.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -54,7 +54,7 @@
 							"modernui" : 1
 						}
 ,
-						"rect" : [ 597.0, 469.0, 786.0, 454.0 ],
+						"rect" : [ 597.0, 469.0, 786.0, 475.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 12.0,
@@ -84,11 +84,24 @@
 						"showontab" : 1,
 						"boxes" : [ 							{
 								"box" : 								{
+									"fontface" : 1,
+									"id" : "obj-2",
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 11.5, 70.0, 525.0, 20.0 ],
+									"style" : "",
+									"text" : "WARNING: need to substract 1 to these indices to match the ones displayed by players"
+								}
+
+							}
+, 							{
+								"box" : 								{
 									"id" : "obj-22",
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 564.0, 377.0, 150.0, 20.0 ],
+									"patching_rect" : [ 564.0, 386.0, 150.0, 20.0 ],
 									"style" : "",
 									"text" : "unscaled marker coords"
 								}
@@ -101,9 +114,9 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 409.0, 376.0, 150.0, 22.0 ],
+									"patching_rect" : [ 409.0, 385.0, 150.0, 22.0 ],
 									"style" : "",
-									"text" : "2.421364 3.203645"
+									"text" : "0.420291 0.502816"
 								}
 
 							}
@@ -114,7 +127,7 @@
 									"numinlets" : 2,
 									"numoutlets" : 2,
 									"outlettype" : [ "", "" ],
-									"patching_rect" : [ 409.0, 347.0, 111.0, 22.0 ],
+									"patching_rect" : [ 409.0, 356.0, 111.0, 22.0 ],
 									"style" : "",
 									"text" : "route markerCoord"
 								}
@@ -127,7 +140,7 @@
 									"numinlets" : 2,
 									"numoutlets" : 2,
 									"outlettype" : [ "", "" ],
-									"patching_rect" : [ 370.833313, 220.0, 40.0, 22.0 ],
+									"patching_rect" : [ 370.833313, 229.0, 40.0, 22.0 ],
 									"style" : "",
 									"text" : "zl reg"
 								}
@@ -140,7 +153,7 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 526.0, 228.0, 120.0, 22.0 ],
+									"patching_rect" : [ 526.0, 237.0, 120.0, 22.0 ],
 									"style" : "",
 									"text" : "if $i1 == 0 then bang"
 								}
@@ -153,9 +166,9 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 385.0, 278.729736, 174.0, 22.0 ],
+									"patching_rect" : [ 385.0, 287.729736, 174.0, 22.0 ],
 									"style" : "",
-									"text" : "0.771845 0.708738 0 0 0 0 0 0"
+									"text" : "0.490291 0.572816 0 0 0 0 0 0"
 								}
 
 							}
@@ -166,7 +179,7 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 526.0, 175.0, 84.0, 22.0 ],
+									"patching_rect" : [ 526.0, 184.0, 84.0, 22.0 ],
 									"style" : "",
 									"text" : "loadmess poll"
 								}
@@ -179,7 +192,7 @@
 									"numinlets" : 1,
 									"numoutlets" : 5,
 									"outlettype" : [ "int", "int", "int", "int", "int" ],
-									"patching_rect" : [ 526.0, 202.0, 73.0, 22.0 ],
+									"patching_rect" : [ 526.0, 211.0, 73.0, 22.0 ],
 									"style" : "",
 									"text" : "mousestate"
 								}
@@ -192,7 +205,7 @@
 									"numinlets" : 3,
 									"numoutlets" : 3,
 									"outlettype" : [ "", "", "" ],
-									"patching_rect" : [ 391.833313, 193.0, 135.0, 22.0 ],
+									"patching_rect" : [ 391.833313, 202.0, 135.0, 22.0 ],
 									"style" : "",
 									"text" : "route mouse mouseidle"
 								}
@@ -207,7 +220,7 @@
 									"numoutlets" : 2,
 									"outlettype" : [ "", "bang" ],
 									"parameter_enable" : 0,
-									"patching_rect" : [ 11.5, 87.0, 50.0, 22.0 ],
+									"patching_rect" : [ 11.5, 100.0, 50.0, 22.0 ],
 									"style" : ""
 								}
 
@@ -219,7 +232,7 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 11.5, 114.0, 77.0, 22.0 ],
+									"patching_rect" : [ 11.5, 125.0, 77.0, 22.0 ],
 									"style" : "",
 									"text" : "nodeSize $1"
 								}
@@ -232,9 +245,9 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 11.5, 359.0, 351.0, 22.0 ],
+									"patching_rect" : [ 11.5, 368.0, 351.0, 22.0 ],
 									"style" : "",
-									"text" : "0."
+									"text" : "0. 0. 0."
 								}
 
 							}
@@ -245,9 +258,9 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 11.5, 391.0, 351.0, 22.0 ],
+									"patching_rect" : [ 11.5, 400.0, 351.0, 22.0 ],
 									"style" : "",
-									"text" : "node 1 0. 0. 0. 1"
+									"text" : "node 3 0.939565 0.07 0.04 1"
 								}
 
 							}
@@ -258,9 +271,9 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 11.5, 423.0, 351.0, 22.0 ],
+									"patching_rect" : [ 11.5, 432.0, 351.0, 22.0 ],
 									"style" : "",
-									"text" : "mouseidle 0.985437 0.73301 0 0 0 0 0 0"
+									"text" : "mouseidle 0.07767 0.087379 0 0 0 0 0 0"
 								}
 
 							}
@@ -271,9 +284,9 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 11.5, 44.0, 351.0, 33.0 ],
+									"patching_rect" : [ 11.5, 41.0, 508.5, 33.0 ],
 									"style" : "",
-									"text" : "display payers positions. to be used in a bpatcher.\ndoes not have a javascript counterpart."
+									"text" : "display payers positions. to be used in a bpatcher.\ndoes not have a javascript counterpart. "
 								}
 
 							}
@@ -292,7 +305,7 @@
 									"numoutlets" : 4,
 									"offset" : [ 0.0, 0.0 ],
 									"outlettype" : [ "", "", "", "" ],
-									"patching_rect" : [ 11.5, 140.0, 351.0, 207.0 ],
+									"patching_rect" : [ 11.5, 149.0, 351.0, 207.0 ],
 									"viewvisibility" : 1
 								}
 
