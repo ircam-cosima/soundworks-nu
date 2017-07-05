@@ -242,11 +242,11 @@ class AudioSynth {
         if(note.osc === undefined){ return; }
         try{ // weird Safari behavior...
           note.osc.stop();
-          note.isPlaying = false
         }
         catch(e){
           if( e.name !== 'InvalidStateError'){ console.error(e); }
         }              
+        note.isPlaying = false
         note.osc = undefined;
         // delete timeout reference
         note.timeout = undefined;
