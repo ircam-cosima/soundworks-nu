@@ -13,6 +13,7 @@ export { default as Probe } from './NuProbe';
 export { default as Synth } from './NuSynth';
 export { default as Stream } from './NuStream';
 export { default as Main } from './NuMain';
+export { default as Score } from './NuScore';
 
 /** 
 * the NuDisplay is a bit specific, not exposed as other modules
