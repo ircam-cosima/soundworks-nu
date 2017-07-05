@@ -45,6 +45,9 @@ export default class NuDisplay extends soundworks.Canvas2dRenderer {
         this[name](args); // function call
     });
 
+    // notify module is ready to receive msg
+    this.soundworksClient.send('moduleReady', this.moduleName);    
+    
     // ATTEMPT AT CROSSMODULE POSTING: FUNCTIONAL BUT ORIGINAL USE NO LONGER CONSIDERED: TODELETE WHEN CONFIRMED
     // setup internal callback
     // console.log('setup event listener')

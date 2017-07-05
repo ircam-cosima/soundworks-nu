@@ -24,6 +24,9 @@ export default class NuBaseModule {
       this.paramCallback(name, args);
     });
 
+    // notify module is ready to receive msg
+    this.soundworksClient.send('moduleReady', this.moduleName);
+
     // binding
     this.paramCallback = this.paramCallback.bind(this);
   }
