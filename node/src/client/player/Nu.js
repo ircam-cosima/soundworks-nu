@@ -37,3 +37,14 @@ if (!Float32Array.prototype.slice) {
     return target;
   };
 }
+
+// couterpart of copyToChannel, without overwrite
+AudioBuffer.prototype.addToChannel = function( source, channelNumber, startInChannel ){
+  let chData = this.getChannelData( channelNumber );
+  let l = source.length;
+
+  for (let i = 0; i < l; i++){
+    chData[startInChannel + i] += source[i];
+  }
+  return this;
+}
