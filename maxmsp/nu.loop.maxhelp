@@ -9,7 +9,7 @@
 			"modernui" : 1
 		}
 ,
-		"rect" : [ 601.0, 646.0, 482.0, 488.0 ],
+		"rect" : [ 866.0, 439.0, 482.0, 488.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -1065,7 +1065,7 @@
 									"numoutlets" : 0,
 									"patching_rect" : [ 115.0, 405.0, 93.0, 22.0 ],
 									"style" : "",
-									"text" : "nu.loop 0 snap"
+									"text" : "nu.loop -1 snap"
 								}
 
 							}
@@ -1323,7 +1323,7 @@
 							"modernui" : 1
 						}
 ,
-						"rect" : [ 601.0, 672.0, 482.0, 462.0 ],
+						"rect" : [ 866.0, 465.0, 482.0, 462.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 12.0,
@@ -1549,12 +1549,13 @@
 , 							{
 								"box" : 								{
 									"id" : "obj-2",
+									"linecount" : 2,
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 335.25, 117.0, 129.5, 20.0 ],
+									"patching_rect" : [ 335.25, 117.0, 133.0, 33.0 ],
 									"style" : "",
-									"text" : "jitter (time) amplitude"
+									"text" : "jitter (on time) amplitude (in samples)"
 								}
 
 							}
@@ -1563,6 +1564,7 @@
 									"floatoutput" : 1,
 									"id" : "obj-3",
 									"maxclass" : "slider",
+									"mult" : 30.0,
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],

@@ -144,7 +144,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 289.0, 379.083313, 40.0, 22.0 ],
 					"style" : "",
-					"text" : "0"
+					"text" : "3"
 				}
 
 			}
@@ -238,7 +238,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 74.333336, 403.75, 32.0, 20.0 ],
 					"style" : "",
-					"text" : "1 s",
+					"text" : "3 s",
 					"textjustification" : 2
 				}
 
@@ -373,7 +373,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 11.5, 44.0, 435.0, 47.0 ],
+					"patching_rect" : [ 11.5, 44.0, 437.0, 47.0 ],
 					"style" : "",
 					"text" : "Establish connection with Soundworks server. Receive nuMain msg from server.\nAN INSTANCE (and one only) OF THIS MODULE MUST BE PRESENT IN ANY SOUNDWORKS PATCH."
 				}
@@ -535,7 +535,7 @@
  ],
 		"dependency_cache" : [ 			{
 				"name" : "nu.main.maxpat",
-				"bootpath" : "~/Projects/Cosima/devs/Nu/soundworks-nu/src/maxmsp",
+				"bootpath" : "~/Projects/Cosima/devs/Nu/soundworks-nu/maxmsp",
 				"type" : "JSON",
 				"implicit" : 1
 			}

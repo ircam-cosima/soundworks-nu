@@ -9,7 +9,7 @@
 			"modernui" : 1
 		}
 ,
-		"rect" : [ 1458.0, 712.0, 519.0, 438.0 ],
+		"rect" : [ 1458.0, 712.0, 568.0, 426.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -54,7 +54,7 @@
 							"modernui" : 1
 						}
 ,
-						"rect" : [ 1458.0, 738.0, 519.0, 412.0 ],
+						"rect" : [ 1458.0, 738.0, 568.0, 400.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 12.0,
@@ -87,7 +87,7 @@
 									"bgcolor" : [ 0.376471, 0.384314, 0.4, 0.0 ],
 									"bgcolor2" : [ 0.290196, 0.309804, 0.301961, 0.0 ],
 									"bgfillcolor_angle" : 270.0,
-									"bgfillcolor_autogradient" : 0,
+									"bgfillcolor_autogradient" : 0.0,
 									"bgfillcolor_color" : [ 0.290196, 0.309804, 0.301961, 1.0 ],
 									"bgfillcolor_color1" : [ 0.376471, 0.384314, 0.4, 0.0 ],
 									"bgfillcolor_color2" : [ 0.290196, 0.309804, 0.301961, 0.0 ],
@@ -101,7 +101,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 130.5, 266.0, 51.0, 22.0 ],
 									"style" : "",
-									"text" : "0.505",
+									"text" : "1.",
 									"textcolor" : [ 0.0, 0.0, 0.0, 1.0 ]
 								}
 
@@ -180,7 +180,7 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 225.0, 247.0, 113.0, 22.0 ],
+									"patching_rect" : [ 225.0, 226.0, 113.0, 22.0 ],
 									"style" : "",
 									"text" : "prepend startScore"
 								}
@@ -202,12 +202,11 @@
 , 							{
 								"box" : 								{
 									"id" : "obj-16",
-									"linecount" : 2,
 									"maxclass" : "message",
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 225.0, 199.0, 252.0, 35.0 ],
+									"patching_rect" : [ 225.0, 199.0, 317.0, 22.0 ],
 									"style" : "",
 									"text" : "0. ab1 0.2 bb1 0.4 c1 0.6 db1 0.8 eb1 1. f1 1.2 g1 1.4 ab2"
 								}
@@ -220,7 +219,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 271.5, 314.0, 205.5, 33.0 ],
+									"patching_rect" : [ 271.5, 285.0, 205.5, 33.0 ],
 									"style" : "",
 									"text" : "stop all sounds from all initiated sequences"
 								}
@@ -233,7 +232,7 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 225.0, 314.0, 37.0, 22.0 ],
+									"patching_rect" : [ 225.0, 285.0, 37.0, 22.0 ],
 									"style" : "",
 									"text" : "reset"
 								}

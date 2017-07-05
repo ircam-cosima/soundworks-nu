@@ -9,7 +9,7 @@
 			"modernui" : 1
 		}
 ,
-		"rect" : [ 339.0, 326.0, 884.0, 523.0 ],
+		"rect" : [ 1122.0, 348.0, 850.0, 522.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -54,7 +54,7 @@
 							"modernui" : 1
 						}
 ,
-						"rect" : [ 0.0, 26.0, 884.0, 497.0 ],
+						"rect" : [ 0.0, 26.0, 850.0, 496.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 12.0,
@@ -1049,7 +1049,7 @@
 							"modernui" : 1
 						}
 ,
-						"rect" : [ 339.0, 352.0, 884.0, 497.0 ],
+						"rect" : [ 1122.0, 374.0, 850.0, 496.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 12.0,
@@ -1080,10 +1080,11 @@
 						"boxes" : [ 							{
 								"box" : 								{
 									"id" : "obj-58",
+									"linecount" : 2,
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 753.0, 240.0, 120.0, 20.0 ],
+									"patching_rect" : [ 753.0, 240.0, 80.0, 33.0 ],
 									"style" : "",
 									"text" : "set blinking bottom"
 								}
@@ -1095,7 +1096,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 702.0, 141.5, 150.0, 20.0 ],
+									"patching_rect" : [ 702.0, 141.5, 131.0, 20.0 ],
 									"style" : "",
 									"text" : "set subtitle"
 								}
@@ -1233,7 +1234,7 @@
 , 							{
 								"box" : 								{
 									"angle" : 0.0,
-									"bgcolor" : [ 0.130341, 0.154499, 1.0, 1.0 ],
+									"bgcolor" : [ 1.0, 1.0, 1.0, 1.0 ],
 									"border" : 1,
 									"bordercolor" : [ 0.0, 0.0, 0.0, 1.0 ],
 									"id" : "obj-22",
@@ -1279,7 +1280,7 @@
 , 							{
 								"box" : 								{
 									"angle" : 0.0,
-									"bgcolor" : [ 0.0, 0.679487, 0.169872, 1.0 ],
+									"bgcolor" : [ 0.0, 0.0, 0.0, 1.0 ],
 									"border" : 1,
 									"bordercolor" : [ 0.0, 0.0, 0.0, 1.0 ],
 									"id" : "obj-16",

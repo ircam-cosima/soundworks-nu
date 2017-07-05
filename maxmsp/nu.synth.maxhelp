@@ -9,7 +9,7 @@
 			"modernui" : 1
 		}
 ,
-		"rect" : [ 371.0, 232.0, 603.0, 537.0 ],
+		"rect" : [ 1323.0, 707.0, 603.0, 552.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -54,7 +54,7 @@
 							"modernui" : 1
 						}
 ,
-						"rect" : [ 0.0, 26.0, 603.0, 511.0 ],
+						"rect" : [ 1323.0, 733.0, 603.0, 526.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 12.0,
@@ -116,19 +116,6 @@
 									"patching_rect" : [ 287.5625, 488.583374, 70.0, 22.0 ],
 									"style" : "",
 									"text" : "nu.synth -1"
-								}
-
-							}
-, 							{
-								"box" : 								{
-									"id" : "obj-2",
-									"maxclass" : "message",
-									"numinlets" : 2,
-									"numoutlets" : 1,
-									"outlettype" : [ "" ],
-									"patching_rect" : [ 408.3125, 450.166687, 50.0, 22.0 ],
-									"style" : "",
-									"text" : "2"
 								}
 
 							}
@@ -3321,7 +3308,7 @@
 													"outlettype" : [ "" ],
 													"patching_rect" : [ 151.0, 217.0, 50.0, 22.0 ],
 													"style" : "",
-													"text" : "2"
+													"text" : "1"
 												}
 
 											}
@@ -4363,17 +4350,6 @@
 									"destination" : [ "obj-10", 0 ],
 									"disabled" : 0,
 									"hidden" : 0,
-									"order" : 1,
-									"source" : [ "obj-74", 0 ]
-								}
-
-							}
-, 							{
-								"patchline" : 								{
-									"destination" : [ "obj-2", 1 ],
-									"disabled" : 0,
-									"hidden" : 0,
-									"order" : 0,
 									"source" : [ "obj-74", 0 ]
 								}
 
@@ -4465,7 +4441,7 @@
 							"modernui" : 1
 						}
 ,
-						"rect" : [ 371.0, 258.0, 603.0, 511.0 ],
+						"rect" : [ 0.0, 26.0, 603.0, 526.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 12.0,
@@ -4499,7 +4475,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 222.0, 46.0, 92.0, 20.0 ],
+									"patching_rect" : [ 222.0, 84.0, 92.0, 20.0 ],
 									"style" : "",
 									"text" : "set note on/off"
 								}
@@ -4515,7 +4491,7 @@
 									"numoutlets" : 2,
 									"outlettype" : [ "", "bang" ],
 									"parameter_enable" : 0,
-									"patching_rect" : [ 222.0, 69.25, 50.0, 22.0 ],
+									"patching_rect" : [ 222.0, 107.25, 50.0, 22.0 ],
 									"style" : ""
 								}
 
@@ -4528,7 +4504,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "int" ],
 									"parameter_enable" : 0,
-									"patching_rect" : [ 253.0, 95.0, 24.0, 24.0 ],
+									"patching_rect" : [ 253.0, 133.0, 24.0, 24.0 ],
 									"style" : ""
 								}
 
@@ -4540,7 +4516,7 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 222.0, 124.0, 50.0, 22.0 ],
+									"patching_rect" : [ 222.0, 162.0, 50.0, 22.0 ],
 									"style" : "",
 									"text" : "pak 0 0"
 								}
@@ -4553,7 +4529,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 190.5, 265.916687, 95.5, 33.0 ],
+									"patching_rect" : [ 190.5, 303.916687, 95.5, 33.0 ],
 									"style" : "",
 									"text" : "note volume on playerId"
 								}
@@ -4592,7 +4568,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 205.25, 346.25, 130.5, 33.0 ],
+									"patching_rect" : [ 205.25, 384.25, 130.5, 33.0 ],
 									"style" : "",
 									"text" : "stop all synth notes of current player"
 								}
@@ -4605,7 +4581,7 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 168.25, 351.75, 37.0, 22.0 ],
+									"patching_rect" : [ 168.25, 389.75, 37.0, 22.0 ],
 									"style" : "",
 									"text" : "clear"
 								}
@@ -4765,7 +4741,7 @@
 									"numoutlets" : 2,
 									"outlettype" : [ "", "bang" ],
 									"parameter_enable" : 0,
-									"patching_rect" : [ 54.5, 204.0, 50.0, 22.0 ],
+									"patching_rect" : [ 54.5, 242.0, 50.0, 22.0 ],
 									"style" : ""
 								}
 
@@ -4779,7 +4755,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"parameter_enable" : 0,
-									"patching_rect" : [ 88.5, 232.0, 126.0, 13.0 ],
+									"patching_rect" : [ 88.5, 270.0, 126.0, 13.0 ],
 									"size" : 1.0,
 									"style" : ""
 								}
@@ -4792,7 +4768,7 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 54.5, 276.916687, 134.0, 22.0 ],
+									"patching_rect" : [ 54.5, 314.916687, 134.0, 22.0 ],
 									"style" : "",
 									"text" : "linkPlayerToNote $1 $2"
 								}
@@ -4805,7 +4781,7 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 54.5, 252.916687, 53.0, 22.0 ],
+									"patching_rect" : [ 54.5, 290.916687, 53.0, 22.0 ],
 									"style" : "",
 									"text" : "pak 0 0."
 								}
@@ -4818,7 +4794,7 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 222.0, 149.75, 97.0, 22.0 ],
+									"patching_rect" : [ 222.0, 187.75, 97.0, 22.0 ],
 									"style" : "",
 									"text" : "noteOnOff $1 $2"
 								}
@@ -4830,7 +4806,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 112.75, 162.0, 77.5, 20.0 ],
+									"patching_rect" : [ 112.75, 200.0, 77.5, 20.0 ],
 									"style" : "",
 									"text" : "main volume"
 								}
@@ -4857,7 +4833,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"parameter_enable" : 0,
-									"patching_rect" : [ 31.5, 146.0, 126.0, 13.0 ],
+									"patching_rect" : [ 31.5, 184.0, 126.0, 13.0 ],
 									"size" : 1.0,
 									"style" : ""
 								}
@@ -4870,7 +4846,7 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 31.5, 162.0, 66.0, 22.0 ],
+									"patching_rect" : [ 31.5, 200.0, 66.0, 22.0 ],
 									"style" : "",
 									"text" : "volume $1"
 								}
@@ -4883,7 +4859,7 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 11.5, 104.0, 70.0, 22.0 ],
+									"patching_rect" : [ 11.5, 142.0, 70.0, 22.0 ],
 									"style" : "",
 									"text" : "playerId $1"
 								}
@@ -4898,7 +4874,7 @@
 									"numoutlets" : 2,
 									"outlettype" : [ "", "bang" ],
 									"parameter_enable" : 0,
-									"patching_rect" : [ 11.5, 80.0, 50.0, 22.0 ],
+									"patching_rect" : [ 11.5, 118.0, 50.0, 22.0 ],
 									"style" : ""
 								}
 
@@ -4918,12 +4894,13 @@
 , 							{
 								"box" : 								{
 									"id" : "obj-11",
+									"linecount" : 3,
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 11.5, 46.0, 174.5, 20.0 ],
+									"patching_rect" : [ 11.5, 46.0, 330.5, 47.0 ],
 									"style" : "",
-									"text" : "Distributed synthesizer"
+									"text" : "Distributed synthesizer\nWarning: some parameters require a note off->on to be taken into acount"
 								}
 
 							}
@@ -5153,7 +5130,7 @@
 		"lines" : [  ],
 		"dependency_cache" : [ 			{
 				"name" : "nu.synth.maxpat",
-				"bootpath" : "~/Projects/Cosima/devs/Nu/soundworks-nu/src/maxmsp",
+				"bootpath" : "~/Projects/Cosima/devs/Nu/soundworks-nu/maxmsp",
 				"type" : "JSON",
 				"implicit" : 1
 			}

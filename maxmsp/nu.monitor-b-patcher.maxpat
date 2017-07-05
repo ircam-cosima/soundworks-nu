@@ -41,7 +41,7 @@
 					"bgcolor" : [ 0.665086, 0.106606, 0.136815, 1.0 ],
 					"bgcolor2" : [ 0.720698, 0.16723, 0.080014, 1.0 ],
 					"bgfillcolor_angle" : 270.0,
-					"bgfillcolor_autogradient" : 0,
+					"bgfillcolor_autogradient" : 0.0,
 					"bgfillcolor_color" : [ 0.290196, 0.309804, 0.301961, 1.0 ],
 					"bgfillcolor_color1" : [ 0.665086, 0.106606, 0.136815, 1.0 ],
 					"bgfillcolor_color2" : [ 0.720698, 0.16723, 0.080014, 1.0 ],
@@ -373,8 +373,7 @@
 					"presentation" : 1,
 					"presentation_rect" : [ 38.25, 23.666668, 81.5, 20.0 ],
 					"style" : "",
-					"text" : "master gain",
-					"textcolor" : [ 0.0, 0.0, 0.0, 1.0 ]
+					"text" : "master gain"
 				}
 
 			}
