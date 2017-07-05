@@ -72,9 +72,11 @@ export default class PlayerExperience extends soundworks.Experience {
       this.renderer = new NuDisplay(this);
       this.view.addRenderer(this.renderer);
 
-      // init client position in room
+      // init client position in room (AWAITING REAL LOC. SYSTEM)
       let coordinates = this.sharedConfig.get('setup.coordinates');
       this.coordinates = coordinates[client.index];
+      // random coordinates if reached end of predefined coords
+      if( this.coordinates === undefined){ this.coordinates = [ Math.random(), Math.random() ]; }
       this.send('coordinates', this.coordinates);
 
       // init Nu modules

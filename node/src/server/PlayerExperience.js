@@ -46,14 +46,22 @@ export default class PlayerExperience extends soundworks.Experience {
     switch (client.type) {
       case 'player':
 
-        // update local attributes
-        this.playerMap.set( client.index, client );
-
-        // update nu modules
-        Object.keys(Nu).forEach( (nuClass) => {
-          this['nu' + nuClass].enterPlayer(client);
+        // msg callback: receive client coordinates 
+        // (could use local service, this way lets open for pos estimation in client in the future)
+        this.receive(client, 'coordinates', (xy) => {
+          this.coordinatesMap.set( client.index, xy );
+          // update client pos in osc client
+          this.osc.send('/nuMain/playerPos', [client.index, xy[0], xy[1]] );
         });
 
+        // update nu modules (when they're ready to receive)
+        this.receive(client, 'moduleReady', (nuClassPrefixed) => {
+          this[nuClassPrefixed].enterPlayer(client);
+        });
+
+        // update local attributes
+        this.playerMap.set( client.index, client );
+        
         break; 
 
       case 'controller':

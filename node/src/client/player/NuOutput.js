@@ -60,8 +60,7 @@ export default class NuOutput extends NuBaseModule {
     this.startRecTime = 0.0;
 
     // init coordinates
-    let coordinates = this.soundworksClient.sharedConfig.get('setup.coordinates');
-    let coordXY = coordinates[client.index];
+    let coordXY = this.soundworksClient.coordinates;
     this.coordXYZ = [ coordXY[0], coordXY[1], 0];
 
     // connect graph
