@@ -43,7 +43,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 260.0, 241.0, 81.0, 22.0 ],
+					"patching_rect" : [ 285.0, 255.5, 81.0, 22.0 ],
 					"style" : "",
 					"text" : "prepend gain"
 				}
@@ -56,7 +56,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 211.0, 211.0, 102.0, 22.0 ],
+					"patching_rect" : [ 231.0, 221.5, 102.0, 22.0 ],
 					"style" : "",
 					"text" : "prepend userPos"
 				}
@@ -69,7 +69,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 162.0, 181.0, 92.0, 22.0 ],
+					"patching_rect" : [ 177.0, 187.5, 92.0, 22.0 ],
 					"style" : "",
 					"text" : "prepend record"
 				}
@@ -82,7 +82,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 113.0, 151.0, 115.0, 22.0 ],
+					"patching_rect" : [ 123.0, 153.5, 115.0, 22.0 ],
 					"style" : "",
 					"text" : "prepend ambiOrder"
 				}
@@ -95,7 +95,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 64.0, 121.0, 126.0, 22.0 ],
+					"patching_rect" : [ 69.0, 119.5, 126.0, 22.0 ],
 					"style" : "",
 					"text" : "prepend enableRoom"
 				}
@@ -133,7 +133,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 15.0, 91.0, 119.0, 22.0 ],
+					"patching_rect" : [ 15.0, 85.5, 119.0, 22.0 ],
 					"style" : "",
 					"text" : "prepend enableSpat"
 				}
@@ -145,7 +145,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 340.0, 91.0, 117.0, 22.0 ],
+					"patching_rect" : [ 340.0, 51.0, 117.0, 22.0 ],
 					"style" : "",
 					"text" : "print WRONG_ARG"
 				}

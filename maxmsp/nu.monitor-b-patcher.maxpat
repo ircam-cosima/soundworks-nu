@@ -608,7 +608,7 @@
 					"presentation" : 1,
 					"presentation_rect" : [ 104.75, 196.166672, 32.0, 20.0 ],
 					"style" : "",
-					"text" : "9 s",
+					"text" : "2 s",
 					"textjustification" : 2
 				}
 

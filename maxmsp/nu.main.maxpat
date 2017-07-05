@@ -9,7 +9,7 @@
 			"modernui" : 1
 		}
 ,
-		"rect" : [ 483.0, 681.0, 1416.0, 467.0 ],
+		"rect" : [ 547.0, 248.0, 1416.0, 467.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -65,7 +65,7 @@
 							"modernui" : 1
 						}
 ,
-						"rect" : [ 473.0, 860.0, 481.0, 275.0 ],
+						"rect" : [ 473.0, 860.0, 458.0, 276.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 12.0,
@@ -92,7 +92,6 @@
 						"tags" : "",
 						"style" : "",
 						"subpatcher_template" : "",
-						"visible" : 1,
 						"boxes" : [ 							{
 								"box" : 								{
 									"id" : "obj-2",
@@ -122,14 +121,12 @@
 , 							{
 								"box" : 								{
 									"id" : "obj-7",
-									"linecount" : 3,
 									"maxclass" : "message",
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 183.0, 114.249969, 305.0, 49.0 ],
-									"style" : "",
-									"text" : "\"Macintosh HD:/Users/davipoir/Projects/Cosima/devs/Nu/soundworks-nu/node/public\""
+									"patching_rect" : [ 183.0, 114.249969, 210.0, 22.0 ],
+									"style" : ""
 								}
 
 							}
@@ -627,7 +624,7 @@
 				"box" : 				{
 					"comment" : "",
 					"id" : "obj-21",
-					"index" : 1,
+					"index" : 0,
 					"maxclass" : "outlet",
 					"numinlets" : 1,
 					"numoutlets" : 0,
@@ -2740,7 +2737,7 @@
 				"box" : 				{
 					"comment" : "",
 					"id" : "obj-1",
-					"index" : 1,
+					"index" : 0,
 					"maxclass" : "inlet",
 					"numinlets" : 0,
 					"numoutlets" : 1,
@@ -3277,7 +3274,15 @@
 				}
 
 			}
- ]
+ ],
+		"dependency_cache" : [ 			{
+				"name" : "thru.maxpat",
+				"bootpath" : "C74:/patchers/m4l/Pluggo for Live resources/patches",
+				"type" : "JSON",
+				"implicit" : 1
+			}
+ ],
+		"autosave" : 0
 	}
 
 }

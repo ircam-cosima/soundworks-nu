@@ -9,7 +9,7 @@
 			"modernui" : 1
 		}
 ,
-		"rect" : [ 363.0, 718.0, 541.0, 397.0 ],
+		"rect" : [ 601.0, 376.0, 541.0, 397.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -236,7 +236,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 329.75, 27.0, 117.0, 22.0 ],
+					"patching_rect" : [ 359.555542, 27.0, 117.0, 22.0 ],
 					"style" : "",
 					"text" : "print WRONG_ARG"
 				}

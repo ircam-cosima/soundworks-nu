@@ -93,7 +93,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 361.0, 99.0, 83.0, 22.0 ],
+					"patching_rect" : [ 329.0, 112.0, 83.0, 22.0 ],
 					"style" : "",
 					"text" : "orientation $1"
 				}
@@ -106,7 +106,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 285.000031, 99.0, 64.0, 22.0 ],
+					"patching_rect" : [ 259.0, 82.0, 64.0, 22.0 ],
 					"style" : "",
 					"text" : "energy $1"
 				}
@@ -119,7 +119,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 220.0, 99.0, 57.0, 22.0 ],
+					"patching_rect" : [ 189.0, 105.0, 57.0, 22.0 ],
 					"style" : "",
 					"text" : "touch $1"
 				}
@@ -158,7 +158,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 119.0, 99.0, 92.0, 22.0 ],
+					"patching_rect" : [ 119.0, 75.0, 92.0, 22.0 ],
 					"style" : "",
 					"text" : "acceleration $1"
 				}
