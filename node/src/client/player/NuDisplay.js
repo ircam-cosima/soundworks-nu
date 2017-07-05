@@ -9,6 +9,7 @@ const audioContext = soundworks.audioContext;
 export default class NuDisplay extends soundworks.Canvas2dRenderer {
   constructor(soundworksClient) {
     super(1/24); // update rate = 0: synchronize updates to frame rate
+    this.moduleName = 'nuDisplay'; 
 
     // local attributes
     this.soundworksClient = soundworksClient;
@@ -34,7 +35,7 @@ export default class NuDisplay extends soundworks.Canvas2dRenderer {
     this.analyserCallback = this.analyserCallback.bind(this);
 
     // setup receive callbacks
-    this.soundworksClient.receive('nuDisplay', (args) => {
+    this.soundworksClient.receive(this.moduleName, (args) => {
       // get header
       let name = args.shift();
       // convert singleton array if need be

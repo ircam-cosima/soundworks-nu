@@ -13,10 +13,9 @@ export default class NuPath extends NuBaseModule {
 
     // to be saved params to send to client when connects:
     this.params = { masterGain: 1.0, 
-                    propagationSpeed: 1.0, 
+                    propagationSpeed: 100.0, 
                     propagationGain: 0.9, 
                     propagationRxMinGain: 0.01, 
-                    audioFileId: 0, 
                     perc: 1, 
                     loop: true, 
                     accSlope: 0, 

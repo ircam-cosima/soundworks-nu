@@ -13,8 +13,7 @@ export default class NuGrain extends NuBaseModule {
 
     // local attributes
     this.params = { 
-      gain: 1.0, 
-      audioFileId: 0, 
+      gain: 1.0,  
       enable: 0, 
       override: 1.0, 
       energy: 0, 
