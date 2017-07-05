@@ -9,7 +9,7 @@
 			"modernui" : 1
 		}
 ,
-		"rect" : [ 149.0, 313.0, 368.0, 230.0 ],
+		"rect" : [ 212.0, 322.0, 368.0, 230.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 1,
 		"default_fontsize" : 12.0,
@@ -38,13 +38,13 @@
 		"subpatcher_template" : "",
 		"boxes" : [ 			{
 				"box" : 				{
-					"bgcolor" : [ 0.784314, 0.145098, 0.023529, 1.0 ],
-					"bgcolor2" : [ 0.784314, 0.145098, 0.023529, 1.0 ],
+					"bgcolor" : [ 0.665086, 0.106606, 0.136815, 1.0 ],
+					"bgcolor2" : [ 0.720698, 0.16723, 0.080014, 1.0 ],
 					"bgfillcolor_angle" : 270.0,
-					"bgfillcolor_autogradient" : 0.0,
+					"bgfillcolor_autogradient" : 0,
 					"bgfillcolor_color" : [ 0.290196, 0.309804, 0.301961, 1.0 ],
-					"bgfillcolor_color1" : [ 0.784314, 0.145098, 0.023529, 1.0 ],
-					"bgfillcolor_color2" : [ 0.784314, 0.145098, 0.023529, 1.0 ],
+					"bgfillcolor_color1" : [ 0.665086, 0.106606, 0.136815, 1.0 ],
+					"bgfillcolor_color2" : [ 0.720698, 0.16723, 0.080014, 1.0 ],
 					"bgfillcolor_proportion" : 0.39,
 					"bgfillcolor_type" : "gradient",
 					"fontsize" : 10.0,
@@ -374,7 +374,7 @@
 					"presentation_rect" : [ 38.25, 23.666668, 81.5, 20.0 ],
 					"style" : "",
 					"text" : "master gain",
-					"textcolor" : [ 0.862745, 0.870588, 0.878431, 1.0 ]
+					"textcolor" : [ 0.0, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -382,7 +382,7 @@
 				"box" : 				{
 					"floatoutput" : 1,
 					"id" : "obj-32",
-					"knobcolor" : [ 0.784314, 0.145098, 0.023529, 1.0 ],
+					"knobcolor" : [ 0.764706, 0.87451, 0.890196, 1.0 ],
 					"maxclass" : "slider",
 					"numinlets" : 1,
 					"numoutlets" : 1,
@@ -503,7 +503,7 @@
 					"presentation" : 1,
 					"presentation_rect" : [ 93.25, 4.0, 40.0, 22.0 ],
 					"style" : "",
-					"text" : "1",
+					"text" : "0",
 					"textjustification" : 2
 				}
 
@@ -609,7 +609,7 @@
 					"presentation" : 1,
 					"presentation_rect" : [ 104.75, 196.166672, 32.0, 20.0 ],
 					"style" : "",
-					"text" : "1 s",
+					"text" : "9 s",
 					"textjustification" : 2
 				}
 

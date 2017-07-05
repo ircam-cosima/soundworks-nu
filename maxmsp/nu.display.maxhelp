@@ -1185,7 +1185,7 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 661.0, 80.0, 75.0, 22.0 ],
+									"patching_rect" : [ 661.0, 80.0, 78.0, 22.0 ],
 									"style" : "",
 									"text" : "clientId"
 								}
@@ -1279,7 +1279,7 @@
 , 							{
 								"box" : 								{
 									"angle" : 0.0,
-									"bgcolor" : [ 0.0, 0.0, 0.0, 1.0 ],
+									"bgcolor" : [ 0.0, 0.679487, 0.169872, 1.0 ],
 									"border" : 1,
 									"bordercolor" : [ 0.0, 0.0, 0.0, 1.0 ],
 									"id" : "obj-16",
@@ -1406,7 +1406,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 242.799988, 387.083313, 45.0, 22.0 ],
 									"style" : "",
-									"text" : "18882",
+									"text" : "80",
 									"textcolor" : [ 1.0, 1.0, 1.0, 1.0 ],
 									"textjustification" : 2
 								}
@@ -1446,7 +1446,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 120.799988, 387.083313, 55.0, 22.0 ],
 									"style" : "",
-									"text" : "0",
+									"text" : "60",
 									"textcolor" : [ 1.0, 1.0, 1.0, 1.0 ]
 								}
 
@@ -1524,7 +1524,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 184.25, 303.083313, 83.0, 22.0 ],
 									"style" : "",
-									"text" : "30",
+									"text" : "23",
 									"textcolor" : [ 1.0, 1.0, 1.0, 1.0 ],
 									"textjustification" : 2
 								}
@@ -1564,7 +1564,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 97.799988, 303.083313, 42.0, 22.0 ],
 									"style" : "",
-									"text" : "-57",
+									"text" : "3",
 									"textcolor" : [ 1.0, 1.0, 1.0, 1.0 ]
 								}
 
