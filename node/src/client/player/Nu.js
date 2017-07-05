@@ -12,6 +12,7 @@ export { default as Grain } from './NuGrain';
 export { default as Probe } from './NuProbe';
 export { default as Synth } from './NuSynth';
 export { default as Stream } from './NuStream';
+export { default as Main } from './NuMain';
 
 /** 
 * the NuDisplay is a bit specific, not exposed as other modules
@@ -34,23 +35,4 @@ if (!Float32Array.prototype.slice) {
     }
     return target;
   };
-}
-
-
-// ------------------------------------------------------------
-// NU MAIN
-// ------------------------------------------------------------
-
-import NuBaseModule from './NuBaseModule'
-
-export default class NuMain extends NuBaseModule {
-  constructor(soundworksClient) {
-    super(soundworksClient, 'nuMain');
-  }
-
-  // reload page
-  reload(){
-  	window.location.reload(true);
-  }
-
 }
