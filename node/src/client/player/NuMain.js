@@ -5,8 +5,8 @@
 import NuBaseModule from './NuBaseModule'
 
 export default class NuMain extends NuBaseModule {
-  constructor(soundworksClient) {
-    super(soundworksClient, 'nuMain');
+  constructor(playerExperience) {
+    super(playerExperience, 'nuMain');
   }
 
   // reload page

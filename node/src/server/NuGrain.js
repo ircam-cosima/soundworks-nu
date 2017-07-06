@@ -8,8 +8,8 @@
 import NuBaseModule from './NuBaseModule'
 
 export default class NuGrain extends NuBaseModule {
-  constructor(soundworksServer) {
-    super(soundworksServer, 'nuGrain');
+  constructor(serverExperience) {
+    super(serverExperience, 'nuGrain');
 
     // local attributes
     this.params = { 
@@ -26,7 +26,7 @@ export default class NuGrain extends NuBaseModule {
   // reset granular engine on client's side (required e.g. to set tempo)
   reset(){
     // re-route to clients
-    this.soundworksServer.broadcast( 'player', null, this.moduleName, ['reset'] );
+    this.e.broadcast( 'player', null, this.moduleName, ['reset'] );
   }  
 
   /**
@@ -37,10 +37,10 @@ export default class NuGrain extends NuBaseModule {
   enterPlayer(client){
     // send to new client information regarding current groups parameters
     Object.keys(this.params).forEach( (key) => {
-      this.soundworksServer.send(client, this.moduleName, [key, this.params[key]] );
+      this.e.send(client, this.moduleName, [key, this.params[key]] );
     });
     // reset granular engine to take preset values into account
-    this.soundworksServer.send( client, this.moduleName, ['reset'] );
+    this.e.send( client, this.moduleName, ['reset'] );
   } 
 
 }

@@ -23,13 +23,13 @@ for (var key in audioFiles) {
 }
 
 export default class NuLoop extends NuBaseModule {
-  constructor(soundworksClient) {
-    super(soundworksClient, 'nuLoop');
+  constructor(playerExperience) {
+    super(playerExperience, 'nuLoop');
 
     // local attributes
     this.params = {};
-    let audioBuffers = this.soundworksClient.loader.data;
-    this.synth = new SampleSynth(audioBuffers, this.soundworksClient.nuOutput.in);
+    let audioBuffers = this.e.loader.data;
+    this.synth = new SampleSynth(audioBuffers, this.e.nuOutput.in);
     this.loops = new Matrix(audioBuffers.length, this.params.divisions);
 
     // binding
@@ -79,7 +79,7 @@ export default class NuLoop extends NuBaseModule {
     // check valid trackName / trackId
     let trackId = audioFileNameToId.get(trackName);
     if( trackId === undefined) {
-      console.warn('required track ', trackName, 'not available, actual content:', this.soundworksClient.loader.options.files);
+      console.warn('required track ', trackName, 'not available, actual content:', this.e.loader.options.files);
       return;
     }
     // check valid slotId
@@ -93,10 +93,10 @@ export default class NuLoop extends NuBaseModule {
       // discard start already started source
       if( this.loops.mat[trackId][slotId] !== undefined ) { return; }
       // start new loop event
-      let slotTime = this.getSlotTime(this.soundworksClient.scheduler.syncTime, slotId);
+      let slotTime = this.getSlotTime(this.e.scheduler.syncTime, slotId);
       this.start(slotTime, {trackId: trackId, slotId: slotId}, true);
       // enable visual feedback
-      this.soundworksClient.renderer.enable();
+      this.e.renderer.enable();
     }
 
     // remove event from loop
@@ -104,7 +104,7 @@ export default class NuLoop extends NuBaseModule {
       // this.looper.stop(time, soundParams, true);
       this.remove(trackId, slotId);
       // disable visual feedback
-      this.soundworksClient.renderer.disable();
+      this.e.renderer.disable();
     }
 
   }
@@ -125,7 +125,7 @@ export default class NuLoop extends NuBaseModule {
     // add loop to set
     this.loops.mat[soundParams.trackId][soundParams.slotId] = loop;
     // add loop to scheduler
-    this.soundworksClient.scheduler.add(loop, time);
+    this.e.scheduler.add(loop, time);
   }
 
   // callback: called at each loop (in scheduler)
@@ -133,7 +133,7 @@ export default class NuLoop extends NuBaseModule {
     const soundParams = loop.soundParams;
     const params = this.params;
     // trigger sound
-    const duration = this.synth.trigger(this.soundworksClient.scheduler.audioTime, soundParams);
+    const duration = this.synth.trigger(this.e.scheduler.audioTime, soundParams);
     // add jitter (randomness to beat exact time)
     let jitter = this.params.jitter * // jitter gain in [0:1]
                  Math.random() *  // random value in [0:1[
@@ -155,7 +155,7 @@ export default class NuLoop extends NuBaseModule {
     // check if loop is defined
     if( loop === undefined ) { return; }
     // remove loop from scheduler
-    this.soundworksClient.scheduler.remove(loop);
+    this.e.scheduler.remove(loop);
     // delete loop from set
     this.loops.mat[trackId][slotId] = undefined;
   }
@@ -168,9 +168,9 @@ export default class NuLoop extends NuBaseModule {
         loop = this.loops.mat[i][j];
         if( loop !== undefined ){
           // remove loop
-          this.soundworksClient.scheduler.remove(loop);
+          this.e.scheduler.remove(loop);
           // disable renderer
-          this.soundworksClient.renderer.disable();
+          this.e.renderer.disable();
         }
       }
     }

@@ -10,15 +10,15 @@ const client = soundworks.client;
 const audioContext = soundworks.audioContext;
 
 export default class NuSynth extends NuBaseModule {
-  constructor(soundworksClient) {
-    super(soundworksClient, 'nuSynth');
+  constructor(playerExperience) {
+    super(playerExperience, 'nuSynth');
     // create synth
-    this.audioSynth = new AudioSynth(this.soundworksClient);
+    this.audioSynth = new AudioSynth(this.e);
     // create master gain
     this.localGain = audioContext.createGain();
     // connect graph
     this.audioSynth.out.connect(this.localGain);
-    this.localGain.connect(this.soundworksClient.nuOutput.in);
+    this.localGain.connect(this.e.nuOutput.in);
     // binding
     this.noteOnOff = this.noteOnOff.bind(this);
     this.volume = this.volume.bind(this);
@@ -85,7 +85,7 @@ export default class NuSynth extends NuBaseModule {
 // a (really) basic audio synthetizer, based on the WebAudio Oscillator node
 class AudioSynth {
   constructor(soundworksClient){
-    this.soundworksClient = soundworksClient;
+    this.e = soundworksClient;
 
     // local attributes
     this.noteMap = new Map();
@@ -182,7 +182,7 @@ class AudioSynth {
     let note = this.noteMap.get(noteId);
     // discard if note undefined
     if( note === undefined ){
-      this.soundworksClient.renderer.blink([200, 0, 0]);
+      this.e.renderer.blink([200, 0, 0]);
       console.warn('note', noteId, 'not defined');
       return;
     }
@@ -259,11 +259,11 @@ class AudioSynth {
   // enable / disable visualization (enable as long as at least one note plays)
   updateRendererStatus(){
     if( this.numNotesPlayed === 1 && !this.isPlaying){
-      this.soundworksClient.renderer.enable();
+      this.e.renderer.enable();
       this.isPlaying = true;
     }
     else if( this.numNotesPlayed === 0 ){
-      this.soundworksClient.renderer.disable();
+      this.e.renderer.disable();
       this.isPlaying = false;
     }    
   }

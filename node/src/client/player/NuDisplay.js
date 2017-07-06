@@ -7,12 +7,12 @@ const client = soundworks.client;
 const audioContext = soundworks.audioContext;
 
 export default class NuDisplay extends soundworks.Canvas2dRenderer {
-  constructor(soundworksClient) {
+  constructor(playerExperience) {
     super(1/24); // update rate = 0: synchronize updates to frame rate
     this.moduleName = 'nuDisplay'; 
 
     // local attributes
-    this.soundworksClient = soundworksClient;
+    this.e = playerExperience;
     this.params = {
       'feedbackGain': 1.0,
       'enableFeedback': true
@@ -35,7 +35,7 @@ export default class NuDisplay extends soundworks.Canvas2dRenderer {
     this.analyserCallback = this.analyserCallback.bind(this);
 
     // setup receive callbacks
-    this.soundworksClient.receive(this.moduleName, (args) => {
+    this.e.receive(this.moduleName, (args) => {
       // get header
       let name = args.shift();
       // convert singleton array if need be
@@ -47,7 +47,7 @@ export default class NuDisplay extends soundworks.Canvas2dRenderer {
     });
 
     // notify module is ready to receive msg
-    this.soundworksClient.send('moduleReady', this.moduleName);    
+    this.e.send('moduleReady', this.moduleName);    
     
     // ATTEMPT AT CROSSMODULE POSTING: FUNCTIONAL BUT ORIGINAL USE NO LONGER CONSIDERED: TODELETE WHEN CONFIRMED
     // setup internal callback

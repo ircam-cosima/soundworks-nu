@@ -10,14 +10,14 @@ const client = soundworks.client;
 const audioContext = soundworks.audioContext;
 
 export default class NuGroups extends NuBaseModule {
-  constructor(soundworksClient) {
-    super(soundworksClient, 'nuGroups');
+  constructor(playerExperience) {
+    super(playerExperience, 'nuGroups');
 
     // local attributes
     this.groupMap = new Map();
     this.localGain = audioContext.createGain();
     this.localGain.gain.value = 1.0;
-    this.localGain.connect( this.soundworksClient.nuOutput.in );
+    this.localGain.connect( this.e.nuOutput.in );
 
     // binding
     this.onOff = this.onOff.bind(this);
@@ -48,13 +48,13 @@ export default class NuGroups extends NuBaseModule {
         // stop source 
         group.src.stop(0);
         // notify renderer we don't need it anymore
-        this.soundworksClient.renderer.disable();
+        this.e.renderer.disable();
       }
 
     // start group (src)
     else{
       // get time delay since order to start has been given
-      let timeOffset = this.soundworksClient.scheduler.syncTime - value;
+      let timeOffset = this.e.scheduler.syncTime - value;
       // modulo buffer length for slow / late connected players 
       timeOffset %= group.src.buffer.duration;
       // make sure timeOffset is positive (if e.g. player not yet perfectly sync.)
@@ -64,7 +64,7 @@ export default class NuGroups extends NuBaseModule {
       // remember start time
       group.startTime = value;
       // enable render
-      this.soundworksClient.renderer.enable();
+      this.e.renderer.enable();
     }      
   }
 
@@ -101,7 +101,7 @@ export default class NuGroups extends NuBaseModule {
       // stop source 
       group.src.stop(0);
       // notify renderer we don't need it anymore
-      this.soundworksClient.renderer.disable();
+      this.e.renderer.disable();
     });
     // reset local map
     this.groupMap = new Map();
@@ -127,9 +127,9 @@ export default class NuGroups extends NuBaseModule {
       return this.groupMap.get(groupId);
 
     // check if audio buffer associated to group exists
-    let buffer = this.soundworksClient.loader.data[groupId];
+    let buffer = this.e.loader.data[groupId];
     if (buffer === undefined) {
-      console.warn('required audio file id', groupId, 'not in client index, actual content:', this.soundworksClient.loader.options.files, '-> initializing empty audio source..');
+      console.warn('required audio file id', groupId, 'not in client index, actual content:', this.e.loader.options.files, '-> initializing empty audio source..');
       buffer = audioContext.createBuffer(1, 22050, 44100);
     }
 

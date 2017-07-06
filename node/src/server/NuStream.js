@@ -14,8 +14,8 @@ const audioContext = new AudioContext;
 const assetsPath = __dirname + '/../../public/stream/';
 
 export default class NuStream extends NuBaseModule {
-  constructor(soundworksServer) {
-    super(soundworksServer, 'nuStream');
+  constructor(serverExperience) {
+    super(serverExperience, 'nuStream');
 
     // local attributes
     this.pointerToStreamInterval = undefined;
@@ -56,8 +56,8 @@ export default class NuStream extends NuBaseModule {
       // reset packet id
       this.packetId = 0;
       // broadcast start time for reference
-      this.params.startTime = this.soundworksServer.sync.getSyncTime();
-      this.soundworksServer.broadcast('player', null, 'nuStream', ['startTime', this.params.startTime] );
+      this.params.startTime = this.e.sync.getSyncTime();
+      this.e.broadcast('player', null, 'nuStream', ['startTime', this.params.startTime] );
       // start streaming callback
       this.pointerToStreamInterval = setInterval( () => {
         this.streamCallback();
@@ -68,7 +68,7 @@ export default class NuStream extends NuBaseModule {
     else{ clearInterval( this.pointerToStreamInterval ); }
 
     // notify clients of on/off status
-    this.soundworksServer.broadcast( 'player', null, this.moduleName, ['onOff', value] );
+    this.e.broadcast( 'player', null, this.moduleName, ['onOff', value] );
   }
 
   /** 
@@ -115,9 +115,9 @@ export default class NuStream extends NuBaseModule {
           dataArray.set(audioArray, 1);
 
           // send data to every clients
-          this.soundworksServer.clients.forEach( (client) => {
+          this.e.clients.forEach( (client) => {
             if( client.type === 'player' ){
-              this.soundworksServer.rawSocket.send( client, 'nuStream', dataArray );
+              this.e.rawSocket.send( client, 'nuStream', dataArray );
             }
           });
 

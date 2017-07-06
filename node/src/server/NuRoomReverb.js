@@ -11,8 +11,8 @@
 import NuBaseModule from './NuBaseModule'
 
 export default class NuRoomReverb extends NuBaseModule {
-  constructor(soundworksServer) {
-    super(soundworksServer, 'nuRoomReverb');
+  constructor(serverExperience) {
+    super(serverExperience, 'nuRoomReverb');
 
     // local attributes
     this.propagation = new SimulatePropagation(this);
@@ -41,13 +41,13 @@ export default class NuRoomReverb extends NuBaseModule {
     // get array of clients positions
     let posArray = [];
     let clientIdArray = [];
-    this.soundworksServer.coordinatesMap.forEach( (pos, key) => {
+    this.e.coordinatesMap.forEach( (pos, key) => {
       posArray.push( pos );
       clientIdArray.push( key );
     });
 
     // for each player connected
-    this.soundworksServer.coordinatesMap.forEach( ( emitterPos, emitterId ) => {
+    this.e.coordinatesMap.forEach( ( emitterPos, emitterId ) => {
       // consider each client as potential emitter
       this.propagation.computeSrcImg( emitterPos );
       // get IR associated for each potential receiver (each client)
@@ -58,8 +58,8 @@ export default class NuRoomReverb extends NuBaseModule {
         ir.unshift( emitterId ); // add emitter id
         let msgArray = new Float32Array( ir );
         // console.log('send to client', receiverId, clientIdArray[ receiverId ], 'IR', ir);
-        let receiverClient = this.soundworksServer.playerMap.get( receiverId );
-        this.soundworksServer.rawSocket.send( receiverClient, this.moduleName, msgArray );
+        let receiverClient = this.e.playerMap.get( receiverId );
+        this.e.rawSocket.send( receiverClient, this.moduleName, msgArray );
       });
 
     });
@@ -74,7 +74,7 @@ export default class NuRoomReverb extends NuBaseModule {
     // discrete position for now:  find player closest to emit pos to defined it as new emit pos
     let dist = Infinity;
     let emitterId = -1;
-    this.soundworksServer.coordinatesMap.forEach((item, key) => {
+    this.e.coordinatesMap.forEach((item, key) => {
       let distTmp = Math.sqrt(Math.pow(item[0] - emitPos[0], 2) + Math.pow(item[1] - emitPos[1], 2));
       if (distTmp < dist) {
         emitterId = key;
@@ -84,8 +84,8 @@ export default class NuRoomReverb extends NuBaseModule {
 
     // if found discrete emitter pos (i.e. player), broadcast msg to players to trigger propagation
     if (emitterId > -1) {
-      let rdvTime = this.soundworksServer.sync.getSyncTime() + 2.0;
-      this.soundworksServer.broadcast('player', null, this.moduleName, ['emitAtPos', emitterId, rdvTime] );
+      let rdvTime = this.e.sync.getSyncTime() + 2.0;
+      this.e.broadcast('player', null, this.moduleName, ['emitAtPos', emitterId, rdvTime] );
     }
 
   }
@@ -117,7 +117,7 @@ export default class NuRoomReverb extends NuBaseModule {
   // stop all current sounds
   reset(){
     // re-route to clients
-    this.soundworksServer.broadcast( 'player', null, this.moduleName, ['reset'] );
+    this.e.broadcast( 'player', null, this.moduleName, ['reset'] );
   }
 
 }

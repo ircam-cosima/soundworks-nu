@@ -12,8 +12,8 @@ const client = soundworks.client;
 const audioContext = soundworks.audioContext;
 
 export default class NuPath extends NuBaseModule {
-  constructor(soundworksClient) {
-    super(soundworksClient, 'nuPath');
+  constructor(playerExperience) {
+    super(playerExperience, 'nuPath');
 
     // local attributes
     this.irMap = new Map();
@@ -26,7 +26,7 @@ export default class NuPath extends NuBaseModule {
     this.reset = this.reset.bind(this);
 
     // setup socket reveive callbacks (receiving raw audio data)
-    this.soundworksClient.rawSocket.receive(this.moduleName, this.rawSocketCallback );    
+    this.e.rawSocket.receive(this.moduleName, this.rawSocketCallback );    
   }
 
   /*
@@ -56,7 +56,7 @@ export default class NuPath extends NuBaseModule {
     this.irMap.set(pathId, ir);
 
     // feedback user that IR has been loaded 
-    this.soundworksClient.renderer.blink([0, 100, 0]);
+    this.e.renderer.blink([0, 100, 0]);
   }
 
   /*
@@ -68,14 +68,14 @@ export default class NuPath extends NuBaseModule {
     let syncStartTime = args.shift();
 
     // check if designated audioFile exists in loader
-    if (this.soundworksClient.loader.data[this.params.audioFileId] == undefined) {
-      console.warn('required audio file id', this.params.audioFileId, 'not in client index, actual content:', this.soundworksClient.loader.options.files);
+    if (this.e.loader.data[this.params.audioFileId] == undefined) {
+      console.warn('required audio file id', this.params.audioFileId, 'not in client index, actual content:', this.e.loader.options.files);
       return;
     }
 
     // check if IR not available yet: slightly flash red otherwise
     if (!this.irMap.has(irId)) {
-      this.soundworksClient.renderer.blink([160, 0, 0]);
+      this.e.renderer.blink([160, 0, 0]);
       console.warn('IR', irId, 'not yet defined in client, need to update propagation');
       return;
     }
@@ -85,7 +85,7 @@ export default class NuPath extends NuBaseModule {
 
     // create empty sound src
     let src = audioContext.createBufferSource();
-    let inputBuffer = this.soundworksClient.loader.data[this.params.audioFileId];
+    let inputBuffer = this.e.loader.data[this.params.audioFileId];
     let outputDuration = ir.duration + inputBuffer.duration + 1;
     let outputBuffer = audioContext.createBuffer(1, Math.max(outputDuration * audioContext.sampleRate, 512), audioContext.sampleRate);
 
@@ -140,28 +140,28 @@ export default class NuPath extends NuBaseModule {
 
     // connect graph
     src.connect(gain);
-    gain.connect( this.soundworksClient.nuOutput.in );
+    gain.connect( this.e.nuOutput.in );
 
     // play sound if rendez-vous time is in the future (else report bug)
-    let now = this.soundworksClient.sync.getSyncTime();
+    let now = this.e.sync.getSyncTime();
     if (syncStartTime > now) {
       let audioContextStartTime = audioContext.currentTime + syncStartTime - now;
       src.start(audioContextStartTime);
       // console.log('play scheduled in:', Math.round((syncStartTime - now) * 1000) / 1000, 'sec', 'at:', syncStartTime);
     } else {
       console.warn('no sound played, I received the instruction to play to late');
-      this.soundworksClient.renderer.blink([250, 0, 0]);
+      this.e.renderer.blink([250, 0, 0]);
     }
 
     // setup screen color = f(amplitude) callback
-    this.soundworksClient.renderer.enable();
+    this.e.renderer.enable();
 
     // save source for eventual global reset
     this.srcSet.add(src);
 
     // timeout callback, runs when we finished playing
     setTimeout(() => {
-      this.soundworksClient.renderer.disable();
+      this.e.renderer.disable();
       // remove source from set
       this.srcSet.delete(src);
     }, (syncStartTime - now + src.buffer.duration) * 1000);
@@ -174,7 +174,7 @@ export default class NuPath extends NuBaseModule {
       // stop source
       src.stop(); 
       // remove associated visual feedback
-      this.soundworksClient.renderer.disable();
+      this.e.renderer.disable();
     });
   }  
 

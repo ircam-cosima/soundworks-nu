@@ -5,8 +5,8 @@
 import NuBaseModule from './NuBaseModule'
 
 export default class NuGroups extends NuBaseModule {
-  constructor(soundworksServer) {
-    super(soundworksServer, 'nuGroups', true);
+  constructor(serverExperience) {
+    super(serverExperience, 'nuGroups', true);
 
     // binding
     this.getGroup = this.getGroup.bind(this);
@@ -28,15 +28,15 @@ export default class NuGroups extends NuBaseModule {
 
     // if player specific instruction
     if( playerId !== -1 ){
-      let client = this.soundworksServer.playerMap.get( playerId );
+      let client = this.e.playerMap.get( playerId );
       if( client === undefined ){ return; }
-      this.soundworksServer.send( client, this.moduleName, msgStippedOfPlayerId );
+      this.e.send( client, this.moduleName, msgStippedOfPlayerId );
     }
 
     // if instruction concerns all the players
     else{
       // broadcast msg
-      this.soundworksServer.broadcast( 'player', null, this.moduleName, msgStippedOfPlayerId ); 
+      this.e.broadcast( 'player', null, this.moduleName, msgStippedOfPlayerId ); 
       // store value
       let groupId = args.shift();
       let value = args.shift();
@@ -68,7 +68,7 @@ export default class NuGroups extends NuBaseModule {
     // send to new client information regarding current groups parameters
     this.groupMap.forEach( (group, groupId) => {
       Object.keys(group).forEach( (key) => {
-        this.soundworksServer.send(client, 'nuGroups', [key, groupId, group[key]]);
+        this.e.send(client, 'nuGroups', [key, groupId, group[key]]);
       });          
     });    
   }

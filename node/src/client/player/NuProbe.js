@@ -9,8 +9,8 @@ const client = soundworks.client;
 const audioContext = soundworks.audioContext;
 
 export default class NuProbe extends NuBaseModule {
-  constructor(soundworksClient) {
-    super(soundworksClient, 'nuProbe');
+  constructor(playerExperience) {
+    super(playerExperience, 'nuProbe');
 
     // local attributes
     this.params = {};
@@ -29,7 +29,7 @@ export default class NuProbe extends NuBaseModule {
       energy: false,
       touch: false
     };
-    this.surface = new soundworks.TouchSurface(this.soundworksClient.view.$el);
+    this.surface = new soundworks.TouchSurface(this.e.view.$el);
 
     // binding
     this.orientationCallback = this.orientationCallback.bind(this);
@@ -56,7 +56,7 @@ export default class NuProbe extends NuBaseModule {
     this.throttle.ori[1] = data[1];
     this.throttle.ori[2] = data[2];
     // send to OSC via server
-    this.soundworksClient.send('osc', '/' + this.moduleName, ['orientation', data[0], data[1], data[2]] );
+    this.e.send('osc', '/' + this.moduleName, ['orientation', data[0], data[1], data[2]] );
   }
 
   accelerationCallback(data){
@@ -70,7 +70,7 @@ export default class NuProbe extends NuBaseModule {
     this.throttle.acc[1] = data[1];
     this.throttle.acc[2] = data[2];
     // send to OSC via server
-    this.soundworksClient.send('osc', '/' + this.moduleName, ['acceleration', data[0], data[1], data[2]] );
+    this.e.send('osc', '/' + this.moduleName, ['acceleration', data[0], data[1], data[2]] );
   }
 
   energyCallback(data){
@@ -80,12 +80,12 @@ export default class NuProbe extends NuBaseModule {
     // save new throttle values
     this.throttle.energy = data;
     // send to OSC via server
-    this.soundworksClient.send('osc', '/' + this.moduleName, ['energy', data] );
+    this.e.send('osc', '/' + this.moduleName, ['energy', data] );
   }
 
   touchStartCallback(id, normX, normY){
     // notify touch on
-    this.soundworksClient.send('osc', '/' + this.moduleName, ['touchOn', 1] );
+    this.e.send('osc', '/' + this.moduleName, ['touchOn', 1] );
     // common touch callback
     this.touchCommonCallback(id, normX, normY);      
   }
@@ -97,7 +97,7 @@ export default class NuProbe extends NuBaseModule {
 
   touchEndCallback(id, normX, normY){
     // notify touch off
-    this.soundworksClient.send('osc', '/' + this.moduleName, ['touchOn', 0] );
+    this.e.send('osc', '/' + this.moduleName, ['touchOn', 0] );
     // common touch callback
     this.touchCommonCallback(id, normX, normY);      
   }  
@@ -107,7 +107,7 @@ export default class NuProbe extends NuBaseModule {
     // window.postMessage(['nuRenderer', 'touch', id, normX, normY], location.origin);
     // ----------
     // send touch pos
-    this.soundworksClient.send('osc', '/' + this.moduleName, ['touchPos', id, normX, normY]);
+    this.e.send('osc', '/' + this.moduleName, ['touchPos', id, normX, normY]);
   }
 
   // Note: hereafter are the OSC triggered functions used to enable / disable 
@@ -132,45 +132,45 @@ export default class NuProbe extends NuBaseModule {
 
   orientation(onOff){
     // discard instruction if motionInput not available
-    if (!this.soundworksClient.motionInput.isAvailable('deviceorientation')){ return; }
+    if (!this.e.motionInput.isAvailable('deviceorientation')){ return; }
     // enable if not already enabled
     if( onOff && !this.callBackStatus.ori ){
-      this.soundworksClient.motionInput.addListener('deviceorientation', this.orientationCallback);
+      this.e.motionInput.addListener('deviceorientation', this.orientationCallback);
       this.callBackStatus.ori = true;
     }
     // disable if not already disabled
     if( !onOff && this.callBackStatus.ori ){
-      this.soundworksClient.motionInput.removeListener('deviceorientation', this.orientationCallback);
+      this.e.motionInput.removeListener('deviceorientation', this.orientationCallback);
       this.callBackStatus.ori = false;
     }
   }
 
   acceleration(onOff){ 
     // discard instruction if motionInput not available
-    if (!this.soundworksClient.motionInput.isAvailable('accelerationIncludingGravity')){ return; }
+    if (!this.e.motionInput.isAvailable('accelerationIncludingGravity')){ return; }
     // enable if not already enabled
     if( onOff && !this.callBackStatus.acc ){
-      this.soundworksClient.motionInput.addListener('accelerationIncludingGravity', this.accelerationCallback);
+      this.e.motionInput.addListener('accelerationIncludingGravity', this.accelerationCallback);
       this.callBackStatus.acc = true;
     }
     // disable if not already disabled
     if( !onOff && this.callBackStatus.acc ){
-      this.soundworksClient.motionInput.removeListener('accelerationIncludingGravity', this.accelerationCallback);
+      this.e.motionInput.removeListener('accelerationIncludingGravity', this.accelerationCallback);
       this.callBackStatus.acc = false;
     }
   }
 
   energy(onOff){ 
     // discard instruction if motionInput not available
-    if (!this.soundworksClient.motionInput.isAvailable('energy')){ return; }
+    if (!this.e.motionInput.isAvailable('energy')){ return; }
     // enable if not already enabled
     if( onOff && !this.callBackStatus.energy ){
-      this.soundworksClient.motionInput.addListener('energy', this.energyCallback);
+      this.e.motionInput.addListener('energy', this.energyCallback);
       this.callBackStatus.energy = true;
     }
     // disable if not already disabled
     if( !onOff && this.callBackStatus.energy ){
-      this.soundworksClient.motionInput.removeListener('energy', this.energyCallback);
+      this.e.motionInput.removeListener('energy', this.energyCallback);
       this.callBackStatus.energy = false;
     }
   }

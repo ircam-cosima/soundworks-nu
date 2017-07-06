@@ -6,8 +6,8 @@
 import NuBaseModule from './NuBaseModule'
 
 export default class NuSynth extends NuBaseModule {
-  constructor(soundworksServer) {
-    super(soundworksServer, 'nuSynth', true);
+  constructor(serverExperience) {
+    super(serverExperience, 'nuSynth', true);
 
     // local attributes
     this.params = {

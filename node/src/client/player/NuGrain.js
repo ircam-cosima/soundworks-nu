@@ -23,8 +23,8 @@ const client = soundworks.client;
 const audioContext = soundworks.audioContext;
 
 export default class NuGrain extends NuBaseModule {
-  constructor(soundworksClient) {
-    super(soundworksClient, 'nuGrain');
+  constructor(playerExperience) {
+    super(playerExperience, 'nuGrain');
 
     // local attributes
     this.params = {'energy': 0, 'override': 1.0};
@@ -48,7 +48,7 @@ export default class NuGrain extends NuBaseModule {
     });
 
     // create and configure synthesizer
-    this.synth = new Synthesizer(this.soundworksClient.scheduler, this.soundworksClient.nuOutput.in);
+    this.synth = new Synthesizer(this.e.scheduler, this.e.nuOutput.in);
 
     this.synth.setBeatCallback((delay, index, energy = 1) => {
       const intensity = Math.min(1, 10 * energy);
@@ -82,12 +82,12 @@ export default class NuGrain extends NuBaseModule {
       // (avoid enabling twice)
       if( this.motionInputCallbackAdded ){ return; }
       // add motion input listener 
-      this.soundworksClient.motionInput.addListener('energy', this.motionInputEnergyCallback);
+      this.e.motionInput.addListener('energy', this.motionInputEnergyCallback);
       this.setIntervalListener = window.setInterval( this.setEnergyCallback, 100);
       // start synthesizer
       this.synth.start();
       // enable visual feedback
-      this.soundworksClient.renderer.enable();
+      this.e.renderer.enable();
       // flag state
       this.motionInputCallbackAdded = true;
     }
@@ -96,12 +96,12 @@ export default class NuGrain extends NuBaseModule {
       // (avoid disabling twice)
       if( !this.motionInputCallbackAdded ){ return; }      
       // remove motion input listener
-      this.soundworksClient.motionInput.removeListener('energy', this.motionInputEnergyCallback);
+      this.e.motionInput.removeListener('energy', this.motionInputEnergyCallback);
       window.clearInterval(this.setIntervalListener); 
       // stop synth
       this.synth.stop();
       // disable visual feedback
-      this.soundworksClient.renderer.disable();
+      this.e.renderer.disable();
       // flag state
       this.motionInputCallbackAdded = false;
     }
@@ -114,11 +114,11 @@ export default class NuGrain extends NuBaseModule {
     this.segments = undefined;
 
     // get audio buffer
-    const audioBuffer = this.soundworksClient.loader.data[fileId];
+    const audioBuffer = this.e.loader.data[fileId];
     
     // discard if file not found
     if( audioBuffer === undefined) {
-      console.warn('required track ', fileId, 'not available, actual content:', this.soundworksClient.loader.options.files);
+      console.warn('required track ', fileId, 'not available, actual content:', this.e.loader.options.files);
       return;
     }
 

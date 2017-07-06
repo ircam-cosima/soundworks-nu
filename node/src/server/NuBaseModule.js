@@ -3,10 +3,10 @@
  **/
 
 export default class NuBaseModule {
-  constructor(soundworksServer, moduleName, requiresPlayerId = false) {
+  constructor(serverExperience, moduleName, requiresPlayerId = false) {
 
     // local attributes
-    this.soundworksServer = soundworksServer;
+    this.e = serverExperience;
     this.moduleName = moduleName;
     this.requiresPlayerId = requiresPlayerId;
 
@@ -24,7 +24,7 @@ export default class NuBaseModule {
     }
 
     // general router towards internal functions
-    this.soundworksServer.osc.receive( '/' + this.moduleName, (msgRaw) => {
+    this.e.osc.receive( '/' + this.moduleName, (msgRaw) => {
       // shape msg into array of arguments      
       let msg = msgRaw.split(' ');
       msg.numberify();
@@ -42,7 +42,7 @@ export default class NuBaseModule {
   enterPlayer(client){
     // send to new client information regarding current groups parameters
     Object.keys(this.params).forEach( (key) => {
-      this.soundworksServer.send(client, this.moduleName, [key, this.params[key]] );
+      this.e.send(client, this.moduleName, [key, this.params[key]] );
     });
   }
 
@@ -66,7 +66,7 @@ export default class NuBaseModule {
     // or save value to local and forward to players
     else{
       this.params[name] = args;
-      this.soundworksServer.broadcast( 'player', null, this.moduleName, msg );
+      this.e.broadcast( 'player', null, this.moduleName, msg );
     }
   }
 
@@ -90,15 +90,15 @@ export default class NuBaseModule {
 
     // if player specific instruction, send to player
     if( playerId !== -1 ){
-      let client = this.soundworksServer.playerMap.get( playerId );
+      let client = this.e.playerMap.get( playerId );
       if( client === undefined ){ return; }
-      this.soundworksServer.send( client, this.moduleName, msg );
+      this.e.send( client, this.moduleName, msg );
     }
     
     // else, broadcast and save local
     else{
       // broadcast message
-      this.soundworksServer.broadcast( 'player', null, this.moduleName, msg );
+      this.e.broadcast( 'player', null, this.moduleName, msg );
       
       // extract parameter value
       let args = msg.slice(1);

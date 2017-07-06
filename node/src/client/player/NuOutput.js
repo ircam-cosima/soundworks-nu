@@ -27,8 +27,8 @@ const cart2sph = function(xyz){
 }
 
 export default class NuOutput extends NuBaseModule {
-  constructor(soundworksClient) {
-    super(soundworksClient, 'nuOutput');
+  constructor(playerExperience) {
+    super(playerExperience, 'nuOutput');
 
     // local attributes
     this.params = { userPos: [0, 0, 0] };
@@ -38,7 +38,7 @@ export default class NuOutput extends NuBaseModule {
     * (had to do it the other around since Safari's analyser would
     * remain frozen this.in was the gain connected to the analyser)
     **/
-    this.in = this.soundworksClient.renderer.audioAnalyser.in;
+    this.in = this.e.renderer.audioAnalyser.in;
     this.masterGain = audioContext.createGain();
     this.out = audioContext.createGain();
 
@@ -60,7 +60,7 @@ export default class NuOutput extends NuBaseModule {
     this.startRecTime = 0.0;
 
     // init coordinates
-    let coordXY = this.soundworksClient.coordinates;
+    let coordXY = this.e.coordinates;
     this.coordXYZ = [ coordXY[0], coordXY[1], 0];
 
     // connect graph
@@ -78,7 +78,7 @@ export default class NuOutput extends NuBaseModule {
         // start recording
         this.recorder.clear();
         this.recorder.record();
-        this.startRecTime = this.soundworksClient.sync.getSyncTime();
+        this.startRecTime = this.e.sync.getSyncTime();
       }
       // stop recording
       else {
@@ -103,7 +103,7 @@ export default class NuOutput extends NuBaseModule {
           }
 
           // send audio data
-          this.soundworksClient.rawSocket.send( this.moduleName, interleavedBuffer );
+          this.e.rawSocket.send( this.moduleName, interleavedBuffer );
         });
 
     }

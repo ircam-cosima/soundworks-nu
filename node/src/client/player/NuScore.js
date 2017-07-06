@@ -9,12 +9,12 @@ const client = soundworks.client;
 const audioContext = soundworks.audioContext;
 
 export default class NuScore extends NuBaseModule {
-  constructor(soundworksClient) {
-    super(soundworksClient, 'nuScore');
+  constructor(playerExperience) {
+    super(playerExperience, 'nuScore');
 
     // local attributes
     this.masterGain = audioContext.createGain();
-    this.masterGain.connect(this.soundworksClient.nuOutput.in);
+    this.masterGain.connect(this.e.nuOutput.in);
     this.srcMap = new Map();
   }
 
@@ -32,7 +32,7 @@ export default class NuScore extends NuBaseModule {
     var time, name, buffer, startTime, duration;
 
     // define times
-    var now = this.soundworksClient.sync.getSyncTime();
+    var now = this.e.sync.getSyncTime();
     var syncStartTime = timeSent + this.params.delay - now;
 
     // loop over score samples, fill in output buffer with samples
@@ -40,7 +40,7 @@ export default class NuScore extends NuBaseModule {
       // get note params
       time = args[ 2*i ];
       name = args[ 2*i + 1 ];
-      buffer = this.soundworksClient.loader.data[name];
+      buffer = this.e.loader.data[name];
 
       // skip note if undefined audio buffer
       if( buffer === undefined ){ continue; }
@@ -62,11 +62,11 @@ export default class NuScore extends NuBaseModule {
       this.srcMap.set(src, src);
       src.onended = () => { 
         this.srcMap.delete(src); 
-        this.soundworksClient.renderer.disable();
+        this.e.renderer.disable();
       };
 
       // enable visual rendering
-      this.soundworksClient.renderer.enable();
+      this.e.renderer.enable();
     }
 
   }
@@ -77,7 +77,7 @@ export default class NuScore extends NuBaseModule {
       // stop source
       src.stop(); 
       // remove associated visual feedback
-      this.soundworksClient.renderer.disable();
+      this.e.renderer.disable();
     });
   }  
 

@@ -5,8 +5,8 @@
 import NuBaseModule from './NuBaseModule'
 
 export default class NuLoop extends NuBaseModule {
-  constructor(soundworksServer) {
-    super(soundworksServer, 'nuLoop', true);
+  constructor(serverExperience) {
+    super(serverExperience, 'nuLoop', true);
 
     // local attributes
     this.params = { period: 2.0,
@@ -20,7 +20,7 @@ export default class NuLoop extends NuBaseModule {
 
   reset(){
     // re-route to clients
-    this.soundworksServer.broadcast( 'player', null, this.moduleName, ['reset'] );
+    this.e.broadcast( 'player', null, this.moduleName, ['reset'] );
   }  
 
 }

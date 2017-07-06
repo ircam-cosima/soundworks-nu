@@ -9,8 +9,8 @@ const client = soundworks.client;
 const audioContext = soundworks.audioContext;
 
 export default class NuTemplate extends NuBaseModule {
-  constructor(soundworksClient) {
-    super(soundworksClient, 'nuTemplate');
+  constructor(playerExperience) {
+    super(playerExperience, 'nuTemplate');
 
     // local attributes
     this.params = {'gain': 1.0, 'fileId': 0};
@@ -20,7 +20,7 @@ export default class NuTemplate extends NuBaseModule {
     this.aMethodTriggeredFromServer = this.aMethodTriggeredFromServer.bind(this);
 
     // setup receive callbacks
-    this.soundworksClient.receive('nuTemplateInternal_aMethodTriggeredFromServer', this.aMethodTriggeredFromServer);
+    this.e.receive('nuTemplateInternal_aMethodTriggeredFromServer', this.aMethodTriggeredFromServer);
   }
 
   // trigger event directly from OSC client
@@ -31,7 +31,7 @@ export default class NuTemplate extends NuBaseModule {
   // re-routed event for sync. playback: server add a rdv time to msg sent by OSC client
   aMethodTriggeredFromServer(args){
     console.log('aMethodTriggeredFromServer, e.g. play a sound at synchronized time:', args);
-    this.soundworksClient.renderer.blink([0, 160, 200], 0.4);
+    this.e.renderer.blink([0, 160, 200], 0.4);
   }
 
 }

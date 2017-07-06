@@ -9,8 +9,8 @@ const client = soundworks.client;
 const audioContext = soundworks.audioContext;
 
 export default class NuStream extends NuBaseModule {
-  constructor(soundworksClient) {
-    super(soundworksClient, 'nuStream');
+  constructor(playerExperience) {
+    super(playerExperience, 'nuStream');
 
     // local attributes
     this.params = {};
@@ -19,11 +19,11 @@ export default class NuStream extends NuBaseModule {
     this.rawSocketCallback = this.rawSocketCallback.bind(this);
 
     // setup socket reveive callbacks (receiving raw audio data)
-    this.soundworksClient.rawSocket.receive('nuStream', this.rawSocketCallback );
+    this.e.rawSocket.receive('nuStream', this.rawSocketCallback );
 
     // output gain
     this.out = audioContext.createGain();
-    this.out.connect( this.soundworksClient.nuOutput.in );
+    this.out.connect( this.e.nuOutput.in );
   }
 
   // set audio gain out
@@ -36,8 +36,8 @@ export default class NuStream extends NuBaseModule {
   * actual streaming is done automatically when receiving audio data from dedicated web-socket
   **/
   onOff(value){
-    if( value ){ this.soundworksClient.renderer.enable(); }
-    else{ this.soundworksClient.renderer.disable(); }
+    if( value ){ this.e.renderer.enable(); }
+    else{ this.e.renderer.disable(); }
   }
 
   /*
@@ -50,13 +50,13 @@ export default class NuStream extends NuBaseModule {
     let audioArray = new Float32Array(data.slice(1, data.length));
 
     // get start time
-    const now = this.soundworksClient.sync.getSyncTime();
+    const now = this.e.sync.getSyncTime();
     let sysTime = this.params.startTime + ( packetId ) * this.params.packetTime + this.params.delayTime;
     let relOffset = sysTime - now;
 
     // discard data if start time passed (packet deprecated)
     if( relOffset < 0 ){ 
-      this.soundworksClient.renderer.blink([100, 0, 0]); 
+      this.e.renderer.blink([100, 0, 0]); 
       return;
     }
 

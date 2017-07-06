@@ -5,8 +5,8 @@
 import NuBaseModule from './NuBaseModule'
 
 export default class NuDisplay extends NuBaseModule {
-  constructor(soundworksServer) {
-    super(soundworksServer, 'nuDisplay', true);
+  constructor(serverExperience) {
+    super(serverExperience, 'nuDisplay', true);
 
     // to be saved params to send to client when connects:
     this.params = {

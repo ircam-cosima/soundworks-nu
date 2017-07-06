@@ -26,11 +26,9 @@ const viewTemplate = `
   </div>
 `;
 
-const model = { title: `` };
-
 /*
 * The PlayerExperience script defines the behavior of default clients (of type 'player').
-* Here it simply imports and instantiate all Nu modules.
+* Here it simply imports and instantiates all Nu modules.
 */
 
 export default class PlayerExperience extends soundworks.Experience {
@@ -53,6 +51,7 @@ export default class PlayerExperience extends soundworks.Experience {
       descriptors: ['accelerationIncludingGravity', 'deviceorientation', 'energy']
     });
 
+    // auto-click if #emulate found in url (for debug / laptop-based sessions)
     if( window.location.hash === "#emulate" ) { this.emulateClick(); } 
   }
 

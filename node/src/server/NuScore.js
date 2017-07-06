@@ -5,8 +5,8 @@
 import NuBaseModule from './NuBaseModule'
 
 export default class NuScore extends NuBaseModule {
-  constructor(soundworksServer) {
-    super(soundworksServer, 'nuScore', true);
+  constructor(serverExperience) {
+    super(serverExperience, 'nuScore', true);
 
     // to be saved params to send to client when connects:
     this.params = { 
@@ -22,7 +22,7 @@ export default class NuScore extends NuBaseModule {
     // send to new client information regarding current groups parameters
     Object.keys(this.params).forEach( (key) => {
       if( key != 'startScore' ){
-        this.soundworksServer.send(client, this.moduleName, [key, this.params[key]] );
+        this.e.send(client, this.moduleName, [key, this.params[key]] );
       }
     });
   }

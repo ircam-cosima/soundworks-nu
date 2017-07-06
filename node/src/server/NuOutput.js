@@ -17,8 +17,8 @@ const assetsPath = __dirname + '/../../public/';
 const downloadPath = '/Users/davipoir/Downloads/';
 
 export default class NuOutput extends NuBaseModule {
-  constructor(soundworksServer) {
-    super(soundworksServer, 'nuOutput');
+  constructor(serverExperience) {
+    super(serverExperience, 'nuOutput');
 
     // to be saved parameters to send to client when connects:
     this.params = { 
@@ -44,11 +44,11 @@ export default class NuOutput extends NuBaseModule {
   enterPlayer(client){
     // send to new client information regarding current groups parameters
     Object.keys(this.params).forEach( (key) => {
-      this.soundworksServer.send(client, this.moduleName, [key, this.params[key]] );
+      this.e.send(client, this.moduleName, [key, this.params[key]] );
     });
 
     // setup socket receive callbacks (receiving raw audio data)
-    this.soundworksServer.rawSocket.receive(client, this.moduleName, this.rawSocketCallback );
+    this.e.rawSocket.receive(client, this.moduleName, this.rawSocketCallback );
   }
 
   /** 
@@ -58,11 +58,11 @@ export default class NuOutput extends NuBaseModule {
   record(val){
     // save recording start time
     if( val === 1 ){ 
-      this.startRecTime = this.soundworksServer.sync.getSyncTime(); 
+      this.startRecTime = this.e.sync.getSyncTime(); 
     }
 
     // forward msg to players
-    this.soundworksServer.broadcast( 'player', null, this.moduleName, ['record', val] );
+    this.e.broadcast( 'player', null, this.moduleName, ['record', val] );
   }
 
   // record callback, called once per client sending audio data at recording's end
@@ -134,7 +134,7 @@ export default class NuOutput extends NuBaseModule {
     // check if all clients sent recordings
     // TODO: find a way to break out of forEach loop asa one is not in it
     let allReceived = true;
-    this.soundworksServer.playerMap.forEach( (client, id) => {
+    this.e.playerMap.forEach( (client, id) => {
       if( this.logClientRec.indexOf( id ) < 0 ){
         allReceived = false;
       }

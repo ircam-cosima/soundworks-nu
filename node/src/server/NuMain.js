@@ -5,14 +5,14 @@
 import NuBaseModule from './NuBaseModule'
 
 export default class NuMain extends NuBaseModule {
-  constructor(soundworksClient) {
-    super(soundworksClient, 'nuMain');
+  constructor(serverExperience) {
+    super(serverExperience, 'nuMain');
 
     setTimeout( () => { 
       // sync. clocks
       const clockInterval = 0.1; // refresh interval in seconds
       setInterval( () => { 
-        this.soundworksServer.osc.send('/nuMain/clock', this.soundworksServer.sync.getSyncTime()); 
+        this.e.osc.send('/nuMain/clock', this.e.sync.getSyncTime()); 
       }, 1000 * clockInterval);
     }, 1000);
 
@@ -21,19 +21,19 @@ export default class NuMain extends NuBaseModule {
   enterPlayer(client){
 
     // direct forward of players message to OSC client
-    this.soundworksServer.receive(client, 'osc', (header, args) => {
+    this.e.receive(client, 'osc', (header, args) => {
       // append client index to msg
       args.unshift(client.index);
       // forward to OSC
-      this.soundworksServer.osc.send(header, args);
+      this.e.osc.send(header, args);
     });
   }
 
   exitPlayer(client){
     // update local attributes
-    this.soundworksServer.coordinatesMap.delete( client.index );
+    this.e.coordinatesMap.delete( client.index );
   // update osc mapper
-  this.soundworksServer.osc.send('/nuMain/playerRemoved', client.index );
+  this.e.osc.send('/nuMain/playerRemoved', client.index );
   }
 
   /**
@@ -42,15 +42,15 @@ export default class NuMain extends NuBaseModule {
   **/
   updateRequest(){
     // send back players position at osc client request
-    this.soundworksServer.coordinatesMap.forEach((item, key)=>{
-      this.soundworksServer.osc.send('/nuMain/playerPos', [key, item[0], item[1]] );
+    this.e.coordinatesMap.forEach((item, key)=>{
+      this.e.osc.send('/nuMain/playerPos', [key, item[0], item[1]] );
     });
   }
 
   // force all players to reload the current page
   reloadPlayers(){
     // re-route to clients
-    this.soundworksServer.broadcast( 'player', null, 'nuMain', ['reload'] );    
+    this.e.broadcast( 'player', null, 'nuMain', ['reload'] );    
   }
 
 }

@@ -5,8 +5,8 @@
 import NuBaseModule from './NuBaseModule'
 
 export default class NuProbe extends NuBaseModule {
-  constructor(soundworksServer) {
-    super(soundworksServer, 'nuProbe', true);
+  constructor(serverExperience) {
+    super(serverExperience, 'nuProbe', true);
 
     // to be saved params to send to client when connects:
     this.params = { 

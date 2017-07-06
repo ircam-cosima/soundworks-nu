@@ -7,15 +7,15 @@ const client = soundworks.client;
 const audioContext = soundworks.audioContext;
 
 export default class NuBaseModule {
-  constructor(soundworksClient, moduleName) {
+  constructor(playerExperience, moduleName) {
 
     // local attributes
-    this.soundworksClient = soundworksClient;
+    this.e = playerExperience;
     this.moduleName = moduleName;
     this.params = {};
     
     // setup receive callbacks
-    this.soundworksClient.receive(this.moduleName, (args) => {
+    this.e.receive(this.moduleName, (args) => {
       // get header
       let name = args.shift();
       // convert singleton array if need be
@@ -25,7 +25,7 @@ export default class NuBaseModule {
     });
 
     // notify module is ready to receive msg
-    this.soundworksClient.send('moduleReady', this.moduleName);
+    this.e.send('moduleReady', this.moduleName);
 
     // binding
     this.paramCallback = this.paramCallback.bind(this);

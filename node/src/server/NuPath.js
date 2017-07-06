@@ -8,8 +8,8 @@
 import NuBaseModule from './NuBaseModule'
 
 export default class NuPath extends NuBaseModule {
-  constructor(soundworksServer) {
-    super(soundworksServer, 'nuPath');
+  constructor(serverExperience) {
+    super(serverExperience, 'nuPath');
 
     // to be saved params to send to client when connects:
     this.params = { masterGain: 1.0, 
@@ -45,7 +45,7 @@ export default class NuPath extends NuBaseModule {
     // create IR for each player
     let dist, time, gain, timeMin = 0;
     let irsArray = [];
-    this.soundworksServer.coordinatesMap.forEach(( clientPos, clientId) => {
+    this.e.coordinatesMap.forEach(( clientPos, clientId) => {
       
       // init
       irsArray[clientId] = [];
@@ -73,7 +73,7 @@ export default class NuPath extends NuBaseModule {
     });
 
     // send IRs (had to split in two (see above) because of timeMin)
-    this.soundworksServer.coordinatesMap.forEach((clientPos, clientId) => {
+    this.e.coordinatesMap.forEach((clientPos, clientId) => {
       // get IR
       let ir = irsArray[ clientId ];
       // add init time offset (useful for negative speed)
@@ -82,8 +82,8 @@ export default class NuPath extends NuBaseModule {
       // shape for sending
       let msgArray = new Float32Array( ir );
       // send
-      let client = this.soundworksServer.playerMap.get( clientId );
-      this.soundworksServer.rawSocket.send( client, this.moduleName, msgArray );
+      let client = this.e.playerMap.get( clientId );
+      this.e.rawSocket.send( client, this.moduleName, msgArray );
     });
   }
 
@@ -91,14 +91,14 @@ export default class NuPath extends NuBaseModule {
   startPath(args){
     let pathId = args;
     // set rendez-vous time in 2 seconds from now.
-    let rdvTime = this.soundworksServer.sync.getSyncTime() + 2.0;
-    this.soundworksServer.broadcast('player', null, this.moduleName, ['startPath', pathId, rdvTime] );
+    let rdvTime = this.e.sync.getSyncTime() + 2.0;
+    this.e.broadcast('player', null, this.moduleName, ['startPath', pathId, rdvTime] );
   }
 
   // reset clients (stop all sounds)
   reset(){
     // re-route to clients
-    this.soundworksServer.broadcast( 'player', null, this.moduleName, ['reset'] );
+    this.e.broadcast( 'player', null, this.moduleName, ['reset'] );
   }
 
 }
