@@ -8,7 +8,6 @@ export default class NuBaseModule {
     // local attributes
     this.e = serverExperience;
     this.moduleName = moduleName;
-    this.requiresPlayerId = requiresPlayerId;
 
     // to be saved parameters to send to client when connects:
     this.params = {};
