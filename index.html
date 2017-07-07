@@ -50,7 +50,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="#head">Nü Soundworks</a>
+                <a class="navbar-brand" href="#head"><font color="red">Nü</font> Soundworks</a>
             </div>
             
             <!-- Collect the nav links, forms, and other content for toggling -->
@@ -74,7 +74,7 @@
 
         <div class="row" id="head">
             <div class="col-lg-12 text-left">
-                <h1>Nü Soundworks</h1>
+                <h1><font color="red">Nü</font> Soundworks</h1>
                 <p class="lead">Max/MSP leash on the WebAudio API: spectators devices as distributed speakers and sensors during live performances.</p>
             </div>
              <div class="col-lg-12 text-justify">
@@ -101,7 +101,7 @@
 
                 <h4>The real thing:</h4>
                 <p>
-                    A Nü session involves at least 3 components: a server, a client, and a Max patch. The server (a <a href="https://nodejs.org/en/">npm server</a> if you feel like digging) runs on a laptop, the Max patch as well (can even be the same), and the client on a smartphone connected to the web page the server serves. All three components thus need to be connected to the same network (WiFi, cellular, etc.) for them to address each other. The smartphone connected to the server becomes a client: displaying a welcome screen, it stands ready for Max's instructions (relayed by the server). 
+                    A Nü session involves at least 3 components: a server, a client, and a Max patch. The server (a <a href="https://nodejs.org/en/">NodeJS server</a> if you feel like digging) runs on a laptop, the Max patch as well (can even be the same), and the client on a smartphone connected to the web page the server serves. All three components thus need to be connected to the same network (WiFi, cellular, etc.) for them to address each other. The smartphone connected to the server becomes a client: displaying a welcome screen, it stands ready for Max's instructions (relayed by the server). 
                     <br> <br>
                     These instructions are issues via OSC from a Max abstraction, referred to as a <i>Nü module</i>. Actually, a module designs a triplet [Max-abstraction / Server Class / Client Class]: messages from the abstraction are sent to the server, and re-directed to the concerned clients. Each module is designed to do one thing (and eventually do it right), much like Max's objects (sfplay, loadbang, gate, etc.). On the server and client sides, the messages sent by the Max abstraction are interpreted, most of the time triggering a dedicated method. The figure below details the architecture of a Nü session and the intra-module-inter-context communication concept. 
                 </p>
@@ -125,7 +125,7 @@
             <div class="col-lg-12 text-justify">
                 <h1>Getting started</h1>
                 <p>
-                    First, you need to <a href="">Install Max</a>. Then, download the <a href="https://github.com/ircam-cosima/soundworks-nu/archive/v1.0.zip">latest release of the Nü framework</a>. Run the ./node/_install_&lt;name-of-your-architecture&gt; file in a terminal. Example with OSX:
+                    First, you need to install <a href="https://cycling74.com/">Max</a>. Then, download the <a href="https://github.com/ircam-cosima/soundworks-nu/archive/v1.0.zip">latest release of the Nü framework</a>. Run the ./node/_install_&lt;name-of-your-architecture&gt; file in a terminal. Example with OSX:
                 </p>
                 <pre> 
                     # (adapt release number below) <br>
@@ -213,10 +213,10 @@
                 <h5 class="code-header">production (deployment):</h5>
                 <pre> 
                     env: 'production' <br>
-                    assetsDomain: 'https://apps.cosima.ircam.fr/square/' <br>
+                    assetsDomain: 'http://my.domain.name.fr/myApp' <br>
                     websockets: { <br>
                     ... <br>
-                    path: '/square/socket.io' <br>
+                    path: '/myApp/socket.io' <br>
                     } <br>
                 </pre> 
             </div>
@@ -244,8 +244,8 @@
                   // configuration of the `osc` service <br>
                   osc: { <br>
                     ... <br>
-                    receiveAddress: 'apps.cosima.ircam.fr', <br>
-                    sendAddress: '129.102.17.231', <br>
+                    receiveAddress: 'my.domain.name.fr', <br>
+                    sendAddress: 'node.server.ip.address', <br>
                   }
                 </pre> 
             </div>
@@ -279,7 +279,7 @@
             <div class="col-lg-12 text-center">
                 <p> </p>
                 <p>
-                    <a href="mailto:davipoir@gmail.com"><i class="fa fa-envelope-o fa-3x"></i></a>
+                    <a href="mailto:david.poirier-quinot@ircam.fr"><i class="fa fa-envelope-o fa-3x"></i></a>
                 </p>
             </div>
         </div> 
