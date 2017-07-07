@@ -1,0 +1,39 @@
+/*
+ * Where personal modif (bootstrap override, new classes, etc.) go.
+ */
+
+p {
+  font-size: 16px;
+  font-weight: 300;
+}
+
+.lead {
+  font-size: 18px;
+  font-weight: 350;
+}
+
+pre {
+    white-space:normal;
+}
+
+code {
+  font-size: 13px;
+  font-weight: 300;
+  background: #f5f5f5;
+  color:black;
+}
+
+.img-responsive {
+    /*margin: 0 auto; // align center*/
+    margin-top: 20px;
+    margin-bottom: 30px;
+    /*margin-right: 0px;
+    margin-left: 0px;    */
+}
+
+.embed-responsive {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    margin-right: 0px;
+    margin-left: 0px;
+}
