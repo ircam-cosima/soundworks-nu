@@ -288,9 +288,9 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 408.0, 24.0, 117.0, 22.0 ],
+					"patching_rect" : [ 472.0, 24.0, 53.0, 22.0 ],
 					"style" : "",
-					"text" : "print WRONG_ARG"
+					"text" : "nu.error"
 				}
 
 			}
@@ -630,7 +630,13 @@
 
 			}
  ],
-		"dependency_cache" : [  ],
+		"dependency_cache" : [ 			{
+				"name" : "nu.error.maxpat",
+				"bootpath" : "~/Projects/Cosima/devs/Nu/soundworks-nu/maxmsp/extras",
+				"type" : "JSON",
+				"implicit" : 1
+			}
+ ],
 		"autosave" : 0
 	}
 

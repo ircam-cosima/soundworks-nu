@@ -121,12 +121,14 @@
 , 							{
 								"box" : 								{
 									"id" : "obj-7",
+									"linecount" : 4,
 									"maxclass" : "message",
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 183.0, 114.249969, 210.0, 22.0 ],
-									"style" : ""
+									"style" : "",
+									"text" : "\"Macintosh HD:/Users/davipoir/Projects/Cosima/devs/Nu/soundworks-nu/maxmsp/node/public\""
 								}
 
 							}
@@ -2449,9 +2451,9 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 493.899994, 55.0, 117.0, 22.0 ],
+					"patching_rect" : [ 431.0, 28.0, 53.0, 22.0 ],
 					"style" : "",
-					"text" : "print WRONG_ARG"
+					"text" : "nu.error"
 				}
 
 			}
@@ -3278,6 +3280,12 @@
 		"dependency_cache" : [ 			{
 				"name" : "thru.maxpat",
 				"bootpath" : "C74:/patchers/m4l/Pluggo for Live resources/patches",
+				"type" : "JSON",
+				"implicit" : 1
+			}
+, 			{
+				"name" : "nu.error.maxpat",
+				"bootpath" : "~/Projects/Cosima/devs/Nu/soundworks-nu/maxmsp/extras",
 				"type" : "JSON",
 				"implicit" : 1
 			}

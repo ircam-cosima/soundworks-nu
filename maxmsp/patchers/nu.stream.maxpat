@@ -203,7 +203,7 @@
 									"maxclass" : "inlet",
 									"numinlets" : 0,
 									"numoutlets" : 1,
-									"outlettype" : [ "signal" ],
+									"outlettype" : [ "" ],
 									"patching_rect" : [ 105.5, 14.0, 30.0, 30.0 ],
 									"style" : ""
 								}
@@ -448,14 +448,14 @@
 , 							{
 								"box" : 								{
 									"id" : "obj-63",
-									"linecount" : 3,
+									"linecount" : 4,
 									"maxclass" : "message",
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 53.5, 340.0, 205.0, 49.0 ],
 									"style" : "",
-									"text" : "\"Macintosh HD:/Users/davipoir/Projects/Cosima/devs/Nu/public\""
+									"text" : "\"Macintosh HD:/Users/davipoir/Projects/Cosima/devs/Nu/soundworks-nu/maxmsp/node/public\""
 								}
 
 							}
@@ -1357,11 +1357,11 @@
 				"box" : 				{
 					"comment" : "",
 					"id" : "obj-2",
-					"index" : 2,
+					"index" : 0,
 					"maxclass" : "inlet",
 					"numinlets" : 0,
 					"numoutlets" : 1,
-					"outlettype" : [ "signal" ],
+					"outlettype" : [ "" ],
 					"patching_rect" : [ 192.166656, 179.0, 30.0, 30.0 ],
 					"style" : ""
 				}
@@ -1411,9 +1411,9 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 53.0, 25.0, 117.0, 22.0 ],
+					"patching_rect" : [ 116.166664, 23.0, 53.0, 22.0 ],
 					"style" : "",
-					"text" : "print WRONG_ARG"
+					"text" : "nu.error"
 				}
 
 			}
@@ -1434,7 +1434,7 @@
 				"box" : 				{
 					"comment" : "",
 					"id" : "obj-1",
-					"index" : 1,
+					"index" : 0,
 					"maxclass" : "inlet",
 					"numinlets" : 0,
 					"numoutlets" : 1,
@@ -1553,7 +1553,15 @@
 				}
 
 			}
- ]
+ ],
+		"dependency_cache" : [ 			{
+				"name" : "nu.error.maxpat",
+				"bootpath" : "~/Projects/Cosima/devs/Nu/soundworks-nu/maxmsp/extras",
+				"type" : "JSON",
+				"implicit" : 1
+			}
+ ],
+		"autosave" : 0
 	}
 
 }
