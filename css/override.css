@@ -41,3 +41,7 @@ code {
 .code-header {
   margin-bottom:5;
 }
+
+.row:target {
+    padding-top: 40px;
+}
