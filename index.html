@@ -61,6 +61,7 @@
                     <li> <a href="#start-design">Start designing</a> </li>
                     <li> <a href="#deploy">Deployment</a> </li>
                     <li> <a href="#create-module">Create module</a> </li>
+                    <li> <a href="#faq">FAQ</a> </li>
                     <li> <a href="#about">About</a> </li>
                 </ul>
             </div>
@@ -79,7 +80,7 @@
             </div>
              <div class="col-lg-12 text-justify">
                 <p>
-                    The objective of the Nü framework, based on <a href="https://github.com/collective-soundworks/soundworks/">Soundworks</a>, is to give composers control over the speakers of spectators smartphones during a performance. Connecting their devices to a web page broadcasted by the performer's laptop, spectators become part of the composition: from simple sound sources to active musicians. The performer can then control the behaviours of "Nü modules" via a Max/MSP based interface: modular units (distributed room reverb, granular synthesis, etc.) designed for live composition. Nü has been developed as part of the <a href="http://cosima.ircam.fr/">CoSiMa Project</a>.
+                    The objective of the Nü framework, based on <a href="https://github.com/collective-soundworks/soundworks/">Soundworks</a>, is to give composers control over the speakers of spectators smartphones during a performance. Connecting their devices to a web page broadcasted by the performer's laptop, spectators become part of the composition: from simple sound sources to active musicians. The performer can then control the behaviors of "Nü modules" via a Max/MSP based interface: modular units (distributed room reverb, granular synthesis, etc.) designed for live composition. Nü has been developed as part of the <a href="http://cosima.ircam.fr/">CoSiMa Project</a>.
                 </p>
             </div>
 
@@ -184,7 +185,7 @@
             </div>  
 
             <div class="col-lg-10 col-lg-offset-1 text-center">
-                <h5>Development session layout. left: Max GUI, right: emulated Nü clients. An &ldquo;audio beam&rdquo; is projected ins space (panned through the clients).<h5>
+                <h5>Development session layout. left: Max GUI, right: emulated Nü clients. An &ldquo;audio beam&rdquo; is projected in space (panned through the clients).<h5>
                 <img class="img-responsive" style="margin-top:5px;" src="img/group_interface_v2.png">                
             </div>       
         </div> 
@@ -261,19 +262,48 @@
         <div class="row" id="create-module">
             <div class="col-lg-12 text-justify">
                 <h1>Create new modules</h1>
-                <p>Building...</p>
+                <p>
+                    Creating a new module will require to (1) learn JavaScript and (2) understand the way the framework has been designed. The former I leave to you. For the later, have a look at both <code>nuTemplate</code> and <code>nuScore</code> modules. Keep in mind that each module has 3 components:
+
+                    <ul>
+                        <li>Server class: <code>./node/src/server/NuMyModuleName.js</code></li>
+                        <li>Client class: <code>./node/src/client/player/NuMyModuleName.js</code></li>
+                        <li>Max patch: <code>./maxmsp/patchers/nu.myModuleName.maxpat</code> </li>
+                        <li><i>(optional) Max help patch: <code>./maxmsp/help/nu.myModuleName.maxhelp</code> </i></li>
+                    </ul>                                    
+                </p>
+                <p>
+                    From your readings, you should understand that:
+                    <ul>
+                        <li> All standard modules extend the <code>NuBaseModule</code> Client / Server Classes.</li>
+                        <li> If all players are concerned by an OSC message, it is stored in server's <code>this.param</code> attribute but if a method named after the OSC header is defined in the Server class of the module.</li>
+                        <li>Likewise, a Nü module on the Client side will save the values issued by its Server counterpart - values coming from OSC messages re-routed via web-socket by the server to concerned clients - to its <code>this.param</code> attribute but if it defines a method named after the OSC header.</li>
+                    </ul>                
+                </p>
             </div>
         </div> 
+
+        <div class="row" id="faq">
+            <div class="col-lg-12 text-justify">
+                <h1>FAQ</h1>
+                <p class="faq-q">
+                    How do I add my own audio samples to the available sounds?
+                </p>
+                <p class="faq-a">
+                    Add your audio files to any existing / new folder of the <code>./node/public/sounds</code> folder. The depth of the file tree does not matter as it's flattened at import. Restart the Nü server. Audio file names are referred to without their extension from Max, see e.g. <code>./maxmsp/extra/nu.getting-started.maxpat</code>. Prefer .mp3 or .wav for you files extensions.
+                </p>
+            </div>
+        </div>         
 
         <div class="row" id="about">
             <div class="col-lg-12 text-justify">
                 <h1>About</h1>
                 <p>
-                    <b>Licence</b>:The Nü framework is released under the <a href="https://opensource.org/licenses/BSD-3-Clause">BSD 3-Clause license</a>.
+                    <b>License</b>:The Nü framework is released under the <a href="https://opensource.org/licenses/BSD-3-Clause">BSD 3-Clause license</a>.
                 </p>
 
                 <p>
-                    <b>Credits</b>: Nü has been developped at <a href="https://www.ircam.fr/">IRCAM-CNRS</a> within the <a href="http://cosima.ircam.fr/">CoSiMa</a> research project, supported by the French National Research Agency (ANR).
+                    <b>Credits</b>: Nü has been developed at <a href="https://www.ircam.fr/">IRCAM-CNRS</a> within the <a href="http://cosima.ircam.fr/">CoSiMa</a> research project, supported by the French National Research Agency (ANR).
                 </p>
             </div>
             <div class="col-lg-12 text-center">
