@@ -12,14 +12,32 @@ export default class NuTemplate extends NuBaseModule{
     this.params = { gain: 1.0, fileId: 0 };
 
     // binding
-    this.giveGlobalInstruction = this.giveGlobalInstruction.bind(this);
+    this.serverMethod = this.serverMethod.bind(this);
   }
 
   // send a global timed instruction to all players from OSC client
-  giveGlobalInstruction(args){
-    let delay = args;
+  serverMethod(args){
+    console.log('--', args)
+    // extract arguments
+    let playerId = args[0];
+    let delay = args[1];
+
+    // define rdv time (sec) in which to blink synchronously
     let rdvTime = this.e.sync.getSyncTime() + delay;
-    this.e.broadcast('player', null, 'nuTemplateInternal_aMethodTriggeredFromServer', rdvTime );
+    console.log(rdvTime, delay, this.e.sync.getSyncTime());
+    
+    // send to all a rdv time 
+    if( playerId == -1 ){
+      this.e.broadcast('player', null, 'nuTemplate_methodTriggeredFromServer', rdvTime );
+      return;
+    }
+    
+    // msg is player specific: get player from server map
+    let client = this.e.playerMap.get( playerId );
+    // discard if player not defined
+    if( client === undefined ){ return; }
+    // send player specific msg
+    this.e.send(client, 'nuTemplate_methodTriggeredFromServer', rdvTime );
   }
 
 }

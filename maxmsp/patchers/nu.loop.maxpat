@@ -9,7 +9,7 @@
 			"modernui" : 1
 		}
 ,
-		"rect" : [ 601.0, 376.0, 541.0, 397.0 ],
+		"rect" : [ 597.0, 363.0, 541.0, 397.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -43,7 +43,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 408.777771, 290.0, 37.0, 22.0 ],
+					"patching_rect" : [ 435.444458, 219.0, 37.0, 22.0 ],
 					"style" : "",
 					"text" : "reset"
 				}
@@ -56,7 +56,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 359.555542, 146.0, 43.0, 22.0 ],
+					"patching_rect" : [ 382.888885, 271.0, 43.0, 22.0 ],
 					"style" : "",
 					"text" : "set $1"
 				}
@@ -69,35 +69,9 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 310.333344, 182.5, 71.0, 22.0 ],
+					"patching_rect" : [ 330.333344, 307.5, 71.0, 22.0 ],
 					"style" : "",
 					"text" : "prepend #2"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-15",
-					"maxclass" : "newobj",
-					"numinlets" : 2,
-					"numoutlets" : 2,
-					"outlettype" : [ "", "" ],
-					"patching_rect" : [ 65.0, 226.5, 51.0, 22.0 ],
-					"style" : "",
-					"text" : "zl rot -1"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-28",
-					"maxclass" : "newobj",
-					"numinlets" : 2,
-					"numoutlets" : 2,
-					"outlettype" : [ "", "" ],
-					"patching_rect" : [ 15.0, 282.0, 47.0, 22.0 ],
-					"style" : "",
-					"text" : "zl rot 1"
 				}
 
 			}
@@ -108,7 +82,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 15.0, 254.5, 113.0, 22.0 ],
+					"patching_rect" : [ 15.0, 290.0, 113.0, 22.0 ],
 					"style" : "",
 					"text" : "prepend #1"
 				}
@@ -146,7 +120,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 310.333344, 211.5, 124.0, 22.0 ],
+					"patching_rect" : [ 330.333344, 336.5, 124.0, 22.0 ],
 					"style" : "",
 					"text" : "prepend setTrackSlot"
 				}
@@ -172,7 +146,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 261.111115, 119.5, 81.0, 22.0 ],
+					"patching_rect" : [ 277.0, 225.5, 81.0, 22.0 ],
 					"style" : "",
 					"text" : "prepend jitter"
 				}
@@ -185,7 +159,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 211.888885, 89.0, 124.0, 22.0 ],
+					"patching_rect" : [ 225.0, 191.5, 124.0, 22.0 ],
 					"style" : "",
 					"text" : "prepend jitterMemory"
 				}
@@ -198,7 +172,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 162.666672, 150.5, 120.0, 22.0 ],
+					"patching_rect" : [ 172.0, 157.5, 120.0, 22.0 ],
 					"style" : "",
 					"text" : "prepend masterGain"
 				}
@@ -211,7 +185,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 113.444443, 119.5, 91.0, 22.0 ],
+					"patching_rect" : [ 120.0, 123.5, 91.0, 22.0 ],
 					"style" : "",
 					"text" : "prepend period"
 				}
@@ -224,7 +198,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 64.222221, 89.0, 98.0, 22.0 ],
+					"patching_rect" : [ 67.555557, 89.0, 98.0, 22.0 ],
 					"style" : "",
 					"text" : "prepend division"
 				}
@@ -236,7 +210,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 424.0, 26.0, 53.0, 22.0 ],
+					"patching_rect" : [ 454.0, 23.0, 53.0, 22.0 ],
 					"style" : "",
 					"text" : "nu.error"
 				}
@@ -249,9 +223,9 @@
 					"numinlets" : 10,
 					"numoutlets" : 10,
 					"outlettype" : [ "", "", "", "", "", "", "", "", "", "" ],
-					"patching_rect" : [ 15.0, 55.0, 462.0, 22.0 ],
+					"patching_rect" : [ 15.0, 55.0, 492.0, 22.0 ],
 					"style" : "",
-					"text" : "route int divisions period masterGain jitterMemory jitter setTrackSlot trackName reset"
+					"text" : "route playerId divisions period masterGain jitterMemory jitter setTrackSlot trackName reset"
 				}
 
 			}
@@ -281,7 +255,7 @@
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-15", 0 ],
+					"destination" : [ "obj-11", 0 ],
 					"disabled" : 0,
 					"hidden" : 0,
 					"source" : [ "obj-10", 0 ]
@@ -290,7 +264,7 @@
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-28", 0 ],
+					"destination" : [ "obj-13", 0 ],
 					"disabled" : 0,
 					"hidden" : 0,
 					"source" : [ "obj-11", 0 ]
@@ -303,15 +277,6 @@
 					"disabled" : 0,
 					"hidden" : 0,
 					"source" : [ "obj-13", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-11", 0 ],
-					"disabled" : 0,
-					"hidden" : 0,
-					"source" : [ "obj-15", 0 ]
 				}
 
 			}
@@ -335,7 +300,7 @@
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-15", 0 ],
+					"destination" : [ "obj-11", 0 ],
 					"disabled" : 0,
 					"hidden" : 0,
 					"source" : [ "obj-2", 0 ]
@@ -434,19 +399,10 @@
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-13", 0 ],
+					"destination" : [ "obj-11", 0 ],
 					"disabled" : 0,
 					"hidden" : 0,
 					"source" : [ "obj-27", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-13", 0 ],
-					"disabled" : 0,
-					"hidden" : 0,
-					"source" : [ "obj-28", 0 ]
 				}
 
 			}
@@ -461,7 +417,7 @@
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-15", 0 ],
+					"destination" : [ "obj-11", 0 ],
 					"disabled" : 0,
 					"hidden" : 0,
 					"source" : [ "obj-6", 0 ]
@@ -470,7 +426,7 @@
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-15", 0 ],
+					"destination" : [ "obj-11", 0 ],
 					"disabled" : 0,
 					"hidden" : 0,
 					"source" : [ "obj-7", 0 ]
@@ -479,7 +435,7 @@
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-15", 0 ],
+					"destination" : [ "obj-11", 0 ],
 					"disabled" : 0,
 					"hidden" : 0,
 					"source" : [ "obj-8", 0 ]
@@ -488,7 +444,7 @@
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-15", 0 ],
+					"destination" : [ "obj-11", 0 ],
 					"disabled" : 0,
 					"hidden" : 0,
 					"source" : [ "obj-9", 0 ]

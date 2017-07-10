@@ -9,7 +9,7 @@
 			"modernui" : 1
 		}
 ,
-		"rect" : [ 191.0, 848.0, 568.0, 430.0 ],
+		"rect" : [ 191.0, 848.0, 568.0, 366.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -194,45 +194,6 @@
 			}
 , 			{
 				"box" : 				{
-					"id" : "obj-91",
-					"maxclass" : "newobj",
-					"numinlets" : 2,
-					"numoutlets" : 2,
-					"outlettype" : [ "", "" ],
-					"patching_rect" : [ 15.000001, 342.799988, 57.0, 22.0 ],
-					"style" : "",
-					"text" : "zl join"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-90",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 15.000001, 315.799988, 41.0, 22.0 ],
-					"style" : "",
-					"text" : "$2 $1"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-88",
-					"maxclass" : "newobj",
-					"numinlets" : 2,
-					"numoutlets" : 2,
-					"outlettype" : [ "", "" ],
-					"patching_rect" : [ 15.000001, 288.799988, 57.0, 22.0 ],
-					"style" : "",
-					"text" : "zl slice 2"
-				}
-
-			}
-, 			{
-				"box" : 				{
 					"id" : "obj-11",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
@@ -263,7 +224,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 15.000001, 396.799988, 65.0, 22.0 ],
+					"patching_rect" : [ 15.000001, 321.799988, 65.0, 22.0 ],
 					"style" : "",
 					"text" : "s toServer"
 				}
@@ -276,7 +237,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 15.000001, 369.799988, 114.0, 22.0 ],
+					"patching_rect" : [ 15.000001, 294.799988, 114.0, 22.0 ],
 					"style" : "",
 					"text" : "prepend /nuDisplay"
 				}
@@ -304,7 +265,7 @@
 					"outlettype" : [ "", "", "", "", "", "", "", "", "", "", "", "", "", "" ],
 					"patching_rect" : [ 15.0, 53.0, 510.0, 35.0 ],
 					"style" : "",
-					"text" : "route int enableFeedback feedbackGain restColor activeColor dBmin dBmax freqMin freqMax smoothingTimeConstant text1 text2 text3"
+					"text" : "route playerId enableFeedback feedbackGain restColor activeColor dBmin dBmax freqMin freqMax smoothingTimeConstant text1 text2 text3"
 				}
 
 			}
@@ -312,7 +273,7 @@
 				"box" : 				{
 					"comment" : "",
 					"id" : "obj-1",
-					"index" : 0,
+					"index" : 1,
 					"maxclass" : "inlet",
 					"numinlets" : 0,
 					"numoutlets" : 1,
@@ -343,7 +304,7 @@
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-88", 0 ],
+					"destination" : [ "obj-56", 0 ],
 					"disabled" : 0,
 					"hidden" : 0,
 					"source" : [ "obj-11", 0 ]
@@ -593,51 +554,7 @@
 				}
 
 			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-90", 0 ],
-					"disabled" : 0,
-					"hidden" : 0,
-					"source" : [ "obj-88", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-91", 1 ],
-					"disabled" : 0,
-					"hidden" : 0,
-					"source" : [ "obj-88", 1 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-91", 0 ],
-					"disabled" : 0,
-					"hidden" : 0,
-					"source" : [ "obj-90", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-56", 0 ],
-					"disabled" : 0,
-					"hidden" : 0,
-					"source" : [ "obj-91", 0 ]
-				}
-
-			}
- ],
-		"dependency_cache" : [ 			{
-				"name" : "nu.error.maxpat",
-				"bootpath" : "~/Projects/Cosima/devs/Nu/soundworks-nu/maxmsp/extras",
-				"type" : "JSON",
-				"implicit" : 1
-			}
- ],
-		"autosave" : 0
+ ]
 	}
 
 }

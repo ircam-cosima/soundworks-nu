@@ -9,7 +9,7 @@
 			"modernui" : 1
 		}
 ,
-		"rect" : [ 1200.0, 297.0, 469.0, 370.0 ],
+		"rect" : [ 1159.0, 368.0, 469.0, 370.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -45,19 +45,6 @@
 					"patching_rect" : [ 365.0, 16.0, 53.0, 22.0 ],
 					"style" : "",
 					"text" : "nu.error"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-12",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 268.0, 224.5, 57.0, 22.0 ],
-					"style" : "",
-					"text" : "$2 $1 $3"
 				}
 
 			}
@@ -132,7 +119,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 172.0, 172.0, 43.0, 22.0 ],
+					"patching_rect" : [ 168.0, 172.0, 43.0, 22.0 ],
 					"style" : "",
 					"text" : "set $1"
 				}
@@ -145,9 +132,9 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 268.0, 197.0, 65.0, 22.0 ],
+					"patching_rect" : [ 268.0, 224.0, 69.0, 22.0 ],
 					"style" : "",
-					"text" : "prepend 0"
+					"text" : "prepend -1"
 				}
 
 			}
@@ -173,7 +160,7 @@
 					"outlettype" : [ "", "", "", "", "", "" ],
 					"patching_rect" : [ 49.0, 47.0, 369.0, 22.0 ],
 					"style" : "",
-					"text" : "route int acceleration touch energy orientation"
+					"text" : "route playerId acceleration touch energy orientation"
 				}
 
 			}
@@ -333,19 +320,10 @@
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-12", 0 ],
-					"disabled" : 0,
-					"hidden" : 0,
-					"source" : [ "obj-11", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
 					"destination" : [ "obj-44", 0 ],
 					"disabled" : 0,
 					"hidden" : 0,
-					"source" : [ "obj-12", 0 ]
+					"source" : [ "obj-11", 0 ]
 				}
 
 			}

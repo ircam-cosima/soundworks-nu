@@ -9,7 +9,7 @@
 			"modernui" : 1
 		}
 ,
-		"rect" : [ 578.0, 482.0, 468.0, 439.0 ],
+		"rect" : [ 516.0, 589.0, 468.0, 439.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -97,7 +97,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 15.0, 347.5, 74.0, 22.0 ],
 					"style" : "",
-					"text" : "$3 $1 $2 $4"
+					"text" : "$1 $3 $2 $4"
 				}
 
 			}

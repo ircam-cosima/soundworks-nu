@@ -13,7 +13,7 @@ var encodeWav = require('audio-encode-wav');
 import Audio from 'audio';
 var AudioContext = require('web-audio-api').AudioContext
 const audioContext = new AudioContext;
-const assetsPath = __dirname + '/../../public/';
+const savePath = __dirname + '/../../../';
 
 export default class NuOutput extends NuBaseModule {
   constructor(serverExperience) {
@@ -54,7 +54,11 @@ export default class NuOutput extends NuBaseModule {
   * start / stop recording: will receive audio data from all clients, 
   * and concatenate them into output file written to disk
   **/
-  record(val){
+  record(args){
+    let playerId = args.shift();
+    // playerId not used at the moment, only for uniformity with other modules
+    let val = args.shift();
+
     // save recording start time
     if( val === 1 ){ 
       this.startRecTime = this.e.sync.getSyncTime(); 
@@ -184,7 +188,7 @@ export default class NuOutput extends NuBaseModule {
 
     // get output file name / path
     let date = new Date();
-    let fileName = assetsPath + 'nu-rec-' 
+    let fileName = savePath + 'nu-rec-' 
                   + date.getFullYear() + '-' 
                   + date.getMonth() + '-' 
                   + date.getDate() + '-' 

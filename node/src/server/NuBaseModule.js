@@ -3,26 +3,21 @@
  **/
 
 export default class NuBaseModule {
-  constructor(serverExperience, moduleName, requiresPlayerId = false) {
+  constructor(serverExperience, moduleName) {
 
     // local attributes
     this.e = serverExperience;
     this.moduleName = moduleName;
 
-    // to be saved parameters to send to client when connects:
+    // to be saved parameters to send to client when connects
     this.params = {};
 
     // binding
     this.enterPlayer = this.enterPlayer.bind(this);
     this.exitPlayer = this.exitPlayer.bind(this);
-    if( requiresPlayerId ){ 
-      this.paramCallback = this.paramCallbackWithPlayerId.bind(this); 
-    }
-    else{
-      this.paramCallback = this.paramCallbackDefault.bind(this);
-    }
+    this.paramCallback = this.paramCallback.bind(this); 
 
-    // general router towards internal functions
+    // setup osx msg receive callback: format msg and apply this.paramCallback
     this.e.osc.receive( '/' + this.moduleName, (msgRaw) => {
       // shape msg into array of arguments      
       let msg = msgRaw.split(' ');
@@ -47,65 +42,43 @@ export default class NuBaseModule {
 
   /**
   * local equivalent of soundworks exit.
-  * only applied for clients of type 'player'
+  * only applied for clients of type 'players'. No default behavior, 
+  * module-specific override if need be.
   **/
   exitPlayer(client){}
 
-  // callback that handles Nu messages from OSC client
-  paramCallbackDefault(msg){
-    // extract data
-    let name = msg[0];
-    let args = msg.slice(1, msg.length);
-    // convert eventual remaining array to singleton
-    args = (args.length == 1) ? args[0] : args;    
-    // either call dedicated method
-    if( this[name] !== undefined ){
-      this[name](args);
-    }
-    // or save value to local and forward to players
-    else{
-      this.params[name] = args;
-      this.e.broadcast( 'player', null, this.moduleName, msg );
-    }
-  }
-
   /**
-  * callback that handles Nu msg from OSC client.
-  * this second version supposes that every msg received contains 
-  * playerId, and will re-route messages to the corresponding player
+  * callback that handles Nu msg from OSC client. Supposes that every msg 
+  * received contains playerId, re-route to concerned player or to internal
+  * params/function if playerId == -1 (all concerned)
   **/
-  paramCallbackWithPlayerId(msg){
+  paramCallback(msg){
     // extract data
-    let name = msg[0];
+    let playerId = msg.shift(); // concerned player id
+    let name = msg.shift(); // method / argument name
     
-    // call dedicated method if defined
+    // eventually convert remaining array to singleton
+    let args = (msg.length == 1) ? msg[0] : msg;
+
+    // call local dedicated method if defined
     if( this[name] !== undefined ){  
-      this[name]( msg.splice(1, 1) );
+      this[name]( [playerId].concat(args) );
       return;
     }
-
-    // extract player Id from msg
-    let playerId = msg.splice(1, 1)[0]; 
 
     // if player specific instruction, send to player
     if( playerId !== -1 ){
       let client = this.e.playerMap.get( playerId );
       if( client === undefined ){ return; }
-      this.e.send( client, this.moduleName, msg );
+      this.e.send( client, this.moduleName, [name].concat(args) );
+      return
     }
     
-    // else, broadcast and save local
-    else{
-      // broadcast message
-      this.e.broadcast( 'player', null, this.moduleName, msg );
-      
-      // extract parameter value
-      let args = msg.slice(1);
-      // convert eventual remaining array to singleton
-      args = (args.length == 1) ? args[0] : args;
-      // store value
-      this.params[name] = args;
-    }
+    // all players are concerned: broadcast and save local 
+    // (to broadcast current config to newcomers)
+    this.e.broadcast( 'player', null, this.moduleName, [name].concat(args) );
+    // store value
+    this.params[name] = args;
   }
 
 }

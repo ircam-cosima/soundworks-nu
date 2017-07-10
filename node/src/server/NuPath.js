@@ -16,17 +16,23 @@ export default class NuPath extends NuBaseModule {
                     propagationSpeed: 100.0, 
                     propagationGain: 0.9, 
                     propagationRxMinGain: 0.01, 
+                    audioFileId: "snap", 
                     perc: 1, 
                     loop: true, 
                     accSlope: 0, 
                     timeBound: 0 };
-
+    
+    // this variable is intern to server, no need to broadcast it to clients upon connection
+    this._rdvDelay = 2.0;                    
+    
     // binding
     this.setPath = this.setPath.bind(this);
     this.startPath = this.startPath.bind(this);
+    this.rdvDelay = this.rdvDelay.bind(this);
   }
 
   setPath(args){
+    args.shift(); // playerId, not used, here to keep uniform the module impl.
     // extract from arguments
     let pathId = args.shift();
     
@@ -89,10 +95,18 @@ export default class NuPath extends NuBaseModule {
 
   // trigger path rendering in clients
   startPath(args){
-    let pathId = args;
+    args.shift(); // playerId, not used, here to keep uniform the module impl.
+    let pathId = args.shift();
     // set rendez-vous time in 2 seconds from now.
-    let rdvTime = this.e.sync.getSyncTime() + 2.0;
+    let rdvTime = this.e.sync.getSyncTime() + this._rdvDelay;
     this.e.broadcast('player', null, this.moduleName, ['startPath', pathId, rdvTime] );
+  }
+
+  // define delay before rdv time, in sec, from moment when play path msg is received
+  // (for syync. play)
+  rdvDelay(args){
+    args.shift(); // playerId, not used, here to keep uniform the module impl.
+    this._rdvDelay = args.shift();
   }
 
   // reset clients (stop all sounds)

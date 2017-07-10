@@ -9,7 +9,7 @@
 			"modernui" : 1
 		}
 ,
-		"rect" : [ 879.0, 460.0, 293.0, 521.0 ],
+		"rect" : [ 879.0, 460.0, 298.0, 503.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -54,7 +54,7 @@
 							"modernui" : 1
 						}
 ,
-						"rect" : [ 879.0, 486.0, 293.0, 495.0 ],
+						"rect" : [ 879.0, 486.0, 298.0, 477.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 12.0,
@@ -88,7 +88,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 45.25, 77.5, 150.0, 20.0 ],
+									"patching_rect" : [ 44.25, 81.5, 150.0, 20.0 ],
 									"style" : "",
 									"text" : "start stream and dac"
 								}
@@ -112,7 +112,7 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 129.25, 221.0, 104.5, 22.0 ],
+									"patching_rect" : [ 128.25, 223.0, 104.5, 22.0 ],
 									"style" : "",
 									"text" : "9.861285",
 									"textcolor" : [ 0.0, 0.0, 0.0, 1.0 ]
@@ -125,7 +125,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 194.25, 338.0, 91.25, 20.0 ],
+									"patching_rect" : [ 193.25, 312.0, 91.25, 20.0 ],
 									"style" : "",
 									"text" : "example input"
 								}
@@ -147,7 +147,7 @@
 									"numoutlets" : 1,
 									"offset" : [ 0.0, 0.0 ],
 									"outlettype" : [ "signal" ],
-									"patching_rect" : [ 56.5, 351.0, 230.0, 95.0 ],
+									"patching_rect" : [ 55.5, 325.0, 230.0, 95.0 ],
 									"viewvisibility" : 1
 								}
 
@@ -155,11 +155,11 @@
 , 							{
 								"box" : 								{
 									"id" : "obj-86",
-									"linecount" : 6,
+									"linecount" : 4,
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 57.5, 249.0, 121.0, 87.0 ],
+									"patching_rect" : [ 56.5, 251.0, 220.0, 60.0 ],
 									"style" : "",
 									"text" : "delayTime (in sec)\nincrease this value if devices blink, i.e. don't have time to receive audio data before rdv time"
 								}
@@ -174,7 +174,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"parameter_enable" : 0,
-									"patching_rect" : [ 45.25, 204.0, 126.0, 13.0 ],
+									"patching_rect" : [ 44.25, 206.0, 126.0, 13.0 ],
 									"size" : 10.0,
 									"style" : ""
 								}
@@ -187,7 +187,7 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 45.25, 220.0, 82.0, 22.0 ],
+									"patching_rect" : [ 44.25, 222.0, 82.0, 22.0 ],
 									"style" : "",
 									"text" : "delayTime $1"
 								}
@@ -199,7 +199,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 79.0, 166.0, 120.0, 20.0 ],
+									"patching_rect" : [ 78.0, 164.0, 120.0, 20.0 ],
 									"style" : "",
 									"text" : "audio gain"
 								}
@@ -214,7 +214,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"parameter_enable" : 0,
-									"patching_rect" : [ 29.25, 150.0, 126.0, 13.0 ],
+									"patching_rect" : [ 28.25, 148.0, 126.0, 13.0 ],
 									"size" : 1.0,
 									"style" : ""
 								}
@@ -227,7 +227,7 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 29.25, 166.0, 50.0, 22.0 ],
+									"patching_rect" : [ 28.25, 164.0, 50.0, 22.0 ],
 									"style" : "",
 									"text" : "gain $1"
 								}
@@ -240,7 +240,7 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 11.5, 105.5, 57.0, 22.0 ],
+									"patching_rect" : [ 10.5, 111.5, 57.0, 22.0 ],
 									"style" : "",
 									"text" : "onOff $1"
 								}
@@ -254,7 +254,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "int" ],
 									"parameter_enable" : 0,
-									"patching_rect" : [ 11.5, 75.5, 24.0, 24.0 ],
+									"patching_rect" : [ 10.5, 81.5, 24.0, 24.0 ],
 									"style" : ""
 								}
 
@@ -265,7 +265,7 @@
 									"maxclass" : "newobj",
 									"numinlets" : 2,
 									"numoutlets" : 0,
-									"patching_rect" : [ 11.5, 462.0, 64.0, 22.0 ],
+									"patching_rect" : [ 10.5, 436.0, 64.0, 22.0 ],
 									"style" : "",
 									"text" : "nu.stream"
 								}
@@ -279,7 +279,7 @@
 									"numoutlets" : 0,
 									"patching_rect" : [ 11.5, 44.0, 247.0, 20.0 ],
 									"style" : "",
-									"text" : "stream audio to players"
+									"text" : "stream audio to players."
 								}
 
 							}
@@ -399,7 +399,13 @@
 ,
 		"dependency_cache" : [ 			{
 				"name" : "nu.stream.maxpat",
-				"bootpath" : "~/Projects/Cosima/devs/Nu/soundworks-nu/maxmsp",
+				"bootpath" : "~/Projects/Cosima/devs/Nu/soundworks-nu/maxmsp/patchers",
+				"type" : "JSON",
+				"implicit" : 1
+			}
+, 			{
+				"name" : "nu.error.maxpat",
+				"bootpath" : "~/Projects/Cosima/devs/Nu/soundworks-nu/maxmsp/extras",
 				"type" : "JSON",
 				"implicit" : 1
 			}

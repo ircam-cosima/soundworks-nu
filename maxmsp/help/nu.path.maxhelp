@@ -9,7 +9,7 @@
 			"modernui" : 1
 		}
 ,
-		"rect" : [ 1473.0, 537.0, 856.0, 579.0 ],
+		"rect" : [ 272.0, 674.0, 856.0, 579.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -54,7 +54,7 @@
 							"modernui" : 1
 						}
 ,
-						"rect" : [ 1473.0, 563.0, 856.0, 553.0 ],
+						"rect" : [ 272.0, 700.0, 856.0, 553.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 12.0,
@@ -83,6 +83,74 @@
 						"subpatcher_template" : "",
 						"showontab" : 1,
 						"boxes" : [ 							{
+								"box" : 								{
+									"bgcolor" : [ 0.376471, 0.384314, 0.4, 0.0 ],
+									"bgcolor2" : [ 0.572549, 0.27451, 0.027451, 0.0 ],
+									"bgfillcolor_angle" : 270.0,
+									"bgfillcolor_autogradient" : 0.0,
+									"bgfillcolor_color" : [ 0.290196, 0.309804, 0.301961, 1.0 ],
+									"bgfillcolor_color1" : [ 0.376471, 0.384314, 0.4, 0.0 ],
+									"bgfillcolor_color2" : [ 0.572549, 0.27451, 0.027451, 0.0 ],
+									"bgfillcolor_proportion" : 0.39,
+									"bgfillcolor_type" : "gradient",
+									"gradient" : 1,
+									"id" : "obj-1",
+									"ignoreclick" : 1,
+									"maxclass" : "message",
+									"numinlets" : 2,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 642.25, 448.5, 61.5, 22.0 ],
+									"style" : "",
+									"text" : "0.01",
+									"textcolor" : [ 0.0, 0.0, 0.0, 1.0 ]
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"floatoutput" : 1,
+									"id" : "obj-7",
+									"maxclass" : "slider",
+									"min" : 0.01,
+									"mult" : 9.99,
+									"numinlets" : 1,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"parameter_enable" : 0,
+									"patching_rect" : [ 514.25, 453.0, 126.0, 13.0 ],
+									"size" : 1.0,
+									"style" : ""
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"id" : "obj-10",
+									"linecount" : 2,
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 510.0, 412.0, 332.0, 33.0 ],
+									"style" : "",
+									"text" : "delay before rdv time (if too small, some player will not have received the instruction before time to play)"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"id" : "obj-12",
+									"maxclass" : "message",
+									"numinlets" : 2,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 514.25, 470.0, 150.0, 22.0 ],
+									"style" : "",
+									"text" : "rdvDelay $1"
+								}
+
+							}
+, 							{
 								"box" : 								{
 									"id" : "obj-28",
 									"maxclass" : "comment",
@@ -217,7 +285,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 520.75, 123.0, 71.5, 22.0 ],
 									"style" : "",
-									"text" : "0.54",
+									"text" : "1.",
 									"textcolor" : [ 0.0, 0.0, 0.0, 1.0 ]
 								}
 
@@ -369,7 +437,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 427.75, 309.0, 71.5, 22.0 ],
 									"style" : "",
-									"text" : "7",
+									"text" : "2",
 									"textcolor" : [ 0.0, 0.0, 0.0, 1.0 ]
 								}
 
@@ -380,9 +448,9 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 296.5, 288.416687, 150.0, 20.0 ],
+									"patching_rect" : [ 296.5, 288.416687, 186.0, 20.0 ],
 									"style" : "",
-									"text" : "propag speed"
+									"text" : "propag speed (NOT path speed)"
 								}
 
 							}
@@ -769,6 +837,15 @@
 									"destination" : [ "obj-9", 0 ],
 									"disabled" : 0,
 									"hidden" : 0,
+									"source" : [ "obj-12", 0 ]
+								}
+
+							}
+, 							{
+								"patchline" : 								{
+									"destination" : [ "obj-9", 0 ],
+									"disabled" : 0,
+									"hidden" : 0,
 									"source" : [ "obj-13", 0 ]
 								}
 
@@ -1022,6 +1099,26 @@
 							}
 , 							{
 								"patchline" : 								{
+									"destination" : [ "obj-1", 1 ],
+									"disabled" : 0,
+									"hidden" : 1,
+									"order" : 0,
+									"source" : [ "obj-7", 0 ]
+								}
+
+							}
+, 							{
+								"patchline" : 								{
+									"destination" : [ "obj-12", 0 ],
+									"disabled" : 0,
+									"hidden" : 0,
+									"order" : 1,
+									"source" : [ "obj-7", 0 ]
+								}
+
+							}
+, 							{
+								"patchline" : 								{
 									"destination" : [ "obj-9", 0 ],
 									"disabled" : 0,
 									"hidden" : 0,
@@ -1070,7 +1167,13 @@
 		"lines" : [  ],
 		"dependency_cache" : [ 			{
 				"name" : "nu.path.maxpat",
-				"bootpath" : "~/Projects/Cosima/devs/Nu/soundworks-nu/maxmsp",
+				"bootpath" : "~/Projects/Cosima/devs/Nu/soundworks-nu/maxmsp/patchers",
+				"type" : "JSON",
+				"implicit" : 1
+			}
+, 			{
+				"name" : "nu.error.maxpat",
+				"bootpath" : "~/Projects/Cosima/devs/Nu/soundworks-nu/maxmsp/extras",
 				"type" : "JSON",
 				"implicit" : 1
 			}

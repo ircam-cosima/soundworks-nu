@@ -84,6 +84,57 @@
 						"showontab" : 1,
 						"boxes" : [ 							{
 								"box" : 								{
+									"id" : "obj-29",
+									"maxclass" : "message",
+									"numinlets" : 2,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 12.5, 128.5, 70.0, 22.0 ],
+									"style" : "",
+									"text" : "playerId $1"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"id" : "obj-33",
+									"maxclass" : "number",
+									"minimum" : -1,
+									"numinlets" : 1,
+									"numoutlets" : 2,
+									"outlettype" : [ "", "bang" ],
+									"parameter_enable" : 0,
+									"patching_rect" : [ 12.5, 104.5, 50.0, 22.0 ],
+									"style" : ""
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"id" : "obj-34",
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 74.0, 104.5, 165.0, 20.0 ],
+									"style" : "",
+									"text" : "addressed playerID (-1 is all)"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"id" : "obj-14",
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 82.5, 427.0, 150.0, 20.0 ],
+									"style" : "",
+									"text" : "arg: playerId"
+								}
+
+							}
+, 							{
+								"box" : 								{
 									"id" : "obj-2",
 									"maxclass" : "newobj",
 									"numinlets" : 2,
@@ -329,7 +380,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 66.875, 291.796875, 123.75, 20.0 ],
+									"patching_rect" : [ 80.875, 330.296875, 123.75, 20.0 ],
 									"style" : "",
 									"text" : "random energy"
 								}
@@ -343,7 +394,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"parameter_enable" : 0,
-									"patching_rect" : [ 64.625, 315.796875, 126.0, 13.0 ],
+									"patching_rect" : [ 78.625, 354.296875, 126.0, 13.0 ],
 									"size" : 11.0,
 									"style" : ""
 								}
@@ -356,7 +407,7 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 64.625, 331.796875, 86.0, 22.0 ],
+									"patching_rect" : [ 78.625, 370.296875, 86.0, 22.0 ],
 									"style" : "",
 									"text" : "randomVar $1"
 								}
@@ -369,7 +420,7 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 15.5, 139.0, 129.0, 22.0 ],
+									"patching_rect" : [ 29.5, 177.5, 129.0, 22.0 ],
 									"style" : "",
 									"text" : "audioFileId drum_loop"
 								}
@@ -396,7 +447,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "int" ],
 									"parameter_enable" : 0,
-									"patching_rect" : [ 48.5, 232.0, 24.0, 24.0 ],
+									"patching_rect" : [ 62.5, 270.5, 24.0, 24.0 ],
 									"style" : ""
 								}
 
@@ -408,7 +459,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 74.5, 232.0, 96.0, 33.0 ],
+									"patching_rect" : [ 88.5, 270.5, 96.0, 33.0 ],
 									"style" : "",
 									"text" : "enable / disable module"
 								}
@@ -421,7 +472,7 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 48.5, 262.296875, 63.0, 22.0 ],
+									"patching_rect" : [ 62.5, 300.796875, 63.0, 22.0 ],
 									"style" : "",
 									"text" : "enable $1"
 								}
@@ -433,7 +484,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 15.5, 117.0, 89.0, 20.0 ],
+									"patching_rect" : [ 29.5, 155.5, 89.0, 20.0 ],
 									"style" : "",
 									"text" : "set audio file"
 								}
@@ -445,7 +496,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 88.0, 193.0, 81.5, 20.0 ],
+									"patching_rect" : [ 102.0, 231.5, 81.5, 20.0 ],
 									"style" : "",
 									"text" : "main gain"
 								}
@@ -460,7 +511,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"parameter_enable" : 0,
-									"patching_rect" : [ 35.5, 177.0, 126.0, 13.0 ],
+									"patching_rect" : [ 49.5, 215.5, 126.0, 13.0 ],
 									"size" : 1.0,
 									"style" : ""
 								}
@@ -473,7 +524,7 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 35.5, 193.0, 50.0, 22.0 ],
+									"patching_rect" : [ 49.5, 231.5, 50.0, 22.0 ],
 									"style" : "",
 									"text" : "gain $1"
 								}
@@ -485,9 +536,9 @@
 									"maxclass" : "newobj",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 11.5, 427.0, 54.0, 22.0 ],
+									"patching_rect" : [ 12.5, 427.0, 68.0, 22.0 ],
 									"style" : "",
-									"text" : "nu.grain"
+									"text" : "nu.grain -1"
 								}
 
 							}
@@ -633,6 +684,15 @@
 									"destination" : [ "obj-9", 0 ],
 									"disabled" : 0,
 									"hidden" : 0,
+									"source" : [ "obj-29", 0 ]
+								}
+
+							}
+, 							{
+								"patchline" : 								{
+									"destination" : [ "obj-9", 0 ],
+									"disabled" : 0,
+									"hidden" : 0,
 									"source" : [ "obj-3", 0 ]
 								}
 
@@ -661,6 +721,15 @@
 									"disabled" : 0,
 									"hidden" : 0,
 									"source" : [ "obj-32", 0 ]
+								}
+
+							}
+, 							{
+								"patchline" : 								{
+									"destination" : [ "obj-29", 0 ],
+									"disabled" : 0,
+									"hidden" : 0,
+									"source" : [ "obj-33", 0 ]
 								}
 
 							}
@@ -721,13 +790,19 @@
 		"lines" : [  ],
 		"dependency_cache" : [ 			{
 				"name" : "nu.grain.maxpat",
-				"bootpath" : "~/Projects/Cosima/devs/Nu/soundworks-nu/maxmsp",
+				"bootpath" : "~/Projects/Cosima/devs/Nu/soundworks-nu/maxmsp/patchers",
+				"type" : "JSON",
+				"implicit" : 1
+			}
+, 			{
+				"name" : "nu.error.maxpat",
+				"bootpath" : "~/Projects/Cosima/devs/Nu/soundworks-nu/maxmsp/extras",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "nu.display.maxpat",
-				"bootpath" : "~/Projects/Cosima/devs/Nu/soundworks-nu/maxmsp",
+				"bootpath" : "~/Projects/Cosima/devs/Nu/soundworks-nu/maxmsp/patchers",
 				"type" : "JSON",
 				"implicit" : 1
 			}

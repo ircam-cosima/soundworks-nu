@@ -23,12 +23,6 @@ export default class NuGrain extends NuBaseModule {
 
   }
 
-  // reset granular engine on client's side (required e.g. to set tempo)
-  reset(){
-    // re-route to clients
-    this.e.broadcast( 'player', null, this.moduleName, ['reset'] );
-  }  
-
   /**
   * had to redefine the enterPlayer method here to send a "reset" message once
   * all initial parameters were sent, to make sure the granular engine of the 

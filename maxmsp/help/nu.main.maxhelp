@@ -144,7 +144,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 289.0, 379.083313, 40.0, 22.0 ],
 					"style" : "",
-					"text" : "3"
+					"text" : "2"
 				}
 
 			}
@@ -238,7 +238,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 74.333336, 403.75, 32.0, 20.0 ],
 					"style" : "",
-					"text" : "3 s",
+					"text" : "2 s",
 					"textjustification" : 2
 				}
 
@@ -329,6 +329,7 @@
 			}
 , 			{
 				"box" : 				{
+					"bgcolor" : [ 0.290196, 0.309804, 0.301961, 0.0 ],
 					"id" : "obj-4",
 					"maxclass" : "led",
 					"numinlets" : 1,
@@ -535,13 +536,19 @@
  ],
 		"dependency_cache" : [ 			{
 				"name" : "nu.main.maxpat",
-				"bootpath" : "~/Projects/Cosima/devs/Nu/soundworks-nu/maxmsp",
+				"bootpath" : "~/Projects/Cosima/devs/Nu/soundworks-nu/maxmsp/patchers",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "thru.maxpat",
 				"bootpath" : "C74:/patchers/m4l/Pluggo for Live resources/patches",
+				"type" : "JSON",
+				"implicit" : 1
+			}
+, 			{
+				"name" : "nu.error.maxpat",
+				"bootpath" : "~/Projects/Cosima/devs/Nu/soundworks-nu/maxmsp/extras",
 				"type" : "JSON",
 				"implicit" : 1
 			}

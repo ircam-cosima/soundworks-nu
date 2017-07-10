@@ -84,6 +84,33 @@
 						"showontab" : 1,
 						"boxes" : [ 							{
 								"box" : 								{
+									"id" : "obj-3",
+									"maxclass" : "message",
+									"numinlets" : 2,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 11.5, 103.25, 70.0, 22.0 ],
+									"style" : "",
+									"text" : "playerId $1"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"id" : "obj-4",
+									"maxclass" : "number",
+									"minimum" : -1,
+									"numinlets" : 1,
+									"numoutlets" : 2,
+									"outlettype" : [ "", "bang" ],
+									"parameter_enable" : 0,
+									"patching_rect" : [ 11.5, 79.25, 50.0, 22.0 ],
+									"style" : ""
+								}
+
+							}
+, 							{
+								"box" : 								{
 									"hidden" : 1,
 									"id" : "obj-33",
 									"maxclass" : "newobj",
@@ -1190,25 +1217,11 @@
 							}
 , 							{
 								"box" : 								{
-									"id" : "obj-83",
-									"maxclass" : "number",
-									"minimum" : -1,
-									"numinlets" : 1,
-									"numoutlets" : 2,
-									"outlettype" : [ "", "bang" ],
-									"parameter_enable" : 0,
-									"patching_rect" : [ 15.5, 89.416748, 50.0, 22.0 ],
-									"style" : ""
-								}
-
-							}
-, 							{
-								"box" : 								{
 									"id" : "obj-8",
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 67.5, 89.416748, 159.0, 20.0 ],
+									"patching_rect" : [ 73.0, 79.25, 159.0, 20.0 ],
 									"style" : "",
 									"text" : "monitored playerID (-1 is all)"
 								}
@@ -1371,6 +1384,15 @@
 									"destination" : [ "obj-1", 0 ],
 									"disabled" : 0,
 									"hidden" : 0,
+									"source" : [ "obj-3", 0 ]
+								}
+
+							}
+, 							{
+								"patchline" : 								{
+									"destination" : [ "obj-1", 0 ],
+									"disabled" : 0,
+									"hidden" : 0,
 									"source" : [ "obj-30", 0 ]
 								}
 
@@ -1381,6 +1403,15 @@
 									"disabled" : 0,
 									"hidden" : 1,
 									"source" : [ "obj-33", 0 ]
+								}
+
+							}
+, 							{
+								"patchline" : 								{
+									"destination" : [ "obj-3", 0 ],
+									"disabled" : 0,
+									"hidden" : 0,
+									"source" : [ "obj-4", 0 ]
 								}
 
 							}
@@ -1453,15 +1484,6 @@
 									"disabled" : 0,
 									"hidden" : 1,
 									"source" : [ "obj-75", 0 ]
-								}
-
-							}
-, 							{
-								"patchline" : 								{
-									"destination" : [ "obj-1", 0 ],
-									"disabled" : 0,
-									"hidden" : 0,
-									"source" : [ "obj-83", 0 ]
 								}
 
 							}
@@ -1540,7 +1562,13 @@
 		"lines" : [  ],
 		"dependency_cache" : [ 			{
 				"name" : "nu.probe.maxpat",
-				"bootpath" : "~/Projects/Cosima/devs/Nu/soundworks-nu/maxmsp",
+				"bootpath" : "~/Projects/Cosima/devs/Nu/soundworks-nu/maxmsp/patchers",
+				"type" : "JSON",
+				"implicit" : 1
+			}
+, 			{
+				"name" : "nu.error.maxpat",
+				"bootpath" : "~/Projects/Cosima/devs/Nu/soundworks-nu/maxmsp/extras",
 				"type" : "JSON",
 				"implicit" : 1
 			}

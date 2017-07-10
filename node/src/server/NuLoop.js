@@ -6,7 +6,7 @@ import NuBaseModule from './NuBaseModule'
 
 export default class NuLoop extends NuBaseModule {
   constructor(serverExperience) {
-    super(serverExperience, 'nuLoop', true);
+    super(serverExperience, 'nuLoop');
 
     // local attributes
     this.params = { period: 2.0,
@@ -17,10 +17,5 @@ export default class NuLoop extends NuBaseModule {
                   };
 
   }
-
-  reset(){
-    // re-route to clients
-    this.e.broadcast( 'player', null, this.moduleName, ['reset'] );
-  }  
 
 }

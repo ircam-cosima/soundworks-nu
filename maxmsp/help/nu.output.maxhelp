@@ -9,7 +9,7 @@
 			"modernui" : 1
 		}
 ,
-		"rect" : [ 99.0, 674.0, 390.0, 480.0 ],
+		"rect" : [ 686.0, 529.0, 390.0, 480.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -54,7 +54,7 @@
 							"modernui" : 1
 						}
 ,
-						"rect" : [ 99.0, 700.0, 390.0, 454.0 ],
+						"rect" : [ 686.0, 555.0, 390.0, 454.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 12.0,
@@ -362,12 +362,13 @@
 , 							{
 								"box" : 								{
 									"id" : "obj-11",
+									"linecount" : 2,
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 11.5, 44.0, 437.0, 20.0 ],
+									"patching_rect" : [ 11.5, 44.0, 378.0, 33.0 ],
 									"style" : "",
-									"text" : "handle audio outputs in debug mode"
+									"text" : "handle audio output: binaural rendering of web clients based on their positions, record session to disk, etc."
 								}
 
 							}
@@ -534,7 +535,13 @@
 		"lines" : [  ],
 		"dependency_cache" : [ 			{
 				"name" : "nu.output.maxpat",
-				"bootpath" : "~/Projects/Cosima/devs/Nu/soundworks-nu/maxmsp",
+				"bootpath" : "~/Projects/Cosima/devs/Nu/soundworks-nu/maxmsp/patchers",
+				"type" : "JSON",
+				"implicit" : 1
+			}
+, 			{
+				"name" : "nu.error.maxpat",
+				"bootpath" : "~/Projects/Cosima/devs/Nu/soundworks-nu/maxmsp/extras",
 				"type" : "JSON",
 				"implicit" : 1
 			}

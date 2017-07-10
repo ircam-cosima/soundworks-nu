@@ -9,7 +9,7 @@
 			"modernui" : 1
 		}
 ,
-		"rect" : [ 408.0, 601.0, 278.0, 349.0 ],
+		"rect" : [ 420.0, 728.0, 248.0, 353.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -37,6 +37,19 @@
 		"style" : "",
 		"subpatcher_template" : "",
 		"boxes" : [ 			{
+				"box" : 				{
+					"id" : "obj-4",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 15.000001, 259.0, 69.0, 22.0 ],
+					"style" : "",
+					"text" : "prepend -1"
+				}
+
+			}
+, 			{
 				"box" : 				{
 					"id" : "obj-8",
 					"maxclass" : "newobj",
@@ -119,6 +132,18 @@
 						"style" : "",
 						"subpatcher_template" : "",
 						"boxes" : [ 							{
+								"box" : 								{
+									"id" : "obj-11",
+									"maxclass" : "newobj",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 165.0, 547.0, 71.0, 22.0 ],
+									"style" : "",
+									"text" : "print OPFD"
+								}
+
+							}
+, 							{
 								"box" : 								{
 									"id" : "obj-10",
 									"maxclass" : "newobj",
@@ -453,9 +478,9 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 53.5, 340.0, 205.0, 49.0 ],
+									"patching_rect" : [ 53.5, 340.0, 205.0, 62.0 ],
 									"style" : "",
-									"text" : "\"Macintosh HD:/Users/davipoir/Projects/Cosima/devs/Nu/soundworks-nu/maxmsp/node/public\""
+									"text" : "\"Macintosh HD:/Users/davipoir/Projects/Cosima/devs/Nu/soundworks-nu/node/public\""
 								}
 
 							}
@@ -1204,10 +1229,20 @@
 							}
 , 							{
 								"patchline" : 								{
-									"destination" : [ "obj-47", 0 ],
+									"destination" : [ "obj-11", 0 ],
 									"disabled" : 0,
 									"hidden" : 0,
 									"order" : 1,
+									"source" : [ "obj-71", 0 ]
+								}
+
+							}
+, 							{
+								"patchline" : 								{
+									"destination" : [ "obj-47", 0 ],
+									"disabled" : 0,
+									"hidden" : 0,
+									"order" : 2,
 									"source" : [ "obj-71", 0 ]
 								}
 
@@ -1386,7 +1421,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 15.000001, 310.799988, 65.0, 22.0 ],
+					"patching_rect" : [ 15.000001, 305.5, 65.0, 22.0 ],
 					"style" : "",
 					"text" : "s toServer"
 				}
@@ -1399,7 +1434,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 15.000001, 283.799988, 113.0, 22.0 ],
+					"patching_rect" : [ 15.000001, 282.5, 113.0, 22.0 ],
 					"style" : "",
 					"text" : "prepend /nuStream"
 				}
@@ -1501,10 +1536,19 @@
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-56", 0 ],
+					"destination" : [ "obj-4", 0 ],
 					"disabled" : 0,
 					"hidden" : 0,
 					"source" : [ "obj-3", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-56", 0 ],
+					"disabled" : 0,
+					"hidden" : 0,
+					"source" : [ "obj-4", 0 ]
 				}
 
 			}
@@ -1519,7 +1563,7 @@
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-56", 0 ],
+					"destination" : [ "obj-4", 0 ],
 					"disabled" : 0,
 					"hidden" : 0,
 					"source" : [ "obj-6", 0 ]
@@ -1528,7 +1572,7 @@
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-56", 0 ],
+					"destination" : [ "obj-4", 0 ],
 					"disabled" : 0,
 					"hidden" : 0,
 					"source" : [ "obj-7", 0 ]

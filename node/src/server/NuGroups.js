@@ -6,7 +6,7 @@ import NuBaseModule from './NuBaseModule'
 
 export default class NuGroups extends NuBaseModule {
   constructor(serverExperience) {
-    super(serverExperience, 'nuGroups', true);
+    super(serverExperience, 'nuGroups');
 
     // binding
     this.getGroup = this.getGroup.bind(this);
@@ -20,11 +20,10 @@ export default class NuGroups extends NuBaseModule {
   * override default paramCallback from parent, to be able to redefine how OSC
   * parameters are copied locally (based on the "groupMap" object)
   **/
-  paramCallbackWithPlayerId(msg){
-    let name = msg[0];
-    let playerId = msg[1];
-    let args = msg.slice(2, msg.length);
-    let msgStippedOfPlayerId = [name].concat(args);
+  paramCallback(msg){
+    let playerId = msg.shift();
+    let name = msg.shift();
+    let msgStippedOfPlayerId = [name].concat(msg);
 
     // if player specific instruction
     if( playerId !== -1 ){
@@ -38,8 +37,8 @@ export default class NuGroups extends NuBaseModule {
       // broadcast msg
       this.e.broadcast( 'player', null, this.moduleName, msgStippedOfPlayerId ); 
       // store value
-      let groupId = args.shift();
-      let value = args.shift();
+      let groupId = msg.shift();
+      let value = msg.shift();
       // get associated group
       let group = this.getGroup( groupId );
       // save values

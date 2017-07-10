@@ -48,8 +48,9 @@ export default class NuStream extends NuBaseModule {
   }
 
   // enable / disable streaming module
-  onOff(value){
-
+  onOff(args){
+    args.shift(); // playerId, not used, here to keep uniform the module impl.
+    let value = args.shift();
     if( value ){
       // remove old files
       this.cleanStreamDir(); 

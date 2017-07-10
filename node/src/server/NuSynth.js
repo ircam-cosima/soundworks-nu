@@ -7,7 +7,7 @@ import NuBaseModule from './NuBaseModule'
 
 export default class NuSynth extends NuBaseModule {
   constructor(serverExperience) {
-    super(serverExperience, 'nuSynth', true);
+    super(serverExperience, 'nuSynth');
 
     // local attributes
     this.params = {

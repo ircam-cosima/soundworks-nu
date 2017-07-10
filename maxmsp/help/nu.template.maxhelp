@@ -9,7 +9,7 @@
 			"modernui" : 1
 		}
 ,
-		"rect" : [ 601.0, 646.0, 265.0, 447.0 ],
+		"rect" : [ 83.0, 249.0, 411.0, 465.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -54,7 +54,7 @@
 							"modernui" : 1
 						}
 ,
-						"rect" : [ 0.0, 26.0, 265.0, 421.0 ],
+						"rect" : [ 0.0, 26.0, 411.0, 439.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 12.0,
@@ -1323,7 +1323,7 @@
 							"modernui" : 1
 						}
 ,
-						"rect" : [ 601.0, 672.0, 265.0, 421.0 ],
+						"rect" : [ 83.0, 275.0, 411.0, 439.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 12.0,
@@ -1353,27 +1353,79 @@
 						"showontab" : 1,
 						"boxes" : [ 							{
 								"box" : 								{
-									"id" : "obj-12",
-									"maxclass" : "newobj",
+									"id" : "obj-15",
+									"linecount" : 3,
+									"maxclass" : "comment",
 									"numinlets" : 1,
-									"numoutlets" : 1,
-									"outlettype" : [ "" ],
-									"patching_rect" : [ 91.625, 322.5, 83.0, 22.0 ],
+									"numoutlets" : 0,
+									"patching_rect" : [ 119.625, 191.0, 259.0, 47.0 ],
 									"style" : "",
-									"text" : "prepend fileId"
+									"text" : "trigger direct client method (bypassing server but for playerId == -1, retained, see below) .\nblink now with green hue of ..."
 								}
 
 							}
 , 							{
 								"box" : 								{
-									"id" : "obj-28",
+									"id" : "obj-13",
+									"maxclass" : "message",
+									"numinlets" : 2,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 87.625, 213.0, 31.0, 22.0 ],
+									"style" : "",
+									"text" : "230"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"id" : "obj-6",
+									"linecount" : 3,
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 106.625, 277.0, 294.0, 47.0 ],
+									"style" : "",
+									"text" : "global parameters, saved in this.param on client side. saved on server side as well for playerId == -1 to broadcast current config to newcomers"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"id" : "obj-24",
+									"maxclass" : "message",
+									"numinlets" : 2,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 11.5, 97.25, 70.0, 22.0 ],
+									"style" : "",
+									"text" : "playerId $1"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"id" : "obj-22",
 									"maxclass" : "number",
+									"minimum" : -1,
 									"numinlets" : 1,
 									"numoutlets" : 2,
 									"outlettype" : [ "", "bang" ],
 									"parameter_enable" : 0,
-									"patching_rect" : [ 91.625, 297.0, 50.0, 22.0 ],
+									"patching_rect" : [ 11.5, 73.25, 50.0, 22.0 ],
 									"style" : ""
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"id" : "obj-5",
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 106.625, 389.0, 112.0, 20.0 ],
+									"style" : "",
+									"text" : "arg: playerID"
 								}
 
 							}
@@ -1382,11 +1434,13 @@
 									"floatoutput" : 1,
 									"id" : "obj-32",
 									"maxclass" : "slider",
+									"min" : 0.3,
+									"mult" : 0.7,
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"parameter_enable" : 0,
-									"patching_rect" : [ 68.625, 243.0, 126.0, 13.0 ],
+									"patching_rect" : [ 111.625, 329.0, 126.0, 13.0 ],
 									"size" : 1.0,
 									"style" : ""
 								}
@@ -1399,7 +1453,7 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 68.625, 259.0, 50.0, 22.0 ],
+									"patching_rect" : [ 111.625, 345.0, 50.0, 22.0 ],
 									"style" : "",
 									"text" : "gain $1"
 								}
@@ -1412,9 +1466,9 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 44.625, 200.0, 174.0, 22.0 ],
+									"patching_rect" : [ 87.625, 240.0, 140.0, 22.0 ],
 									"style" : "",
-									"text" : "aMethodTriggeredFromOsc $1"
+									"text" : "directToClientMethod $1"
 								}
 
 							}
@@ -1425,9 +1479,9 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 17.0, 121.0, 139.0, 22.0 ],
+									"patching_rect" : [ 60.0, 156.0, 101.0, 22.0 ],
 									"style" : "",
-									"text" : "giveGlobalInstruction $1"
+									"text" : "serverMethod $1"
 								}
 
 							}
@@ -1438,48 +1492,21 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 17.0, 87.5, 29.5, 22.0 ],
+									"patching_rect" : [ 60.0, 130.5, 29.5, 22.0 ],
 									"style" : "",
-									"text" : "2."
+									"text" : "1"
 								}
 
 							}
 , 							{
 								"box" : 								{
 									"id" : "obj-3",
-									"linecount" : 3,
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 53.125, 70.5, 147.0, 47.0 ],
+									"patching_rect" : [ 96.125, 130.5, 275.5, 20.0 ],
 									"style" : "",
-									"text" : "give global instruction (e.g. play sound at a given time)"
-								}
-
-							}
-, 							{
-								"box" : 								{
-									"id" : "obj-142",
-									"maxclass" : "led",
-									"numinlets" : 1,
-									"numoutlets" : 1,
-									"outlettype" : [ "int" ],
-									"parameter_enable" : 0,
-									"patching_rect" : [ 44.625, 160.5, 24.0, 24.0 ],
-									"style" : ""
-								}
-
-							}
-, 							{
-								"box" : 								{
-									"id" : "obj-146",
-									"linecount" : 2,
-									"maxclass" : "comment",
-									"numinlets" : 1,
-									"numoutlets" : 0,
-									"patching_rect" : [ 73.75, 160.5, 112.0, 33.0 ],
-									"style" : "",
-									"text" : "trigger method from OSC"
+									"text" : "trigger server method (blink in exactly 1 second)"
 								}
 
 							}
@@ -1489,9 +1516,9 @@
 									"maxclass" : "newobj",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 11.5, 376.0, 73.0, 22.0 ],
+									"patching_rect" : [ 11.5, 389.0, 87.0, 22.0 ],
 									"style" : "",
-									"text" : "nu.template"
+									"text" : "nu.template -1"
 								}
 
 							}
@@ -1503,7 +1530,7 @@
 									"numoutlets" : 0,
 									"patching_rect" : [ 11.5, 42.0, 207.125, 20.0 ],
 									"style" : "",
-									"text" : "bare module"
+									"text" : "template module"
 								}
 
 							}
@@ -1534,19 +1561,10 @@
 							}
 , 							{
 								"patchline" : 								{
-									"destination" : [ "obj-9", 0 ],
-									"disabled" : 0,
-									"hidden" : 0,
-									"source" : [ "obj-12", 0 ]
-								}
-
-							}
-, 							{
-								"patchline" : 								{
 									"destination" : [ "obj-2", 0 ],
 									"disabled" : 0,
 									"hidden" : 0,
-									"source" : [ "obj-142", 0 ]
+									"source" : [ "obj-13", 0 ]
 								}
 
 							}
@@ -1561,10 +1579,19 @@
 							}
 , 							{
 								"patchline" : 								{
-									"destination" : [ "obj-12", 0 ],
+									"destination" : [ "obj-24", 0 ],
 									"disabled" : 0,
 									"hidden" : 0,
-									"source" : [ "obj-28", 0 ]
+									"source" : [ "obj-22", 0 ]
+								}
+
+							}
+, 							{
+								"patchline" : 								{
+									"destination" : [ "obj-9", 0 ],
+									"disabled" : 0,
+									"hidden" : 0,
+									"source" : [ "obj-24", 0 ]
 								}
 
 							}
@@ -1616,13 +1643,19 @@
 		"lines" : [  ],
 		"dependency_cache" : [ 			{
 				"name" : "nu.template.maxpat",
-				"bootpath" : "~/Projects/Cosima/devs/Nu/soundworks-nu/maxmsp",
+				"bootpath" : "~/Projects/Cosima/devs/Nu/soundworks-nu/maxmsp/patchers",
+				"type" : "JSON",
+				"implicit" : 1
+			}
+, 			{
+				"name" : "nu.error.maxpat",
+				"bootpath" : "~/Projects/Cosima/devs/Nu/soundworks-nu/maxmsp/extras",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "nu.loop.maxpat",
-				"bootpath" : "~/Projects/Cosima/devs/Nu/soundworks-nu/maxmsp",
+				"bootpath" : "~/Projects/Cosima/devs/Nu/soundworks-nu/maxmsp/patchers",
 				"type" : "JSON",
 				"implicit" : 1
 			}

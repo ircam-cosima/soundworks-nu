@@ -18,10 +18,10 @@ export default class NuRoomReverb extends NuBaseModule {
     this.propagation = new SimulatePropagation(this);
     // to be saved params to send to client when connects:
     this.params = { masterGain: 1.0, 
-                    propagationSpeed: 1.0, 
+                    propagationSpeed: 10.0, 
                     propagationGain: 0.85, 
                     propagationRxMinGain: 0.3, 
-                    audioFileId: 0, 
+                    audioFileId: "snap", 
                     perc: 1, 
                     loop: true, 
                     accSlope: 0, 
@@ -68,6 +68,7 @@ export default class NuRoomReverb extends NuBaseModule {
 
   // trigger sound in room, expect args is a position, e.g. [floatX, floatY]
   emitAtPos(args) {
+    args.shift(); // playerId, not used, here to keep uniform the module impl.
     // get position from arguments
     let emitPos = [args[0], args[1]];
 
@@ -92,6 +93,7 @@ export default class NuRoomReverb extends NuBaseModule {
 
   // set room walls absorption coefficients (1 is full absorber)
   absorption(args){
+    args.shift(); // playerId, not used, here to keep uniform the module impl.
     let wallId = args[0];
     let absorptionValue = args[1];
     this.propagation.room.absorption[wallId] = absorptionValue;
@@ -99,17 +101,20 @@ export default class NuRoomReverb extends NuBaseModule {
 
   // set scattering angle or rays when bouncing on walls.
   scatterAngle(args){
+    args.shift(); // playerId, not used, here to keep uniform the module impl.
     let scatterAngle = args;
     this.propagation.room.scatterAngle = scatterAngle * (Math.PI / 180);
   }
 
   // percentage of signal power that goes into scattered rays, zero means ray will not be scattered
   scatterAmpl(args){
+    args.shift(); // playerId, not used, here to keep uniform the module impl.
     this.propagation.room.scatterAmpl =  args;
   }  
 
   // define room walls positions
   roomCoord(args){
+    args.shift(); // playerId, not used, here to keep uniform the module impl.
     let id = args[0]; // 0 is top left, 1 is bottom right
     this.propagation.room.coordsTopLeftBottomRight[id] = [ args[1], args[2] ];
   }
@@ -143,7 +148,7 @@ class SimulatePropagation {
     this.sourceImageArray = [];
     this.room = {
       origin: [0, 0],
-      coordsTopLeftBottomRight: [ [0, 0], [1, 1] ],
+      coordsTopLeftBottomRight: [ [0, 0], [5, 5] ],
       absorption: [0, 0, 0, 0], // wall abs clockwise (in 0-1)
       scatterAmpl: 0.0,
       scatterAngle: Math.PI / 13.5

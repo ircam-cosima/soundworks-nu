@@ -142,15 +142,19 @@ export default class NuPath extends NuBaseModule {
     src.connect(gain);
     gain.connect( this.e.nuOutput.in );
 
-    // play sound if rendez-vous time is in the future (else report bug)
+    // play sound if rendez-vous time is in the future (else advance in buffer)
     let now = this.e.sync.getSyncTime();
     if (syncStartTime > now) {
       let audioContextStartTime = audioContext.currentTime + syncStartTime - now;
       src.start(audioContextStartTime);
       // console.log('play scheduled in:', Math.round((syncStartTime - now) * 1000) / 1000, 'sec', 'at:', syncStartTime);
     } else {
-      console.warn('no sound played, I received the instruction to play to late');
-      this.e.renderer.blink([250, 0, 0]);
+      console.warn('no sound played, I received the instruction to play too late');
+      // this.e.renderer.blink([250, 0, 0]);
+      let inBufferTime = now - syncStartTime;
+      if( inBufferTime < src.buffer.duration ){
+        src.start(audioContext.currentTime, inBufferTime);
+      }
     }
 
     // setup screen color = f(amplitude) callback

@@ -9,7 +9,7 @@
 			"modernui" : 1
 		}
 ,
-		"rect" : [ 547.0, 248.0, 1416.0, 467.0 ],
+		"rect" : [ 67.0, 223.0, 1245.0, 467.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -43,7 +43,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 1136.0, 4.5, 130.0, 33.0 ],
+					"patching_rect" : [ 1098.0, 11.0, 120.0, 33.0 ],
 					"style" : "",
 					"text" : "broadcast assets path through patcher"
 				}
@@ -65,7 +65,7 @@
 							"modernui" : 1
 						}
 ,
-						"rect" : [ 473.0, 860.0, 458.0, 276.0 ],
+						"rect" : [ 473.0, 860.0, 433.0, 296.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 12.0,
@@ -92,14 +92,31 @@
 						"tags" : "",
 						"style" : "",
 						"subpatcher_template" : "",
+						"visible" : 1,
 						"boxes" : [ 							{
+								"box" : 								{
+									"fontface" : 0,
+									"fontname" : "Arial",
+									"fontsize" : 11.595187,
+									"id" : "obj-6",
+									"maxclass" : "newobj",
+									"numinlets" : 1,
+									"numoutlets" : 5,
+									"outlettype" : [ "", "", "", "", "" ],
+									"patching_rect" : [ 36.25, 89.0, 80.0, 21.0 ],
+									"style" : "",
+									"text" : "regexp (.+)/.+"
+								}
+
+							}
+, 							{
 								"box" : 								{
 									"id" : "obj-2",
 									"maxclass" : "newobj",
 									"numinlets" : 2,
 									"numoutlets" : 2,
 									"outlettype" : [ "", "" ],
-									"patching_rect" : [ 153.5, 206.0, 40.0, 22.0 ],
+									"patching_rect" : [ 169.25, 216.0, 40.0, 22.0 ],
 									"style" : "",
 									"text" : "zl reg"
 								}
@@ -112,7 +129,7 @@
 									"numinlets" : 0,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 153.5, 176.0, 137.0, 22.0 ],
+									"patching_rect" : [ 169.25, 186.0, 137.0, 22.0 ],
 									"style" : "",
 									"text" : "r nuRequirePathUpdate"
 								}
@@ -126,7 +143,7 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 183.0, 114.249969, 210.0, 22.0 ],
+									"patching_rect" : [ 198.75, 124.249969, 210.0, 62.0 ],
 									"style" : "",
 									"text" : "\"Macintosh HD:/Users/davipoir/Projects/Cosima/devs/Nu/soundworks-nu/maxmsp/node/public\""
 								}
@@ -139,7 +156,7 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 35.75, 145.0, 59.0, 22.0 ],
+									"patching_rect" : [ 51.5, 155.0, 59.0, 22.0 ],
 									"style" : "",
 									"text" : "tosymbol"
 								}
@@ -152,7 +169,7 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 35.75, 114.249969, 128.0, 22.0 ],
+									"patching_rect" : [ 51.5, 124.249969, 128.0, 22.0 ],
 									"style" : "",
 									"text" : "sprintf %s/node/public"
 								}
@@ -164,7 +181,7 @@
 									"maxclass" : "newobj",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 35.75, 242.0, 91.0, 22.0 ],
+									"patching_rect" : [ 51.5, 252.0, 91.0, 22.0 ],
 									"style" : "",
 									"text" : "s nuPublicPath"
 								}
@@ -177,7 +194,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 111.5, 77.0, 150.0, 33.0 ],
+									"patching_rect" : [ 132.5, 77.0, 150.0, 33.0 ],
 									"style" : "",
 									"text" : "output everything before last \"/\""
 								}
@@ -298,6 +315,15 @@
 									"destination" : [ "obj-4", 0 ],
 									"disabled" : 0,
 									"hidden" : 0,
+									"source" : [ "obj-6", 1 ]
+								}
+
+							}
+, 							{
+								"patchline" : 								{
+									"destination" : [ "obj-6", 0 ],
+									"disabled" : 0,
+									"hidden" : 0,
 									"source" : [ "obj-73", 1 ]
 								}
 
@@ -305,7 +331,7 @@
  ]
 					}
 ,
-					"patching_rect" : [ 1136.0, 149.416687, 77.0, 22.0 ],
+					"patching_rect" : [ 1098.0, 164.916687, 77.0, 22.0 ],
 					"saved_object_attributes" : 					{
 						"description" : "",
 						"digest" : "",
@@ -326,7 +352,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 1136.0, 92.416687, 89.0, 22.0 ],
+					"patching_rect" : [ 1098.0, 107.916687, 89.0, 22.0 ],
 					"style" : "",
 					"text" : "loadmess path"
 				}
@@ -339,7 +365,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 2,
 					"outlettype" : [ "bang", "" ],
-					"patching_rect" : [ 1136.0, 64.583313, 52.0, 22.0 ],
+					"patching_rect" : [ 1098.0, 80.083313, 52.0, 22.0 ],
 					"style" : "",
 					"text" : "select 1"
 				}
@@ -352,7 +378,7 @@
 					"numinlets" : 0,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 1136.0, 39.5, 85.0, 22.0 ],
+					"patching_rect" : [ 1098.0, 55.0, 85.0, 22.0 ],
 					"style" : "",
 					"text" : "r serverStatus"
 				}
@@ -365,7 +391,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 2,
 					"outlettype" : [ "", "" ],
-					"patching_rect" : [ 1136.0, 120.416687, 69.0, 22.0 ],
+					"patching_rect" : [ 1098.0, 135.916687, 69.0, 22.0 ],
 					"save" : [ "#N", "thispatcher", ";", "#Q", "end", ";" ],
 					"style" : "",
 					"text" : "thispatcher"
@@ -447,9 +473,9 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 411.200012, 147.750015, 101.0, 22.0 ],
+					"patching_rect" : [ 411.200012, 147.750015, 115.0, 22.0 ],
 					"style" : "",
-					"text" : "prepend /nuMain"
+					"text" : "prepend /nuMain -1"
 				}
 
 			}
@@ -626,7 +652,7 @@
 				"box" : 				{
 					"comment" : "",
 					"id" : "obj-21",
-					"index" : 0,
+					"index" : 1,
 					"maxclass" : "outlet",
 					"numinlets" : 1,
 					"numoutlets" : 0,
@@ -2739,7 +2765,7 @@
 				"box" : 				{
 					"comment" : "",
 					"id" : "obj-1",
-					"index" : 0,
+					"index" : 1,
 					"maxclass" : "inlet",
 					"numinlets" : 0,
 					"numoutlets" : 1,
@@ -3276,21 +3302,7 @@
 				}
 
 			}
- ],
-		"dependency_cache" : [ 			{
-				"name" : "thru.maxpat",
-				"bootpath" : "C74:/patchers/m4l/Pluggo for Live resources/patches",
-				"type" : "JSON",
-				"implicit" : 1
-			}
-, 			{
-				"name" : "nu.error.maxpat",
-				"bootpath" : "~/Projects/Cosima/devs/Nu/soundworks-nu/maxmsp/extras",
-				"type" : "JSON",
-				"implicit" : 1
-			}
- ],
-		"autosave" : 0
+ ]
 	}
 
 }

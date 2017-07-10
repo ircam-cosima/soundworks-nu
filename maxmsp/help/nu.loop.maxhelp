@@ -9,7 +9,7 @@
 			"modernui" : 1
 		}
 ,
-		"rect" : [ 866.0, 439.0, 482.0, 488.0 ],
+		"rect" : [ 659.0, 875.0, 482.0, 488.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -1323,7 +1323,7 @@
 							"modernui" : 1
 						}
 ,
-						"rect" : [ 866.0, 465.0, 482.0, 462.0 ],
+						"rect" : [ 659.0, 901.0, 482.0, 462.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 12.0,
@@ -1353,12 +1353,25 @@
 						"showontab" : 1,
 						"boxes" : [ 							{
 								"box" : 								{
+									"id" : "obj-6",
+									"maxclass" : "message",
+									"numinlets" : 2,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 15.5, 128.0, 70.0, 22.0 ],
+									"style" : "",
+									"text" : "playerId $1"
+								}
+
+							}
+, 							{
+								"box" : 								{
 									"id" : "obj-28",
 									"linecount" : 2,
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 74.5, 266.041687, 52.0, 33.0 ],
+									"patching_rect" : [ 80.5, 304.041687, 52.0, 33.0 ],
 									"style" : "",
 									"text" : "stop all tracks"
 								}
@@ -1371,7 +1384,7 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 74.5, 301.041687, 37.0, 22.0 ],
+									"patching_rect" : [ 80.5, 339.041687, 37.0, 22.0 ],
 									"style" : "",
 									"text" : "reset"
 								}
@@ -1386,7 +1399,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "int" ],
 									"parameter_enable" : 0,
-									"patching_rect" : [ 53.5, 198.5, 24.0, 24.0 ],
+									"patching_rect" : [ 59.5, 236.5, 24.0, 24.0 ],
 									"style" : ""
 								}
 
@@ -1412,7 +1425,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 82.5, 189.5, 140.0, 33.0 ],
+									"patching_rect" : [ 88.5, 227.5, 140.0, 33.0 ],
 									"style" : "",
 									"text" : "activate/deactivate time slot"
 								}
@@ -1425,7 +1438,7 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 53.5, 228.796875, 103.0, 22.0 ],
+									"patching_rect" : [ 59.5, 266.796875, 103.0, 22.0 ],
 									"style" : "",
 									"text" : "setTrackSlot 2 $1"
 								}
@@ -1633,7 +1646,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 133.5, 154.0, 81.5, 20.0 ],
+									"patching_rect" : [ 139.5, 192.0, 81.5, 20.0 ],
 									"style" : "",
 									"text" : "main gain"
 								}
@@ -1648,7 +1661,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"parameter_enable" : 0,
-									"patching_rect" : [ 40.0, 136.0, 126.0, 13.0 ],
+									"patching_rect" : [ 46.0, 174.0, 126.0, 13.0 ],
 									"size" : 1.0,
 									"style" : ""
 								}
@@ -1661,7 +1674,7 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 40.0, 152.0, 89.0, 22.0 ],
+									"patching_rect" : [ 46.0, 190.0, 89.0, 22.0 ],
 									"style" : "",
 									"text" : "masterGain $1"
 								}
@@ -1821,13 +1834,22 @@
 									"destination" : [ "obj-9", 0 ],
 									"disabled" : 0,
 									"hidden" : 0,
-									"source" : [ "obj-7", 0 ]
+									"source" : [ "obj-6", 0 ]
 								}
 
 							}
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-9", 0 ],
+									"disabled" : 0,
+									"hidden" : 0,
+									"source" : [ "obj-7", 0 ]
+								}
+
+							}
+, 							{
+								"patchline" : 								{
+									"destination" : [ "obj-6", 0 ],
 									"disabled" : 0,
 									"hidden" : 0,
 									"source" : [ "obj-83", 0 ]
@@ -1855,7 +1877,13 @@
 		"lines" : [  ],
 		"dependency_cache" : [ 			{
 				"name" : "nu.loop.maxpat",
-				"bootpath" : "~/Projects/Cosima/devs/Nu/soundworks-nu/maxmsp",
+				"bootpath" : "~/Projects/Cosima/devs/Nu/soundworks-nu/maxmsp/patchers",
+				"type" : "JSON",
+				"implicit" : 1
+			}
+, 			{
+				"name" : "nu.error.maxpat",
+				"bootpath" : "~/Projects/Cosima/devs/Nu/soundworks-nu/maxmsp/extras",
 				"type" : "JSON",
 				"implicit" : 1
 			}

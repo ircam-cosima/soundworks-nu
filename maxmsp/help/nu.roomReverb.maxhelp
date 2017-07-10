@@ -9,7 +9,7 @@
 			"modernui" : 1
 		}
 ,
-		"rect" : [ 1253.0, 783.0, 1068.0, 563.0 ],
+		"rect" : [ 87.0, 479.0, 1068.0, 563.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -54,7 +54,7 @@
 							"modernui" : 1
 						}
 ,
-						"rect" : [ 1253.0, 809.0, 1068.0, 537.0 ],
+						"rect" : [ 87.0, 505.0, 1068.0, 537.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 12.0,
@@ -178,7 +178,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 348.5, 455.0, 117.0, 20.0 ],
+									"patching_rect" : [ 153.75, 442.0, 117.0, 20.0 ],
 									"style" : "",
 									"text" : "stop all sounds"
 								}
@@ -191,7 +191,7 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 302.0, 455.0, 37.0, 22.0 ],
+									"patching_rect" : [ 107.25, 442.0, 37.0, 22.0 ],
 									"style" : "",
 									"text" : "reset"
 								}
@@ -358,7 +358,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 809.25, 407.791779, 45.5, 22.0 ],
 									"style" : "",
-									"text" : "0.",
+									"text" : "0.25",
 									"textcolor" : [ 0.0, 0.0, 0.0, 1.0 ]
 								}
 
@@ -410,7 +410,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 606.75, 404.791779, 45.5, 22.0 ],
 									"style" : "",
-									"text" : "0.",
+									"text" : "0.22",
 									"textcolor" : [ 0.0, 0.0, 0.0, 1.0 ]
 								}
 
@@ -462,7 +462,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 651.0, 424.708344, 71.5, 22.0 ],
 									"style" : "",
-									"text" : "1.",
+									"text" : "0.11",
 									"textcolor" : [ 0.0, 0.0, 0.0, 1.0 ]
 								}
 
@@ -514,7 +514,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 651.0, 286.708344, 71.5, 22.0 ],
 									"style" : "",
-									"text" : "1.",
+									"text" : "0.12",
 									"textcolor" : [ 0.0, 0.0, 0.0, 1.0 ]
 								}
 
@@ -564,7 +564,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 170.0, 426.5, 97.25, 20.0 ],
+									"patching_rect" : [ 331.0, 416.791779, 97.25, 20.0 ],
 									"style" : "",
 									"text" : "XY emit position"
 								}
@@ -572,12 +572,22 @@
 							}
 , 							{
 								"box" : 								{
+									"bgcolor" : [ 0.784314, 0.145098, 0.023529, 1.0 ],
+									"bgcolor2" : [ 0.784314, 0.145098, 0.023529, 1.0 ],
+									"bgfillcolor_angle" : 270.0,
+									"bgfillcolor_autogradient" : 0,
+									"bgfillcolor_color" : [ 0.290196, 0.309804, 0.301961, 1.0 ],
+									"bgfillcolor_color1" : [ 0.784314, 0.145098, 0.023529, 1.0 ],
+									"bgfillcolor_color2" : [ 0.784314, 0.145098, 0.023529, 1.0 ],
+									"bgfillcolor_proportion" : 0.39,
+									"bgfillcolor_type" : "gradient",
+									"gradient" : 1,
 									"id" : "obj-56",
 									"maxclass" : "message",
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 138.5, 426.5, 29.5, 22.0 ],
+									"patching_rect" : [ 299.5, 416.791779, 29.5, 22.0 ],
 									"style" : "",
 									"text" : "2 2"
 								}
@@ -590,7 +600,7 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 138.5, 455.0, 113.0, 22.0 ],
+									"patching_rect" : [ 299.5, 445.291779, 113.0, 22.0 ],
 									"style" : "",
 									"text" : "prepend emitAtPos"
 								}
@@ -616,7 +626,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 563.25, 187.0, 71.5, 22.0 ],
 									"style" : "",
-									"text" : "79",
+									"text" : "16",
 									"textcolor" : [ 0.0, 0.0, 0.0, 1.0 ]
 								}
 
@@ -680,7 +690,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 563.25, 102.583313, 71.5, 22.0 ],
 									"style" : "",
-									"text" : "0.",
+									"text" : "0.32",
 									"textcolor" : [ 0.0, 0.0, 0.0, 1.0 ]
 								}
 
@@ -795,7 +805,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 427.75, 289.0, 71.5, 22.0 ],
 									"style" : "",
-									"text" : "7",
+									"text" : "8",
 									"textcolor" : [ 0.0, 0.0, 0.0, 1.0 ]
 								}
 
@@ -1705,7 +1715,13 @@
 		"lines" : [  ],
 		"dependency_cache" : [ 			{
 				"name" : "nu.roomReverb.maxpat",
-				"bootpath" : "~/Projects/Cosima/devs/Nu/soundworks-nu/maxmsp",
+				"bootpath" : "~/Projects/Cosima/devs/Nu/soundworks-nu/maxmsp/patchers",
+				"type" : "JSON",
+				"implicit" : 1
+			}
+, 			{
+				"name" : "nu.error.maxpat",
+				"bootpath" : "~/Projects/Cosima/devs/Nu/soundworks-nu/maxmsp/extras",
 				"type" : "JSON",
 				"implicit" : 1
 			}

@@ -6,7 +6,7 @@ import NuBaseModule from './NuBaseModule'
 
 export default class NuScore extends NuBaseModule {
   constructor(serverExperience) {
-    super(serverExperience, 'nuScore', true);
+    super(serverExperience, 'nuScore');
 
     // to be saved params to send to client when connects:
     this.params = { 
