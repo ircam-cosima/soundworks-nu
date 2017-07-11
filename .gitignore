@@ -19,3 +19,6 @@ Thumbs.db
 
 # ignore audio file description (dynamically gen.)
 src/client/shared/audioFiles.js
+
+# ignore node folder (gh-pages branch)
+/node
