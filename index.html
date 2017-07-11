@@ -61,6 +61,7 @@
                     <li> <a href="#start-design">Start designing</a> </li>
                     <li> <a href="#deploy">Deployment</a> </li>
                     <li> <a href="#create-module">Create module</a> </li>
+                    <li> <a href="#available-modules">Available modules</a> </li>
                     <li> <a href="#faq">FAQ</a> </li>
                     <li> <a href="#about">About</a> </li>
                 </ul>
@@ -161,7 +162,7 @@
             </div>    
             <div class="col-lg-12 text-justify">
                 <p>
-                    Finally, open the <code>./maxmsp/extra/nu.getting-started.maxpat</code> patcher to produce a few notes to test your installation. If your smartphone is connected to the same network as the computer running both server and max patch, connect it to the server <b> using its local IP address this time </b>. Mine at the moment is <code>192.168.0.12</code>, the resulting url: <code>http://192.168.0.12:8000</code>.
+                    Finally, add <code>./maxmsp/</code> and its subfolders to your Max path and open the <code>./maxmsp/extra/nu.getting-started.maxpat</code> patcher to produce a few notes to test your installation. If your smartphone is connected to the same network as the computer running both server and max patch, connect it to the server <b> using its local IP address this time </b>. Mine at the moment is <code>192.168.0.12</code>, the resulting url: <code>http://192.168.0.12:8000</code>.
                 </p>     
             </div>        
         </div>  
@@ -285,6 +286,13 @@
             </div>
         </div> 
 
+        <div class="row" id="available-modules">
+            <div class="col-lg-12 text-justify">
+                <h1>Available modules</h1>
+                <p></p>
+            </div>
+        </div> 
+
         <div class="row" id="faq">
             <div class="col-lg-12 text-justify">
                 <h1>FAQ</h1>
@@ -294,6 +302,16 @@
                 <p class="faq-a">
                     Add your audio files to any existing / new folder of the <code>./node/public/sounds</code> folder. The depth of the file tree does not matter as it's flattened at import. Restart the Nü server. Audio file names are referred to without their extension from Max, see e.g. <code>./maxmsp/extra/nu.getting-started.maxpat</code>. Prefer .mp3 or .wav for you files extensions.
                 </p>
+                <p class="faq-q">
+                    Opening <code>nu.getting-started</code> patch, Max console outputs a bunch of &ldquo;nu.* : No such object&rdquo;.
+                </p>
+                <p class="faq-a">
+                    Add <code>./maxmsp/</code> and its subfolders to your Max path.
+                </p>                
+                <div class="col-lg-8 col-lg-offset-2 text-center">
+                    <img class="img-responsive" src="img/faq-max-path.jpg">                
+                </div>    
+
             </div>
         </div>         
 
