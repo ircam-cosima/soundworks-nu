@@ -77,11 +77,11 @@
         <div class="row" id="head">
             <div class="col-lg-12 text-left">
                 <h1><font color="red">Nü</font> Soundworks</h1>
-                <p class="lead">Max/MSP leash on the WebAudio API: spectators devices as distributed speakers and sensors during live performances.</p>
+                <p class="lead">Max (Cycling '74) leash on the WebAudio API: spectators devices as distributed speakers and sensors during live performances.</p>
             </div>
              <div class="col-lg-12 text-justify">
                 <p>
-                    The objective of the Nü framework, based on <a href="https://github.com/collective-soundworks/soundworks/">Soundworks</a>, is to give composers control over the speakers of spectators smartphones during a performance. Connecting their devices to a web page broadcasted by the performer's laptop, spectators become part of the composition: from simple sound sources to active musicians. The performer can then control the behaviors of "Nü modules" via a Max/MSP based interface: modular units (distributed room reverb, granular synthesis, etc.) designed for live composition. Nü has been developed as part of the <a href="http://cosima.ircam.fr/">CoSiMa Project</a>.
+                    The objective of the Nü framework, based on <a href="https://github.com/collective-soundworks/soundworks/">Soundworks</a>, is to give composers &ldquo;control&rdquo; over the speakers of spectators smartphones during a performance. Connecting their devices to a web page broadcasted by the performer's laptop, spectators become part of the composition: from simple sound sources to active musicians. The performer can then control the behaviors of <i>Nü modules</i> &#8210; modular units (playback, distributed sequencer, etc.) designed for live composition &#8210; via a series of Max objects. Nü has been developed as part of the <a href="http://cosima.ircam.fr/">CoSiMa Project</a>.
                 </p>
             </div>
 
@@ -95,17 +95,18 @@
 
         <div class="row" id="how-it-works">
             <div class="col-lg-12 text-justify">
-                <h1>How it works</h1>
-                <p>Nü's objective is to support the design of web-audio install (see video above), where the behavior of each client (device on the floor) is defined from Max. See it as a <a href="https://github.com/Cycling74/miraweb">MiraWeb</a> where the sound and processing actually happens on the connected devices.</p>
+                <h1>How it Works</h1>
+                <p>Nü's objective is to support the design of web-audio install (see video above), where the behavior of each client (device on the floor) is defined from Max. See it as a <a href="https://github.com/Cycling74/miraweb">MiraWeb</a> where the sound and processing happens on the connected devices.</p>
 
                 <h4>Over-simplified concept:</h4>
-                <p>Connect your laptop and a bunch of smartphones on the same WiFi network. On said laptop, launch the Nü server (see install section) and connect the smartphones to the server. Open a new Max patch and instantiate a nu object. Open the object help, randomly click around: sound should start coming out of the smartphones. Repeat.</p>
+                <p>Connect your laptop and a bunch of smartphones on the same WiFi network. On said laptop, launch the Nü server (see the <a href="#getting-started">getting started section</a>) and connect the smartphones to the server. Open a new Max patch and instantiate a Nü object. Open the object help, randomly click around: sound should start coming out of the smartphones. Repeat.</p>
 
                 <h4>The real thing:</h4>
                 <p>
-                    A Nü session involves at least 3 components: a server, a client, and a Max patch. The server (a <a href="https://nodejs.org/en/">NodeJS server</a> if you feel like digging) runs on a laptop, the Max patch as well (can even be the same), and the client on a smartphone connected to the web page the server serves. All three components thus need to be connected to the same network (WiFi, cellular, etc.) for them to address each other. The smartphone connected to the server becomes a client: displaying a welcome screen, it stands ready for Max's instructions (relayed by the server). 
-                    <br> <br>
-                    These instructions are issues via OSC from a Max abstraction, referred to as a <i>Nü module</i>. Actually, a module designs a triplet [Max-abstraction / Server Class / Client Class]: messages from the abstraction are sent to the server, and re-directed to the concerned clients. Each module is designed to do one thing (and eventually do it right), much like Max's objects (sfplay, loadbang, gate, etc.). On the server and client sides, the messages sent by the Max abstraction are interpreted, most of the time triggering a dedicated method. The figure below details the architecture of a Nü session and the intra-module-inter-context communication concept. 
+                    A Nü session involves at least 3 components: a server, a client, and a Max patch. The server (a <a href="https://nodejs.org/en/">NodeJS server</a> if you feel like digging) runs on a laptop, the Max patch as well (can even be the same), and the client on a smartphone connected to the web page the server serves. All three components thus need to be connected to the same network (WiFi, cellular, etc.) for them to address each other. The smartphone connected to the server becomes a client (also referred to as player): displaying a welcome screen, it stands ready for Max's instructions (relayed by the server). 
+                </p>
+                <p>
+                    These instructions are issues via OSC from a Max abstraction, referred to as a <i>Nü module</i>. Actually, a module designs a triplet [ Max-abstraction / server Class / client Class ]: messages from the abstraction are sent to the server, and re-directed to the concerned clients. Each module is designed to do one thing (and eventually do it right), much like Max's objects (sfplay, loadbang, gate, etc.). On the server and client sides, the messages sent by the Max abstraction are interpreted, most of the time triggering a dedicated method. The figure below details the architecture of a Nü session and the inter-contexts / intra-module communications. 
                 </p>
             </div>
             <div class="col-lg-10 col-lg-offset-1 text-center">
@@ -115,7 +116,7 @@
 
             <div class="col-lg-12 text-justify">
                 <p>
-                    Based on these modules, one can design a web-based performance without learning JavaScript / HTML / CSS. While a module on its own is limited to a unique feature, they can be combined to do any kind of passive or participative audio-visual rendering on the connected smartphones. The framework has also been designed to simplify the creation of new modules, if ever you feel it's missing a feature.
+                    Based on these modules, one can design a web-based performance without learning JavaScript / HTML / CSS. While a module on its own is limited to a unique feature, they can be combined to do any kind of passive or participative audio-visual rendering on the connected smartphones. The framework has also been designed to simplify the <a href="#create-module">creation of new modules</a>, if ever you feel it's missing a feature.
                 </p>
 
             </div>
@@ -125,9 +126,9 @@
         
         <div class="row" id="getting-started">
             <div class="col-lg-12 text-justify">
-                <h1>Getting started</h1>
+                <h1>Getting Started</h1>
                 <p>
-                    First, you need to install <a href="https://cycling74.com/">Max</a>. Then, download the <a href="https://github.com/ircam-cosima/soundworks-nu/archive/v1.1.zip">latest release of the Nü framework</a>. Run the ./node/_install_&lt;name-of-your-architecture&gt; file in a terminal. Example with OSX:
+                    First, you need to install <a href="https://cycling74.com/">Max</a>. Then, download the <a href="https://github.com/ircam-cosima/soundworks-nu/archive/v1.1.zip">latest release of the Nü framework</a>. Run the ./node/_install_&lt;name-of-your-architecture&gt; file in a terminal <i><b>(only available for OSX at the moment)</b></i>. Example with OSX:
                 </p>
                 <pre> 
                     # (adapt release number below) <br>
@@ -153,7 +154,7 @@
                     [HTTP SERVER] Server listening on http://127.0.0.1:8000
                 </pre>                
                 <p>
-                    Open your favorite browser to the suggested url <code>http://127.0.0.1:8000</code> to the Nü splash-screen (left below). Clicking on said screen will lead you directly to the &ldquo;ready to play&rdquo; screen (right):
+                    Open your favorite browser to the suggested url <code>http://127.0.0.1:8000</code> to the Nü splash-screen (left below). Clicking on said screen will lead you directly to the &ldquo;ready to play&rdquo; screen (right). A smartphone does not truly becomes a functional client until it reaches the later.
                 </p>
             </div>
 
@@ -162,7 +163,7 @@
             </div>    
             <div class="col-lg-12 text-justify">
                 <p>
-                    Finally, add <code>./maxmsp/</code> and its subfolders to your Max path and open the <code>./maxmsp/extra/nu.getting-started.maxpat</code> patcher to produce a few notes to test your installation. If your smartphone is connected to the same network as the computer running both server and max patch, connect it to the server <b> using its local IP address this time </b>. Mine at the moment is <code>192.168.0.12</code>, the resulting url: <code>http://192.168.0.12:8000</code>.
+                    Finally, add <code>./maxmsp/</code> and its subfolders to your Max path and open the <code>./maxmsp/extra/nu.getting-started.maxpat</code> patcher. From there you should be able to produce a few notes and test your installation. If your smartphone is connected to the same network as the computer running both server and max patch, connect it to said server <b> using its local IP address</b> this time. Mine at the moment is <code>192.168.0.12</code>, the resulting url: <code>http://192.168.0.12:8000</code>.
                 </p>     
             </div>        
         </div>  
@@ -170,8 +171,8 @@
 
         <div class="row" id="start-design">
             <div class="col-lg-12 text-justify">
-                <h1>Start designing</h1>
-                <p>Every Nü module has its own Max abstraction, from which one controls both Client and Server parts of the module. As with standard Max objects, Nü objects (abstractions) can be combined to create complex scenarios without having to meddle in JavaScript. The best way to start designing your own Max patch is probably to read through the content of the <code>./maxmsp/help</code> folder, getting to know each module and its potential applications. The following video showcases some of these applications with the module available as of mid 2017:
+                <h1>Start Designing</h1>
+                <p>Every Nü module has its own Max abstraction, from which one controls both Client and Server parts of the module. As with standard Max objects, Nü abstractions can be combined to create complex scenarios (without having to meddle in JavaScript). The best way to start designing your own Max patch is probably to read through the content of the <code>./maxmsp/help</code> folder, getting to know each module and its potential applications. The following video showcases some of these applications with the <a href="#available-modules">modules available</a> as of mid 2017:
                 </p>
             </div>
             <div class="col-lg-10 col-lg-offset-1 text-center">
@@ -186,6 +187,9 @@
                 <p>
                     <b>Simulating devices on your laptop</b>: Hopefully, the <code>./maxmsp/extra/nu.monitor-b-patcher.maxpat</code> bpatcher coupled with the <code>./utils/openChromeArray.sh</code> utility will help you figure out how your design will feel like once deployed in a concert hall on numerous devices. The latter is a bash script that opens a NxN array of <a href="https://www.google.fr/chrome">Chrome</a> windows that will emulate Nü clients connected to your server. The former is a debug tool that can be used for real-time auralization of the clients audio outputs (binaural + room impulse response): position a virtual listener in the midst of the emulated clients to ear them as you would in the real thing (or close enough to assess whether your design is heading the right way).
                 </p>
+                <p>
+                    <b>The Controller lives on a different webpage</b>: If you stumble upon the <code>./maxmsp/nu.controller.maxpat</code> module, try connecting your device to <code>http://&lt;server.ip.address&gt;:8000/controller</code>. This webpage is dedicated to your (as opposed to spectator's) devices, to e.g. control the behavior of your patch with touch, orientation, and acceleration sensors.
+                </p>                
             </div>  
 
             <div class="col-lg-10 col-lg-offset-1 text-center">
@@ -196,7 +200,7 @@
 
         <div class="row" id="deploy">
             <div class="col-lg-12 text-justify">
-                <h1>Go full scale</h1>
+                <h1>Go Full Scale</h1>
                 <p>
                     To deploy your newly designed web application and use it on the smartphones of (numerous, no doubt) spectators, you may need to modify the network configuration of the NodeJS server. Feel concerned by the following section only if you plan to use a WAN (as opposed to a LAN). Adapt the following parameters of the <code>./node/src/server/config/default.js</code> to the deployment network:
                 </p>
@@ -264,7 +268,7 @@
 
         <div class="row" id="create-module">
             <div class="col-lg-12 text-justify">
-                <h1>Create new modules</h1>
+                <h1>Create New (Nü) Modules</h1>
                 <p>
                     Creating a new module will require to (1) learn JavaScript and (2) understand the way the framework has been designed. The former I leave to you. For the later, have a look at both <code>nuTemplate</code> and <code>nuScore</code> modules. Keep in mind that each module has 3 components:
 
