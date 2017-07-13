@@ -10,7 +10,7 @@ export default class NuMain extends NuBaseModule {
 
     setTimeout( () => { 
       // sync. clocks
-      const clockInterval = 0.1; // refresh interval in seconds
+      const clockInterval = 1.0; // refresh interval in seconds
       setInterval( () => { 
         this.e.osc.send('/nuMain/clock', this.e.sync.getSyncTime()); 
       }, 1000 * clockInterval);
