@@ -16,7 +16,7 @@ Node.js or "npm" is a toolbox / framework / magic wizard for javascript & web de
 
 ```sh
 git clone https://github.com/ircam-cosima/soundworks-nu.git soundworks-nu
-cd soundworks-nu
+cd soundworks-nu/node
 npm install
 echo '## DEV ## working with develop version of soundworks even here, requires transpile'
 cd node_modules/soundworks
@@ -33,6 +33,7 @@ git clone https://github.com/ircam-cosima/soundworks-nu
 cd soundworks-nu
 git checkout develop
 git pull
+cd node
 npm install
 cd node_modules/soundworks
 npm run transpile
