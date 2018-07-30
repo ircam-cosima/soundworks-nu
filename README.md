@@ -10,7 +10,7 @@ Nü has been developped at IRCAM-CNRS within the [CoSiMa](http://cosima.ircam.fr
 
 ## Install Node.js
 
-Node.js or "npm" is a toolbox / framework / magic wizard for javascript & web developers, required to run Nü. Check the official [Node.js installation guide](https://docs.npmjs.com/getting-started/installing-node).
+Node.js or "npm" is a toolbox / framework / magic wizard for javascript & web developers, required to run Nü. Check the official [Node.js installation guide](https://docs.npmjs.com/getting-started/installing-node). Nü has been developped with npm 3.9.5 and node v6.2.2.
 
 ## Install Nü (master)
 
