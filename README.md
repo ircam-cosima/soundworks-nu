@@ -12,7 +12,7 @@ Nü has been developped at IRCAM-CNRS within the [CoSiMa](http://cosima.ircam.fr
 
 Node.js or "npm" is a toolbox / framework / magic wizard for javascript & web developers, required to run Nü. Check the official [Node.js installation guide](https://docs.npmjs.com/getting-started/installing-node). Nü has been developped with npm 3.9.5 and node v6.2.2.
 
-## Install Nü (master)
+## Install Nü (main)
 
 ```sh
 git clone https://github.com/ircam-cosima/soundworks-nu.git soundworks-nu
@@ -23,10 +23,11 @@ cd node_modules/soundworks
 npm run transpile
 cd ../..
 echo '## DEV ##'
-npm run watch
+npm run transpile
+npm run start
 ```
 
-## Install Nü (develop)
+## Install Nü (for nü developers only)
 
 ```sh
 git clone https://github.com/ircam-cosima/soundworks-nu
